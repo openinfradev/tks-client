@@ -13,3 +13,8 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+
+# Go Module files
+go.mod
+go.sum
