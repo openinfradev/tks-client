@@ -66,9 +66,11 @@ func main() {
 	defer cc.Close()
 
 	// three types to define eps
-	// - eplist: set of entry (type, url)
-	// - clusterep and epportlist: cluster endpoint and set of entry (type, port)
-	// - clusterep only: cluster endpoint and default endpoint using the node port. (currently prometheus)
+	//  1. eplist: set of entry (type, url)
+	//  2. clusterep and epportlist: cluster endpoint and set of entry (type, port)
+	//  3. clusterep only: cluster endpoint and default endpoint using the node port. (currently prometheus)
+	// ref) clusterep means the endpoint for the cluster like IP or dns...., you can add some application's endpoint with this function
+
 	if len(*eplist) > 2 {
 		var eps map[pb.AppType]string
 		json.Unmarshal([]byte(*eplist), &eps)
