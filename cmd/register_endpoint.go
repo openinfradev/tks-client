@@ -1,114 +1,202 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
-	"flag"
-	"fmt"
-	"os"
+    "context"
+    "flag"
+    "strings"
+    "fmt"
+    "os"
+    "os/exec"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+    "google.golang.org/grpc"
+    "google.golang.org/grpc/credentials"
 
-	"github.com/sktelecom/tks-contract/pkg/log"
-	"github.com/sktelecom/tks-info/pkg/cert"
-	pb "github.com/sktelecom/tks-proto/pbgo"
+    "github.com/sktelecom/tks-contract/pkg/log"
+    "github.com/sktelecom/tks-info/pkg/cert"
+    pb "github.com/sktelecom/tks-proto/pbgo"
 )
 
 var (
-	port   = flag.Int("port", 9111, "The gRPC server port")
-	tls    = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
-	caFile = flag.String("ca_file", "", "The TLS ca file")
+    port   = flag.Int("port", 9111, "The gRPC server port")
+    tls    = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
+    caFile = flag.String("ca_file", "", "The TLS ca file")
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		panic("Need parameters. (help with -h)")
-	}
-	log.Info("Preporcess for TACO-LMA with TKS-info")
+    if len(os.Args) < 2 {
+        panic("Need parameters. (help with -h)")
+    }
+    log.Info("Preporcess for TACO-LMA with TKS-info")
 
-	ip := flag.String("tks", "127.0.0.1", "An address of TKS-info")
-	clusterid := flag.String("clusterid", "", "Cluster ID to apply. eg. 6abead61-ff2a-4af4-8f41-d2c44c745de7")
-	appgroupid := flag.String("appgroupid", "", "Application ID of The endpoint. eg. 6abead61-ff2a-4af4-8f41-d2c44c745de7")
-	clusterep := flag.String("clusterep", "", "Cluster url or ip. eg. cluster.taco.com or 192.168.123.45")
-	epportlist := flag.String("epportlist", "",
-		"The list of port per app like (application_type, port) eg. {\"1\":\"80\",\"2\":\"10232\"}")
-	eplist := flag.String("eplist", "",
-		"The list of endpoints like (application_type, endpoint) eg. {\"1\":\"192.168.5.55:80\",\"2\":\"192.168.5.55:10232\"}")
+    // Robert: current endpoint should be given here
+    ip := flag.String("tks", "127.0.0.1", "An address of TKS-info")
+    clusterid := flag.String("clusterid", "", "Cluster ID to apply. eg. 6abead61-ff2a-4af4-8f41-d2c44c745de7")
+    appgroupid := flag.String("appgroupid", "", "Application ID of The endpoint. eg. 6abead61-ff2a-4af4-8f41-d2c44c745de7")
+    curEndpoint := flag.String("endpoint", "", "Ingress URL of prometheus sidecar in current cluster. eg. prom-sidecar.cluster-xy")
 
-	flag.Parse()
+    flag.Parse()
 
-	opts := grpc.WithInsecure()
-	if *tls {
-		if *caFile == "" {
-			*caFile = cert.Path("x509/ca.crt")
-		}
-		creds, err := credentials.NewClientTLSFromFile(*caFile, "")
-		if err != nil {
-			log.Fatal("Error while loading CA trust certificate: ", err)
-			return
-		}
-		opts = grpc.WithTransportCredentials(creds)
-	}
+    opts := grpc.WithInsecure()
+    if *tls {
+        if *caFile == "" {
+            *caFile = cert.Path("x509/ca.crt")
+        }
+        creds, err := credentials.NewClientTLSFromFile(*caFile, "")
+        if err != nil {
+            log.Fatal("Error while loading CA trust certificate: ", err)
+            return
+        }
+        opts = grpc.WithTransportCredentials(creds)
+    }
 
-	if len(*clusterid) < 2 {
-		log.Fatal("Argument Error: clusterid, eg. -clusterid c10ead61-ff2a-4af4-8f41-d2c44c745de7")
-	}
-	if len(*appgroupid) < 2 {
-		log.Fatal("Argument Error: appgroupid, eg. -appgroupid abbead61-ff2a-4af4-8f41-d2c44c745de7")
-	}
+    if len(*clusterid) < 2 {
+        log.Fatal("Argument Error: clusterid, eg. -clusterid c10ead61-ff2a-4af4-8f41-d2c44c745de7")
+    }
+    if len(*appgroupid) < 2 {
+        log.Fatal("Argument Error: appgroupid, eg. -appgroupid abbead61-ff2a-4af4-8f41-d2c44c745de7")
+    }
 
-	addr := fmt.Sprintf("%s:%d", *ip, *port)
-	cc, err := grpc.Dial(addr, opts)
-	if err != nil {
-		log.Fatal("could not connect: ", err)
-	}
-	defer cc.Close()
+    addr := fmt.Sprintf("%s:%d", *ip, *port)
+    cc, err := grpc.Dial(addr, opts)
+    if err != nil {
+        log.Fatal("could not connect: ", err)
+    }
+    defer cc.Close()
 
-	// three types to define eps
-	//  1. eplist: set of entry (type, url)
-	//  2. clusterep and epportlist: cluster endpoint and set of entry (type, port)
-	//  3. clusterep only: cluster endpoint and default endpoint using the node port. (currently prometheus)
-	// ref) clusterep means the endpoint for the cluster like IP or dns...., you can add some application's endpoint with this function
+    // Register endpoint to tks-info
+    doUpdateAppEndpoint(cc, *clusterid, *appgroupid, *curEndpoint, pb.AppType_PROMETHEUS)
 
-	if len(*eplist) > 2 {
-		var eps map[pb.AppType]string
-		json.Unmarshal([]byte(*eplist), &eps)
-
-		for sw, ep := range eps {
-			doUpdateAppEndpoint(cc, *clusterid, *appgroupid, ep, sw)
-		}
-	}
-
-	if len(*epportlist) > 2 && len(*clusterep) > 2 {
-		var ports map[pb.AppType]int
-		json.Unmarshal([]byte(*epportlist), &ports)
-
-		for sw, port := range ports {
-			url := fmt.Sprintf("%s:%d", clusterep, port)
-			doUpdateAppEndpoint(cc, *clusterid, *appgroupid, url, sw)
-		}
-	} else if len(*clusterep) > 2 {
-		// It's a logic to register default prometheus(sidecar) endpoint using nodeport
-		url := fmt.Sprintf("%s:%d", *clusterep, 30007)
-		doUpdateAppEndpoint(cc, *clusterid, *appgroupid, url, 2)
-	}
-	fmt.Println(len(*clusterep))
+    /* Update all prometheus endpoints in other clusters' site-yaml */
+    updateAllSiteYamls(cc, *clusterid, *curEndpoint, pb.AppType_PROMETHEUS)
 }
 
+// Robert: clusterid is not used here. Shouldn't it be used??
 func doUpdateAppEndpoint(cc *grpc.ClientConn, clusterid, appgroupid, url string, appType pb.AppType) {
-	c := pb.NewAppInfoServiceClient(cc)
+    c := pb.NewAppInfoServiceClient(cc)
 
-	req := &pb.UpdateAppRequest{
-		AppGroupId: appgroupid,
-		AppType:    appType,
-		Endpoint:   url,
-		Metadata:   "{}",
-	}
+    req := &pb.UpdateAppRequest{
+        AppGroupId: appgroupid,
+        AppType:    appType,
+        Endpoint:   url,
+        Metadata:   "{}",
+    }
 
-	res, err := c.UpdateApp(context.Background(), req)
-	if err != nil {
-		log.Fatal("error while calling UpdateApp RPC::::: ", err)
-	}
-	log.Info("Response from UpdateApp: ", res.GetCode())
+    res, err := c.UpdateApp(context.Background(), req)
+    if err != nil {
+        log.Fatal("error while calling UpdateApp RPC::::: ", err)
+    }
+    log.Info("Response from UpdateApp: ", res.GetCode())
+}
+
+func updateAllSiteYamls(cc *grpc.ClientConn, curClusterId string, curEndpoint string, appType pb.AppType) {
+    appCl := pb.NewAppInfoServiceClient(cc)
+    clusterCl := pb.NewClusterInfoServiceClient(cc)
+
+    var endpointList []string
+    //var endpointMap = map[string]string{}
+    //endpointMap := make(map[string]string)
+
+    /* Get cluster info to identify contract and csp id */
+    req := &pb.GetClusterRequest{
+        ClusterId: curClusterId,
+    }
+
+    res, err := clusterCl.GetCluster(context.Background(), req)
+    if err != nil {
+        log.Info("[test] res.Error from getCluster RPC::::: ", res.GetError())
+        log.Fatal("[test] error while calling getCluster RPC::::: ", err)
+    }
+    log.Info("Response from getCluster: ", res.GetCluster())
+
+    contractId := res.Cluster.ContractId
+    cspId := res.Cluster.CspId
+    curClusterName := res.Cluster.Name
+
+    /* Get all other clusters within same contract and csp */
+    gcReq := &pb.GetClustersRequest{
+        CspId: cspId,
+        ContractId: contractId,
+    }
+
+    gcRes, err := clusterCl.GetClusters(context.Background(), gcReq)
+    if err != nil {
+        log.Fatal("error while calling getClusters RPC::::: ", err)
+    }
+    log.Info("Response from getClusters: ", gcRes.GetClusters())
+
+    /* For each clusters */
+    for _, cluster := range gcRes.Clusters {
+        clusterId := cluster.Id
+        if clusterId != curClusterId {
+            clusterName := cluster.Name
+        log.Info("Processing cluster: ", clusterName)
+            /* Get LMA appGroup in this cluster */
+            req := &pb.IDRequest{
+                Id: clusterId,
+            }
+
+            res, err := appCl.GetAppGroupsByClusterID(context.Background(), req)
+            if err != nil {
+                log.Fatal("error while calling getAppGroupsByClusterID RPC::::: ", err)
+            }
+            log.Info("Response from getAppGroupsByClusterID: ", res.GetAppGroups())
+
+            /* For each appGroup in the cluster */
+            for _, appGroup := range res.AppGroups {
+                if appGroup.Type == pb.AppGroupType_LMA {
+                    req := &pb.GetAppsRequest{
+                        AppGroupId: appGroup.AppGroupId,
+                        Type: pb.AppType_PROMETHEUS,
+                    }
+                    // Get promethus application
+                    res, err := appCl.GetApps(context.Background(), req)
+                    if err != nil {
+                            log.Fatal("error while calling getApps RPC::::: ", err)
+                    }
+                    log.Info("Response from getApps: ", res.GetApps())
+
+                    fmt.Printf("Retrieved prometheus app object: %+v", res.Apps[0])
+                    promEndpoint := res.Apps[0].Endpoint
+                    log.Info("prometheus endpoint: ", promEndpoint)
+                    endpointList = append(endpointList, promEndpoint)
+                }
+            } // End of AppGroup iteration loop
+
+            /* Add current cluster endpoint to this cluster's site-yaml */
+            updateEndpointToSiteYaml(clusterName, curEndpoint)
+        }
+
+    } // End of cluster iteration loop
+
+    /* Add other clusters' endpoints to the current cluster's site-yaml */
+    endpointListStr := strings.Join(endpointList, " ")
+    log.Info("endpointList as string: ", endpointListStr)
+    updateMultipleEndpointsToSiteYaml(curClusterName, endpointListStr)
+}
+
+func updateEndpointToSiteYaml(clusterName string, endpoint string) {
+    c := exec.Command("./updateEndpoint.py", clusterName, endpoint)
+
+    //if err := c.Run(); err != nil {
+    //    fmt.Println("Error: ", err)
+    //}
+    var out []byte
+    var err error
+    if out, err = c.Output(); err != nil {
+        log.Info(string(out))
+        log.Fatal("Error while updating endpoint to site-yaml: ", err)
+    } else {
+        log.Info(string(out))
+    }
+}
+
+func updateMultipleEndpointsToSiteYaml(curClusterName string, endpointList string) {
+    c := exec.Command("./updateMultipleEndpoints.py", curClusterName, endpointList)
+
+    var out []byte
+    var err error
+    if out, err = c.Output(); err != nil {
+        log.Fatal("Error while updating multiple endpoints to site-yaml: ", err)
+    }
+    log.Info(string(out))
 }
