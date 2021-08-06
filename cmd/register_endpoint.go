@@ -17,7 +17,7 @@ import (
 )
 
 var (
-    port   = flag.Int("port", 9111, "The gRPC server port")
+    tks_info_port   = flag.Int("tks_info_port", 9111, "TKS-info gRPC server port")
     tls    = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
     caFile = flag.String("ca_file", "", "The TLS ca file")
 )
@@ -28,8 +28,7 @@ func main() {
     }
     log.Info("Preporcess for TACO-LMA with TKS-info")
 
-    // Robert: current endpoint should be given here
-    ip := flag.String("tks", "127.0.0.1", "An address of TKS-info")
+    tks_info_host := flag.String("tks_info_host", "127.0.0.1", "An address of TKS-info")
     clusterid := flag.String("clusterid", "", "Cluster ID to apply. eg. 6abead61-ff2a-4af4-8f41-d2c44c745de7")
     appgroupid := flag.String("appgroupid", "", "Application ID of The endpoint. eg. 6abead61-ff2a-4af4-8f41-d2c44c745de7")
     curEndpoint := flag.String("endpoint", "", "Ingress URL of prometheus sidecar in current cluster. eg. prom-sidecar.cluster-xy")
@@ -56,7 +55,7 @@ func main() {
         log.Fatal("Argument Error: appgroupid, eg. -appgroupid abbead61-ff2a-4af4-8f41-d2c44c745de7")
     }
 
-    addr := fmt.Sprintf("%s:%d", *ip, *port)
+    addr := fmt.Sprintf("%s:%d", *tks_info_host, *tks_info_port)
     cc, err := grpc.Dial(addr, opts)
     if err != nil {
         log.Fatal("could not connect: ", err)
