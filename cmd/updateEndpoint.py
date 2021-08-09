@@ -9,12 +9,15 @@ import sys
 print("Entering updateEndpoint script..")
 
 parser = argparse.ArgumentParser()
-parser.add_argument('cluster_name', type=str,
+parser.add_argument('--action', required=True, type=str,
+            help="action to take: 'add' or 'delete'")
+parser.add_argument('--cluster_name', required=True, type=str,
             help="cluster name to which the endpoint is added")
-parser.add_argument('endpoint', type=str,
+parser.add_argument('--endpoint', required=True, type=str,
             help="endpoint to add")
 
 args = parser.parse_args()
+action = args.action
 clusterName = args.cluster_name
 endpoint = args.endpoint
 repo = None
@@ -24,6 +27,7 @@ sitePath = './decapod-site'
 siteFileName = "{}/lma/site-values.yaml".format(clusterName)
 siteFileNameFull = "{}/{}".format(sitePath, siteFileName)
 
+# Clone or re-use decapod-site repository #
 if not os.path.isdir(sitePath):
     print("Cloning repository...")
 
@@ -40,13 +44,23 @@ with open(siteFileNameFull, 'r') as f:
 charts = config["charts"]
 thanosChart = [chart for chart in charts if chart['name'] == "thanos"][0]
 
-if (endpoint in thanosChart['override']['querier.stores']):
-    print("The endpoint already exists.")
-    sys.exit(0)
+if action == 'add':
+    if (endpoint in thanosChart['override']['querier.stores']):
+        print("The endpoint already exists.")
+        sys.exit(0)
+    else:
+        print("Before insertion: {}".format(thanosChart))
+        thanosChart['override']['querier.stores'].append(endpoint)
+        print("After insertion: {}".format(thanosChart))
+elif action == 'delete':
+    if (endpoint in thanosChart['override']['querier.stores']):
+        print("Found endpoint. Deleting it...")
+        thanosChart['override']['querier.stores'].remove(endpoint)
+    else:
+        print("The endpoint {} doesn't exist. Exiting script...".format(endpoint))
+        sys.exit(0)
 else:
-    print("Before insertion: {}".format(thanosChart))
-    thanosChart['override']['querier.stores'].append(endpoint)
-    print("After insertion: {}".format(thanosChart))
+    sys.exit("Wrong action type")
 
 with open(siteFileNameFull, 'w') as f:
     ruamel.yaml.round_trip_dump(config, f)

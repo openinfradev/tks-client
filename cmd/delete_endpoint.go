@@ -63,28 +63,26 @@ func main() {
     defer cc.Close()
 
     // Register endpoint to tks-info
-    doUpdateAppEndpoint(cc, *clusterid, *appgroupid, *curEndpoint, pb.AppType_PROMETHEUS)
+    doDeleteAppEndpoint(cc, *clusterid, *appgroupid, *curEndpoint, pb.AppType_PROMETHEUS)
 
     /* Update all prometheus endpoints in other clusters' site-yaml */
     updateAllSiteYamls(cc, *clusterid, *curEndpoint, pb.AppType_PROMETHEUS)
 }
 
 // Robert: clusterid is not used here. Shouldn't it be used??
-func doUpdateAppEndpoint(cc *grpc.ClientConn, clusterid, appgroupid, url string, appType pb.AppType) {
+func doDeleteAppEndpoint(cc *grpc.ClientConn, clusterid, appgroupid, appType pb.AppType) {
     c := pb.NewAppInfoServiceClient(cc)
 
-    req := &pb.UpdateAppRequest{
+    req := &pb.DeleteAppRequest{
         AppGroupId: appgroupid,
         AppType:    appType,
-        Endpoint:   url,
-        Metadata:   "{}",
     }
 
-    res, err := c.UpdateApp(context.Background(), req)
+    res, err := c.DeleteApp(context.Background(), req)
     if err != nil {
-        log.Fatal("error while calling UpdateApp RPC::::: ", err)
+        log.Fatal("error while calling DeleteApp RPC::::: ", err)
     }
-    log.Info("Response from UpdateApp: ", res.GetCode())
+    log.Info("Response from DeleteApp: ", res.GetCode())
 }
 
 func updateAllSiteYamls(cc *grpc.ClientConn, curClusterId string, curEndpoint string, appType pb.AppType) {
@@ -92,8 +90,6 @@ func updateAllSiteYamls(cc *grpc.ClientConn, curClusterId string, curEndpoint st
     clusterCl := pb.NewClusterInfoServiceClient(cc)
 
     var endpointList []string
-    //var endpointMap = map[string]string{}
-    //endpointMap := make(map[string]string)
 
     /* Get cluster info to identify contract and csp id */
     req := &pb.GetClusterRequest{
@@ -128,71 +124,23 @@ func updateAllSiteYamls(cc *grpc.ClientConn, curClusterId string, curEndpoint st
         clusterId := cluster.Id
         if clusterId != curClusterId {
             clusterName := cluster.Name
-        log.Info("Processing cluster: ", clusterName)
-            /* Get LMA appGroup in this cluster */
-            req := &pb.IDRequest{
-                Id: clusterId,
-            }
+            log.Info("Processing cluster: ", clusterName)
 
-            res, err := appCl.GetAppGroupsByClusterID(context.Background(), req)
-            if err != nil {
-                log.Fatal("error while calling getAppGroupsByClusterID RPC::::: ", err)
-            }
-            log.Info("Response from getAppGroupsByClusterID: ", res.GetAppGroups())
-
-            /* For each appGroup in the cluster */
-            for _, appGroup := range res.AppGroups {
-                if appGroup.Type == pb.AppGroupType_LMA {
-                    req := &pb.GetAppsRequest{
-                        AppGroupId: appGroup.AppGroupId,
-                        Type: pb.AppType_PROMETHEUS,
-                    }
-                    // Get promethus application
-                    res, err := appCl.GetApps(context.Background(), req)
-                    if err != nil {
-                            log.Fatal("error while calling getApps RPC::::: ", err)
-                    }
-                    log.Info("Response from getApps: ", res.GetApps())
-
-                    fmt.Printf("Retrieved prometheus app object: %+v", res.Apps[0])
-                    promEndpoint := res.Apps[0].Endpoint
-                    log.Info("prometheus endpoint: ", promEndpoint)
-                    endpointList = append(endpointList, promEndpoint)
-                }
-            } // End of AppGroup iteration loop
-
-            /* Add current cluster endpoint to this cluster's site-yaml */
-            updateEndpointToSiteYaml(clusterName, curEndpoint)
+            /* Delete current cluster endpoint from this cluster's site-yaml */
+            deleteEndpointFromSiteYaml(clusterName, curEndpoint)
         }
-
     } // End of cluster iteration loop
-
-    /* Add other clusters' endpoints to the current cluster's site-yaml */
-    endpointListStr := strings.Join(endpointList, " ")
-    log.Info("endpointList as string: ", endpointListStr)
-    updateMultipleEndpointsToSiteYaml(curClusterName, endpointListStr)
 }
 
-func updateEndpointToSiteYaml(clusterName string, endpoint string) {
-    c := exec.Command("./updateEndpoint.py", "--action", "add", "--cluster_name", clusterName, "--endpoint", endpoint)
+func deleteEndpointFromSiteYaml(clusterName string, endpoint string) {
+    c := exec.Command("./updateEndpoint.py", "--action", "delete", "--cluster_name", clusterName, "--endpoint", endpoint)
 
     var out []byte
     var err error
     if out, err = c.Output(); err != nil {
         log.Info(string(out))
-        log.Fatal("Error while updating endpoint to site-yaml: ", err)
+        log.Fatal("Error while deleting endpoint from site-yaml: ", err)
     } else {
         log.Info(string(out))
     }
-}
-
-func updateMultipleEndpointsToSiteYaml(curClusterName string, endpointList string) {
-    c := exec.Command("./updateMultipleEndpoints.py", curClusterName, endpointList)
-
-    var out []byte
-    var err error
-    if out, err = c.Output(); err != nil {
-        log.Fatal("Error while updating multiple endpoints to site-yaml: ", err)
-    }
-    log.Info(string(out))
 }
