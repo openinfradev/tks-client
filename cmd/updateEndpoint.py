@@ -22,6 +22,7 @@ clusterName = args.cluster_name
 endpoint = args.endpoint
 repo = None
 config = {}
+commit_msg = ''
 
 sitePath = './decapod-site'
 siteFileName = "{}/lma/site-values.yaml".format(clusterName)
@@ -37,6 +38,7 @@ if not os.path.isdir(sitePath):
         git_config.set_value('user', 'name', 'TKS Argo')
 else:
     repo = git.Repo(sitePath)
+    repo.remotes.origin.pull()
 
 with open(siteFileNameFull, 'r') as f:
     config = ruamel.yaml.round_trip_load(f, preserve_quotes=True)
@@ -49,13 +51,15 @@ if action == 'add':
         print("The endpoint already exists.")
         sys.exit(0)
     else:
-        print("Before insertion: {}".format(thanosChart))
+        #print("Before insertion: {}".format(thanosChart))
         thanosChart['override']['querier.stores'].append(endpoint)
-        print("After insertion: {}".format(thanosChart))
+        #print("After insertion: {}".format(thanosChart))
+        commit_msg = "add new thanos-sidecar endpoint to '{}' cluster".format(clusterName)
 elif action == 'delete':
     if (endpoint in thanosChart['override']['querier.stores']):
         print("Found endpoint. Deleting it...")
         thanosChart['override']['querier.stores'].remove(endpoint)
+        commit_msg = "delete thanos-sidecar endpoint from '{}' cluster".format(clusterName)
     else:
         print("The endpoint {} doesn't exist. Exiting script...".format(endpoint))
         sys.exit(0)
@@ -72,7 +76,12 @@ print(diff)
 repo.index.add([siteFileName])
 
 # Provide a commit message
-repo.index.commit("add new thanos-sidecar endpoint to '{}' cluster".format(clusterName))
-repo.remotes.origin.push()
+repo.index.commit(commit_msg)
+res = repo.remotes.origin.push()[0]
+
+# flag '256' means successful fast-forward
+if res.flags != 256:
+    print(res.summary)
+    sys.exit("Push failed!")
 
 print("Exiting updateEndpoint script..")
