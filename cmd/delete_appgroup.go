@@ -3,7 +3,6 @@ package main
 import (
     "context"
     "flag"
-    "strings"
     "fmt"
     "os"
     "os/exec"
@@ -62,34 +61,29 @@ func main() {
     }
     defer cc.Close()
 
-    // Register endpoint to tks-info
-    doDeleteAppEndpoint(cc, *clusterid, *appgroupid, *curEndpoint, pb.AppType_PROMETHEUS)
+    // Delete AppGroup from tks-info
+    doDeleteAppGroup(cc, *appgroupid)
 
     /* Update all prometheus endpoints in other clusters' site-yaml */
     updateAllSiteYamls(cc, *clusterid, *curEndpoint, pb.AppType_PROMETHEUS)
 }
 
-// Robert: clusterid is not used here. Shouldn't it be used??
-func doDeleteAppEndpoint(cc *grpc.ClientConn, clusterid, appgroupid, appType pb.AppType) {
+func doDeleteAppGroup(cc *grpc.ClientConn, appgroupid) {
     c := pb.NewAppInfoServiceClient(cc)
 
-    req := &pb.DeleteAppRequest{
+    req := &pb.DeleteAppGroupRequest{
         AppGroupId: appgroupid,
-        AppType:    appType,
     }
 
-    res, err := c.DeleteApp(context.Background(), req)
+    res, err := c.DeleteAppGroup(context.Background(), req)
     if err != nil {
-        log.Fatal("error while calling DeleteApp RPC::::: ", err)
+        log.Fatal("error while calling DeleteAppGroup RPC::::: ", err)
     }
-    log.Info("Response from DeleteApp: ", res.GetCode())
+    log.Info("Response from DeleteAppGroup: ", res.GetCode())
 }
 
 func updateAllSiteYamls(cc *grpc.ClientConn, curClusterId string, curEndpoint string, appType pb.AppType) {
-    appCl := pb.NewAppInfoServiceClient(cc)
     clusterCl := pb.NewClusterInfoServiceClient(cc)
-
-    var endpointList []string
 
     /* Get cluster info to identify contract and csp id */
     req := &pb.GetClusterRequest{
@@ -105,7 +99,6 @@ func updateAllSiteYamls(cc *grpc.ClientConn, curClusterId string, curEndpoint st
 
     contractId := res.Cluster.ContractId
     cspId := res.Cluster.CspId
-    curClusterName := res.Cluster.Name
 
     /* Get all other clusters within same contract and csp */
     gcReq := &pb.GetClustersRequest{

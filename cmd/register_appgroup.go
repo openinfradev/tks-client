@@ -62,15 +62,32 @@ func main() {
     }
     defer cc.Close()
 
-    // Register endpoint to tks-info
-    doUpdateAppEndpoint(cc, *clusterid, *appgroupid, *curEndpoint, pb.AppType_PROMETHEUS)
+    // Update AppGroupStatus to tks-info
+    doUpdateAppGroupStatus(cc, *appgroupid, pb.AppGroupStatus_APP_GROUP_RUNNING)
 
-    /* Update all prometheus endpoints in other clusters' site-yaml */
+    // Register endpoint to tks-info
+    doUpdateAppEndpoint(cc, *appgroupid, *curEndpoint, pb.AppType_PROMETHEUS)
+
+    // Update all prometheus endpoints in other clusters' site-yaml
     updateAllSiteYamls(cc, *clusterid, *curEndpoint, pb.AppType_PROMETHEUS)
 }
 
-// Robert: clusterid is not used here. Shouldn't it be used??
-func doUpdateAppEndpoint(cc *grpc.ClientConn, clusterid, appgroupid, url string, appType pb.AppType) {
+func doUpdateAppGroupStatus(cc *grpc.ClientConn, appgroupid string, status pb.AppGroupStatus) {
+    c := pb.NewAppInfoServiceClient(cc)
+
+    req := &pb.UpdateAppGroupStatusRequest{
+        AppGroupId: appgroupid,
+        Status: status,
+    }
+
+    res, err := c.UpdateAppGroupStatus(context.Background(), req)
+    if err != nil {
+        log.Fatal("error while calling UpdateAppGroupStatus RPC::::: ", err)
+    }
+    log.Info("Response from UpdateAppGroupStatus: ", res.GetCode())
+}
+
+func doUpdateAppEndpoint(cc *grpc.ClientConn, appgroupid string, url string, appType pb.AppType) {
     c := pb.NewAppInfoServiceClient(cc)
 
     req := &pb.UpdateAppRequest{
