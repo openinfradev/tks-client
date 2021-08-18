@@ -24,11 +24,13 @@ config = {}
 sitePath = './decapod-site'
 siteFileName = "{}/lma/site-values.yaml".format(clusterName)
 siteFileNameFull = "{}/{}".format(sitePath, siteFileName)
+# Tested with 'robertchoi80' repo
+repoOrgName = ''
 
 if not os.path.isdir(sitePath):
     print("Cloning repository...")
 
-    repo = git.Repo.clone_from('https://github.com/robertchoi80/decapod-site', 'decapod-site')
+    repo = git.Repo.clone_from("https://github.com/{}/decapod-site".format(repoOrgName), 'decapod-site')
     with repo.config_writer() as git_config:
         git_config.set_value('user', 'email', 'tks-argo@tks.com')
         git_config.set_value('user', 'name', 'TKS Argo')

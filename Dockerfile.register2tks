@@ -6,11 +6,11 @@ WORKDIR /build
 
 COPY . .
 RUN go mod tidy && go mod vendor
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/ep2tks ./cmd/register_endpoint.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/register2tks ./cmd/register_appgroup.go
 
 RUN mkdir -p /dist
 WORKDIR /dist
-RUN cp /build/bin/ep2tks ./ep2tks
+RUN cp /build/bin/register2tks ./register2tks
 
 FROM golang:alpine3.13
 
@@ -20,5 +20,5 @@ WORKDIR /app
 COPY --chown=0:0 --from=builder /dist /app/
 EXPOSE 9111
 
-ENTRYPOINT ["/app/ep2tks"]
+ENTRYPOINT ["/app/register2tks"]
 CMD ["-h"]

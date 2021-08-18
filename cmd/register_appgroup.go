@@ -109,8 +109,6 @@ func updateAllSiteYamls(cc *grpc.ClientConn, curClusterId string, curEndpoint st
     clusterCl := pb.NewClusterInfoServiceClient(cc)
 
     var endpointList []string
-    //var endpointMap = map[string]string{}
-    //endpointMap := make(map[string]string)
 
     /* Get cluster info to identify contract and csp id */
     req := &pb.GetClusterRequest{

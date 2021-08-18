@@ -68,7 +68,7 @@ func main() {
     updateAllSiteYamls(cc, *clusterid, *curEndpoint, pb.AppType_PROMETHEUS)
 }
 
-func doDeleteAppGroup(cc *grpc.ClientConn, appgroupid) {
+func doDeleteAppGroup(cc *grpc.ClientConn, appgroupid string) {
     c := pb.NewAppInfoServiceClient(cc)
 
     req := &pb.DeleteAppGroupRequest{
