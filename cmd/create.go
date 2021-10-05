@@ -30,8 +30,7 @@ import (
 )
 
 const (
-	address     = "acfbdd951bb184b159245a5616640e1c-905471948.ap-northeast-2.elb.amazonaws.com:9110"
-	defaultName = "dr-who"
+	address     = "tks-cluster-lcm.taco-cat.xyz:9110"
 )
 
 // createCmd represents the create command
