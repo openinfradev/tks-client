@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -27,10 +26,11 @@ import (
 
 	pb "github.com/openinfradev/tks-proto/tks_pb"
 	"github.com/spf13/cobra"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 const (
-	address     = "tks-cluster-lcm.taco-cat.xyz:9110"
+	address = "tks-cluster-lcm.taco-cat.xyz:9110"
 )
 
 // clusterCreateCmd represents the create command
@@ -73,10 +73,14 @@ tks cluster create <CLUSTERNAME> --contract-id <CONTRACTID> --csp-id <CSPID>`,
 		conf.WorkerReplicas = 10
 		conf.K8SVersion = "Hello"
 		data[0].Conf = conf
-		doc, _ := json.Marshal(data[0])
-		fmt.Println("Json data...")
-		fmt.Println(string(doc))
 
+		m := protojson.MarshalOptions{
+			Indent:        "  ",
+			UseProtoNames: true,
+		}
+		jsonBytes, _ := m.Marshal(&data[0])
+		fmt.Println("Proto Json data...")
+		fmt.Println(string(jsonBytes))
 		r, err := client.CreateCluster(ctx, &data[0])
 		fmt.Println(r)
 	},
