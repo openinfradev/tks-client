@@ -33,8 +33,8 @@ const (
 	address     = "tks-cluster-lcm.taco-cat.xyz:9110"
 )
 
-// createCmd represents the create command
-var createCmd = &cobra.Command{
+// clusterCreateCmd represents the create command
+var clusterCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a TACO Cluster.",
 	Long: `Create a TACO Cluster to AWS.
@@ -83,19 +83,19 @@ tks cluster create <CLUSTERNAME> --contract-id <CONTRACTID> --csp-id <CSPID>`,
 }
 
 func init() {
-	clusterCmd.AddCommand(createCmd)
+	clusterCmd.AddCommand(clusterCreateCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// createCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// clusterCreateCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// createCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	createCmd.Flags().String("contract-id", "", "Contract ID")
-	createCmd.MarkFlagRequired("contract-id")
-	createCmd.Flags().String("csp-id", "", "CSP ID")
-	createCmd.MarkFlagRequired("csp-id")
+	// clusterCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	clusterCreateCmd.Flags().String("contract-id", "", "Contract ID")
+	clusterCreateCmd.MarkFlagRequired("contract-id")
+	clusterCreateCmd.Flags().String("csp-id", "", "CSP ID")
+	clusterCreateCmd.MarkFlagRequired("csp-id")
 }
