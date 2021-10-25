@@ -55,7 +55,7 @@ tks cluster create <CLUSTERNAME> --contract-id <CONTRACTID> --csp-id <CSPID>`,
 		defer conn.Close()
 
 		client := pb.NewClusterLcmServiceClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 30 * time.Minute)
 		defer cancel()
 		data := make([]pb.CreateClusterRequest, 1)
 		conf := &pb.ClusterConf{}

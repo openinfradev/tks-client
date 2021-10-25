@@ -60,7 +60,7 @@ tks service create --cluster-id <CLUSTERID> --service-name <LMA,SERVICE_MESH>`,
 		defer conn.Close()
 
 		client := pb.NewClusterLcmServiceClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 30 * time.Minute)
 		defer cancel()
 
 		ClusterId, _ := cmd.Flags().GetString("cluster-id")
