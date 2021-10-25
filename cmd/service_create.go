@@ -31,24 +31,24 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-// appCreateCmd represents the create command
-var appCreateCmd = &cobra.Command{
+// serviceCreateCmd represents the create command
+var serviceCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a TACO App.",
-	Long: `Create a TACO App. supported: LMA, SERVICE_MESH
+	Short: "Create a TACO Service.",
+	Long: `Create a TACO Service. supported: LMA, SERVICE_MESH
 
 Example:
-tks app create --cluster-id <CLUSTERID> --app-name <LMA,SERVICE_MESH>`,
+tks service create --cluster-id <CLUSTERID> --service-name <LMA,SERVICE_MESH>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("create called")
-		AppName, _ := cmd.Flags().GetString("app-name")
+		ServiceName, _ := cmd.Flags().GetString("service-name")
 		var Type pb.AppGroupType
-		if AppName == "LMA" {
+		if ServiceName == "LMA" {
 			Type = pb.AppGroupType_LMA
-		} else if AppName == "SERVICE_MESH" {
+		} else if ServiceName == "SERVICE_MESH" {
 			Type = pb.AppGroupType_SERVICE_MESH
 		} else {
-			fmt.Println("You must specify App Name. LMA or SERVICE_MESH")
+			fmt.Println("You must specify Service Name. LMA or SERVICE_MESH")
 			os.Exit(1)
 		}
 
@@ -65,7 +65,7 @@ tks app create --cluster-id <CLUSTERID> --app-name <LMA,SERVICE_MESH>`,
 
 		ClusterId, _ := cmd.Flags().GetString("cluster-id")
 		ClusterIdPre := strings.Split(ClusterId, "-")
-		AppGroupName := ClusterIdPre[0] + "_" + AppName
+		AppGroupName := ClusterIdPre[0] + "_" + ServiceName
 
 		data := make([]pb.InstallAppGroupsRequest, 1)
 		appgroups := make([]pb.AppGroup, 1)
@@ -93,19 +93,19 @@ tks app create --cluster-id <CLUSTERID> --app-name <LMA,SERVICE_MESH>`,
 }
 
 func init() {
-	appCmd.AddCommand(appCreateCmd)
+	serviceCmd.AddCommand(serviceCreateCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// appCreateCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// serviceCreateCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// appCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	appCreateCmd.Flags().String("cluster-id", "", "Cluster ID")
-	appCreateCmd.MarkFlagRequired("cluster-id")
-	appCreateCmd.Flags().String("app-name", "", "App Name")
-	appCreateCmd.MarkFlagRequired("app-name")
+	// serviceCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	serviceCreateCmd.Flags().String("cluster-id", "", "Cluster ID")
+	serviceCreateCmd.MarkFlagRequired("cluster-id")
+	serviceCreateCmd.Flags().String("service-name", "", "Service Name")
+	serviceCreateCmd.MarkFlagRequired("service-name")
 }
