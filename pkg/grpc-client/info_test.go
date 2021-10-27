@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	gc "github.com/sktelecom/tks-client/pkg/grpc-client"
-	pb "github.com/sktelecom/tks-proto/pbgo"
-	mock "github.com/sktelecom/tks-proto/pbgo/mock"
+	gc "github.com/openinfradev/tks-client/pkg/grpc-client"
+	pb "github.com/openinfradev/tks-proto/tks_pb"
+	mock "github.com/openinfradev/tks-proto/tks_pb/mock"
 )
 
 func TestNewClient(t *testing.T) {

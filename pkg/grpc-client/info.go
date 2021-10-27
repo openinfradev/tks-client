@@ -7,8 +7,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
-	"github.com/sktelecom/tks-contract/pkg/log"
-	pb "github.com/sktelecom/tks-proto/pbgo"
+	"github.com/openinfradev/tks-contract/pkg/log"
+	pb "github.com/openinfradev/tks-proto/tks_pb"
 )
 
 type InfoClient struct {
