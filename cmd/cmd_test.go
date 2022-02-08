@@ -33,7 +33,7 @@ func execute(t *testing.T, c *cobra.Command, args ...string) (string, error) {
 	return strings.TrimSpace(buf.String()), err
 }
 
-func TestSubCmd(t *testing.T) {
+func TestOtherCmd(t *testing.T) {
 	is := is.New(t)
 
 	testcases := []struct {
@@ -55,6 +55,38 @@ func TestSubCmd(t *testing.T) {
 		{[]string{"--config"}, true, errors.New("flag needs an argument: --config"), ""},
 		{[]string{"-t"}, false, nil, ""},
 
+		{[]string{"endpoint"}, true, nil, ""},
+		{[]string{"endpoint", "register"}, true, nil, ""},
+		{[]string{"endpoint", "wrong"}, true, nil, ""},
+
+		{[]string{"help"}, false, nil, ""},
+		{[]string{"-t"}, false, nil, ""},
+		{[]string{"-h"}, false, nil, ""},
+
+		{[]string{"register"}, true, errors.New("unknown command \"register\" for \"tks\""), "Run 'tks --help' for usage."},
+		{[]string{"abcd"}, true, errors.New("unknown command \"abcd\" for \"tks\""), ""},
+	}
+
+	for _, tc := range testcases {
+		out, err := execute(t, rootCmd, tc.args...)
+
+		is.Equal(tc.err, err)
+
+		if tc.err == nil && tc.out_check {
+			is.Equal(tc.out, out)
+		}
+	}
+}
+
+func TestClusterCmd(t *testing.T) {
+	is := is.New(t)
+
+	testcases := []struct {
+		args      []string
+		out_check bool
+		err       error
+		out       string
+	}{
 		{[]string{"cluster"}, true, nil, ""},
 		{[]string{"cluster", "wrong"}, true, nil, ""},
 		{[]string{"cluster", "create"}, true, errors.New("required flag(s) \"contract-id\", \"csp-id\" not set"), ""},
@@ -74,18 +106,35 @@ func TestSubCmd(t *testing.T) {
 		{[]string{"cluster", "list", "-h"}, false, nil, "A longer description that spans multiple lines and likely contains examples"},
 		{[]string{"cluster", "list", "--config", "xx"}, false, nil, "A longer description that spans multiple lines and likely contains examples"},
 		{[]string{"cluster", "list", "--config"}, true, errors.New("flag needs an argument: --config"), ""},
+	}
 
-		{[]string{"endpoint"}, true, nil, ""},
-		{[]string{"endpoint", "register"}, true, nil, ""},
-		{[]string{"endpoint", "wrong"}, true, nil, ""},
+	for _, tc := range testcases {
+		out, err := execute(t, rootCmd, tc.args...)
+
+		is.Equal(tc.err, err)
+
+		if tc.err == nil && tc.out_check {
+			is.Equal(tc.out, out)
+		}
+	}
+}
+
+func TestServiceCmd(t *testing.T) {
+	is := is.New(t)
+
+	testcases := []struct {
+		args      []string
+		out_check bool
+		err       error
+		out       string
+	}{
 		{[]string{"service"}, true, nil, ""},
-
-		{[]string{"help"}, false, nil, ""},
-		{[]string{"-t"}, false, nil, ""},
-		{[]string{"-h"}, false, nil, ""},
-
-		{[]string{"register"}, true, errors.New("unknown command \"register\" for \"tks\""), "Run 'tks --help' for usage."},
-		{[]string{"abcd"}, true, errors.New("unknown command \"abcd\" for \"tks\""), ""},
+		{[]string{"service", "-h"}, false, nil, ""},
+		{[]string{"service", "create"}, true, errors.New("required flag(s) \"cluster-id\", \"service-name\" not set"), ""},
+		{[]string{"service", "create", "--cluster-id"}, true, errors.New("flag needs an argument: --cluster-id"), ""},
+		// {[]string{"service", "create", "--cluster-id", "--service-name"}, true, errors.New("required flag(s) \"service-name\" not set"), ""},
+		// {[]string{"service", "create", "--cluster-id", "aaa", "--service-name"}, true, errors.New("flag needs an argument: --service-name"), ""},
+		{[]string{"service", "create", "--cluster-id", "aaa", "--service-name", "LMA"}, true, nil, ""},
 	}
 
 	for _, tc := range testcases {
