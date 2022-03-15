@@ -38,7 +38,7 @@ var clusterCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a TACO Cluster.",
 	Long: `Create a TACO Cluster to AWS.
-	
+  
 Example:
 tks cluster create <CLUSTERNAME> --contract-id <CONTRACTID> --csp-id <CSPID>`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -50,38 +50,46 @@ tks cluster create <CLUSTERNAME> --contract-id <CONTRACTID> --csp-id <CSPID>`,
 		var conn *grpc.ClientConn
 		conn, err := grpc.Dial(address, grpc.WithInsecure())
 		if err != nil {
-			log.Fatalf("did not connect: %s", err)
+			log.Fatalf("Could not connect to LCM server: %s", err)
 		}
 		defer conn.Close()
 
 		client := pb.NewClusterLcmServiceClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), 30 * time.Minute)
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 		defer cancel()
-		data := make([]pb.CreateClusterRequest, 1)
-		conf := &pb.ClusterConf{}
+
+		/* Parse command line arguments */
+		ClusterName := args[0]
 		ContractId, _ := cmd.Flags().GetString("contract-id")
 		CspId, _ := cmd.Flags().GetString("csp-id")
-		ClusterName := args[0]
-		data[0].ContractId = ContractId
-		data[0].CspId = CspId
-		data[0].Name = ClusterName
-		conf.MasterFlavor = "hello"
-		conf.MasterReplicas = 10
-		conf.MasterRootSize = 50
-		conf.WorkerFlavor = "hello"
-		conf.WorkerRootSize = 50
-		conf.WorkerReplicas = 10
-		conf.K8SVersion = "Hello"
-		data[0].Conf = conf
+
+		conf := pb.ClusterRawConf{}
+		conf.SshKeyName, _ = cmd.Flags().GetString("ssh-key-name")
+		conf.Region, _ = cmd.Flags().GetString("region")
+		conf.MachineType, _ = cmd.Flags().GetString("machine-type")
+
+		numOfAz, _ := cmd.Flags().GetInt("num-of-az")
+		conf.NumOfAz = int32(numOfAz)
+
+		machineReplicas, _ := cmd.Flags().GetInt("machine-replicas")
+		conf.MachineReplicas = int32(machineReplicas)
+
+		/* Construct request map */
+		data := pb.CreateClusterRequest{
+			Name:       ClusterName,
+			ContractId: ContractId,
+			CspId:      CspId,
+			Conf:       &conf,
+		}
 
 		m := protojson.MarshalOptions{
 			Indent:        "  ",
 			UseProtoNames: true,
 		}
-		jsonBytes, _ := m.Marshal(&data[0])
-		fmt.Println("Proto Json data...")
+		jsonBytes, _ := m.Marshal(&data)
+		fmt.Println("Proto Json data: ")
 		fmt.Println(string(jsonBytes))
-		r, err := client.CreateCluster(ctx, &data[0])
+		r, err := client.CreateCluster(ctx, &data)
 		fmt.Println(r)
 	},
 }
@@ -102,4 +110,9 @@ func init() {
 	clusterCreateCmd.MarkFlagRequired("contract-id")
 	clusterCreateCmd.Flags().String("csp-id", "", "CSP ID")
 	clusterCreateCmd.MarkFlagRequired("csp-id")
+	clusterCreateCmd.Flags().String("region", "", "AWS Region")
+	clusterCreateCmd.Flags().Int("num-of-az", 3, "Number of availability zones in selected region")
+	clusterCreateCmd.Flags().String("ssh-key-name", "", "SSH key name for EC2 instance connection")
+	clusterCreateCmd.Flags().String("machine-type", "", "machine type of worker node")
+	clusterCreateCmd.Flags().Int("machine-replicas", 3, "machine replicas of worker node")
 }
