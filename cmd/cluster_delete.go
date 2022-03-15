@@ -43,6 +43,7 @@ tks cluster delete <CLUSTER_ID>`,
 			fmt.Println("Usage: tks cluster delete <CLUSTER_ID>")
 			os.Exit(1)
 		}
+
 		var conn *grpc.ClientConn
 		conn, err := grpc.Dial(address, grpc.WithInsecure())
 		if err != nil {
@@ -51,24 +52,27 @@ tks cluster delete <CLUSTER_ID>`,
 		defer conn.Close()
 
 		client := pb.NewClusterLcmServiceClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), 30 * time.Minute)
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 		defer cancel()
-        data := make([]pb.IDRequest, 1)
-        data[0].Id = args[0]
+		data := pb.IDRequest{}
+		data.Id = args[0]
 		m := protojson.MarshalOptions{
 			Indent:        "  ",
 			UseProtoNames: true,
 		}
-		jsonBytes, _ := m.Marshal(&data[0])
-		fmt.Println("Proto Json data...")
-		fmt.Println(string(jsonBytes))
-		r, err := client.DeleteCluster(ctx, &data[0])
+		jsonBytes, _ := m.Marshal(&data)
+		verbose, err := rootCmd.PersistentFlags().GetBool("verbose")
+		if verbose {
+			fmt.Println("Proto Json data...")
+			fmt.Println(string(jsonBytes))
+		}
+		r, err := client.DeleteCluster(ctx, &data)
 		fmt.Println(r)
-        if err != nil {
-            fmt.Println(err)
-        } else {
-            fmt.Println("The request to delete cluster ", args[0], " was accepted.")
-        }
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("The request to delete cluster ", args[0], " was accepted.")
+		}
 	},
 }
 
