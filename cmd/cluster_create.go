@@ -29,10 +29,6 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-const (
-	address = "tks-cluster-lcm.taco-cat.xyz:9110"
-)
-
 // clusterCreateCmd represents the create command
 var clusterCreateCmd = &cobra.Command{
 	Use:   "create",
@@ -48,7 +44,7 @@ tks cluster create <CLUSTERNAME> --contract-id <CONTRACTID> --csp-id <CSPID>`,
 			os.Exit(1)
 		}
 		var conn *grpc.ClientConn
-		conn, err := grpc.Dial(address, grpc.WithInsecure())
+		conn, err := grpc.Dial(tksClusterLcmUrl, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("Could not connect to LCM server: %s", err)
 		}
