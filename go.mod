@@ -3,7 +3,9 @@ module github.com/openinfradev/tks-client
 go 1.16
 
 require (
+	github.com/go-openapi/strfmt v0.21.2 // indirect
 	github.com/golang/mock v1.6.0
+	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/kr/text v0.2.0 // indirect
 	github.com/matryer/is v1.4.0
 	github.com/openinfradev/tks-contract v0.1.1-0.20210928021110-fe2b666327cc

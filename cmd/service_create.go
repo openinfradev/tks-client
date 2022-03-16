@@ -53,14 +53,14 @@ tks service create --cluster-id <CLUSTERID> --service-name <LMA,SERVICE_MESH>`,
 		}
 
 		var conn *grpc.ClientConn
-		conn, err := grpc.Dial(address, grpc.WithInsecure())
+		conn, err := grpc.Dial(tksClusterLcmUrl, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %s", err)
 		}
 		defer conn.Close()
 
 		client := pb.NewClusterLcmServiceClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), 30 * time.Minute)
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 		defer cancel()
 
 		ClusterId, _ := cmd.Flags().GetString("cluster-id")

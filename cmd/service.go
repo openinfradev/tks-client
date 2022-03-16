@@ -25,7 +25,7 @@ import (
 var serviceCmd = &cobra.Command{
 	Use:   "service",
 	Short: "Operation for TACO Service",
-	Long: `Operation for TACO Service`,
+	Long:  `Operation for TACO Service`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("service called")
 	},
