@@ -7,7 +7,7 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/matryer/is v1.4.0
 	github.com/openinfradev/tks-contract v0.1.1-0.20210928021110-fe2b666327cc
-	github.com/openinfradev/tks-proto v0.0.6-0.20220304011855-99ac351f420f
+	github.com/openinfradev/tks-proto v0.0.6-0.20220317025027-11b1811b6619 // indirect
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0 // indirect
