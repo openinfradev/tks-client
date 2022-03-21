@@ -421,10 +421,8 @@ github.com/openinfradev/tks-contract v0.1.1-0.20210928021110-fe2b666327cc/go.mod
 github.com/openinfradev/tks-proto v0.0.6-0.20210924020717-178698d59e9d/go.mod h1:WDzIQ7ayHVA7cA3Z+D2etK7gQuo4penewcC/cWcewlA=
 github.com/openinfradev/tks-proto v0.0.6-0.20211015003551-ed8f9541f40d h1:ypM1LN+7tjRGzmTBNVegY/25KhJLFuQor2/+DfuhxDM=
 github.com/openinfradev/tks-proto v0.0.6-0.20211015003551-ed8f9541f40d/go.mod h1:ul6kvgOXhNQvXEUmb92Wh5BmsuzknnTCb3wqmVNd/iI=
-github.com/openinfradev/tks-proto v0.0.6-0.20220304011855-99ac351f420f h1:B6pnfHoNabwG1MhX1iwjP7lCS7z2nRT/mf/elv8weXI=
-github.com/openinfradev/tks-proto v0.0.6-0.20220304011855-99ac351f420f/go.mod h1:ul6kvgOXhNQvXEUmb92Wh5BmsuzknnTCb3wqmVNd/iI=
-github.com/openinfradev/tks-proto v0.0.6-0.20220317025027-11b1811b6619 h1:yRxwt8DUnp6sb1i6waaRvzq1pQjClYWbk8/iHHyUqJ0=
-github.com/openinfradev/tks-proto v0.0.6-0.20220317025027-11b1811b6619/go.mod h1:3DrATRNCUJMW0oMLHT6D1teN4hX0vMGH4qOGnadakmo=
+github.com/openinfradev/tks-proto v0.0.6-0.20220318062944-7fccd257bcae h1:n4VlqbtNhQ36WMrqHCWkHp7PR5qUr3AVDdOBINZoa5o=
+github.com/openinfradev/tks-proto v0.0.6-0.20220318062944-7fccd257bcae/go.mod h1:3DrATRNCUJMW0oMLHT6D1teN4hX0vMGH4qOGnadakmo=
 github.com/opentracing-contrib/go-observer v0.0.0-20170622124052-a52f23424492/go.mod h1:Ngi6UdF0k5OKD5t5wlmGhe/EDKPoUM3BXZSSfIuJbis=
 github.com/opentracing/basictracer-go v1.0.0/go.mod h1:QfBfYuafItcjQuMwinw9GhYKwFXS9KnPs5lxoYwgW74=
 github.com/opentracing/opentracing-go v1.0.2/go.mod h1:UkNAQd3GIcIGf0SeVgPpRdFStlNbqXla1AfSYxPUl2o=
