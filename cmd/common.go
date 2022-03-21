@@ -15,10 +15,10 @@ limitations under the License.
 */
 package cmd
 
-const (
-	defaultContractId string = "f84df193-f6c8-45ad-867c-c0bcc48f09e5"
-	defaultCspId      string = "c947d800-ac43-4bab-a8e1-4ceaa0ffec98"
-	tksInfoUrl               = "tks-info.taco-cat.xyz:9110"
-	tksClusterLcmUrl         = "tks-cluster-lcm.taco-cat.xyz:9110"
-	tksContractUrl           = "tks-contract.taco-cat.xyz:9110"
+var (
+	defaultContractId string
+	defaultCspId      string
+	tksInfoUrl        string
+	tksClusterLcmUrl  string
+	tksContractUrl    string
 )

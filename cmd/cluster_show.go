@@ -25,6 +25,7 @@ import (
 	"github.com/jedib0t/go-pretty/table"
 	pb "github.com/openinfradev/tks-proto/tks_pb"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -44,6 +45,11 @@ tks cluster show <CLUSTER_ID>`,
 			os.Exit(1)
 		}
 		var conn *grpc.ClientConn
+		tksInfoUrl = viper.GetString("tksInfoUrl")
+		if tksInfoUrl == "" {
+			fmt.Println("You must specify tksInfoUrl at config file")
+			os.Exit(1)
+		}
 		conn, err := grpc.Dial(tksInfoUrl, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %s", err)

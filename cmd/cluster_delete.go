@@ -26,6 +26,7 @@ import (
 
 	pb "github.com/openinfradev/tks-proto/tks_pb"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -45,7 +46,12 @@ tks cluster delete <CLUSTER_ID>`,
 		}
 
 		var conn *grpc.ClientConn
-		conn, err := grpc.Dial(address, grpc.WithInsecure())
+		tksClusterLcmUrl = viper.GetString("tksClusterLcmUrl")
+		if tksClusterLcmUrl == "" {
+			fmt.Println("You must specify tksClusterLcmUrl at config file")
+			os.Exit(1)
+		}
+		conn, err := grpc.Dial(tksClusterLcmUrl, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %s", err)
 		}

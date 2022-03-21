@@ -19,6 +19,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"google.golang.org/grpc"
@@ -26,6 +27,7 @@ import (
 	"github.com/jedib0t/go-pretty/table"
 	pb "github.com/openinfradev/tks-proto/tks_pb"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -39,8 +41,12 @@ var clusterListCmd = &cobra.Command{
 Example:
 tks cluster list (--long)`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
 		var conn *grpc.ClientConn
+		tksInfoUrl = viper.GetString("tksInfoUrl")
+		if tksInfoUrl == "" {
+			fmt.Println("You must specify tksInfoUrl at config file")
+			os.Exit(1)
+		}
 		conn, err := grpc.Dial(tksInfoUrl, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %s", err)
@@ -51,7 +57,11 @@ tks cluster list (--long)`,
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 		defer cancel()
 		data := pb.GetClustersRequest{}
-		data.ContractId = defaultContractId
+		data.ContractId = viper.GetString("contractId")
+		if data.ContractId == "" {
+			fmt.Println("You must specify contractId at config file")
+			os.Exit(1)
+		}
 
 		m := protojson.MarshalOptions{
 			Indent:        "  ",
