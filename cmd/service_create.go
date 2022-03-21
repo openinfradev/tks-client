@@ -35,20 +35,22 @@ import (
 var serviceCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a TACO Service.",
-	Long: `Create a TACO Service. supported: LMA, SERVICE_MESH
+	Long: `Create a TACO Service. supported: LMA,LMA_EFK,SERVICE_MESH
 
 Example:
-tks service create --cluster-id <CLUSTERID> --service-name <LMA,SERVICE_MESH>`,
+tks service create --cluster-id <CLUSTERID> --service-name <LMA,LMA_EFK,SERVICE_MESH>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("create called")
 		ServiceName, _ := cmd.Flags().GetString("service-name")
 		var Type pb.AppGroupType
 		if ServiceName == "LMA" {
 			Type = pb.AppGroupType_LMA
+		} else if ServiceName == "LMA_EFK" {
+			Type = pb.AppGroupType_LMA_EFK
 		} else if ServiceName == "SERVICE_MESH" {
 			Type = pb.AppGroupType_SERVICE_MESH
 		} else {
-			fmt.Println("You must specify Service Name. LMA or SERVICE_MESH")
+			fmt.Println("You must specify Service Name. LMA | LMA_EFK | SERVICE_MESH")
 			os.Exit(1)
 		}
 
