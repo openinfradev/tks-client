@@ -27,6 +27,7 @@ import (
 
 	pb "github.com/openinfradev/tks-proto/tks_pb"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -55,6 +56,11 @@ tks service create --cluster-id <CLUSTERID> --service-name <LMA,LMA_EFK,SERVICE_
 		}
 
 		var conn *grpc.ClientConn
+		tksClusterLcmUrl = viper.GetString("tksClusterLcmUrl")
+		if tksClusterLcmUrl == "" {
+			fmt.Println("You must specify tksClusterLcmUrl at config file")
+			os.Exit(1)
+		}
 		conn, err := grpc.Dial(tksClusterLcmUrl, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %s", err)

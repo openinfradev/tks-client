@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 SK Telecom <https://github.com/openinfradev>
+Copyright © 2021 SK Telecom <https://github.com/openinfradev>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,26 +22,27 @@ import (
 	"os"
 	"time"
 
+	"google.golang.org/grpc"
+
 	"github.com/jedib0t/go-pretty/table"
 	pb "github.com/openinfradev/tks-proto/tks_pb"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-// clusterShowCmd represents the list command
-var clusterShowCmd = &cobra.Command{
-	Use:   "show",
-	Short: "Show cluster details.",
-	Long: `Show cluster details. 
+// serviceListCmd represents the create command
+var serviceListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "Show list of service.",
+	Long: `Show list of service.
 
 Example:
-tks cluster show <CLUSTER_ID>`,
+tks service list <CLUSTER ID>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			fmt.Println("You must specify cluster id.")
-			fmt.Println("Usage: tks cluster show <CLUSTER_ID>")
+			fmt.Println("You must specify cluster ID.")
+			fmt.Println("Usage: tks service list <CLUSTER ID>")
 			os.Exit(1)
 		}
 		var conn *grpc.ClientConn
@@ -56,11 +57,14 @@ tks cluster show <CLUSTER_ID>`,
 		}
 		defer conn.Close()
 
-		client := pb.NewClusterInfoServiceClient(conn)
+		client := pb.NewAppInfoServiceClient(conn)
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 		defer cancel()
-		data := pb.GetClusterRequest{}
-		data.ClusterId = args[0]
+
+		ClusterId := args[0]
+
+		data := pb.IDRequest{}
+		data.Id = ClusterId
 
 		m := protojson.MarshalOptions{
 			Indent:        "  ",
@@ -72,45 +76,48 @@ tks cluster show <CLUSTER_ID>`,
 			fmt.Println("Proto Json data...")
 			fmt.Println(string(jsonBytes))
 		}
-		r, err := client.GetCluster(ctx, &data)
+		r, err := client.GetAppGroupsByClusterID(ctx, &data)
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			printCluster(r)
+			printAppGroups(r)
 		}
 	},
 }
 
 func init() {
-	clusterCmd.AddCommand(clusterShowCmd)
+	serviceCmd.AddCommand(serviceListCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// clusterShowCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// serviceListCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
+	// serviceListCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-func printCluster(r *pb.GetClusterResponse) {
-	c := r.Cluster
+func printAppGroups(r *pb.GetAppGroupsResponse) {
 	t := table.NewWriter()
+	tTemp := table.Table{}
+	tTemp.Render()
+	t.Style().Options.DrawBorder = false
+	t.Style().Options.SeparateColumns = false
+	t.Style().Options.SeparateFooter = false
+	t.Style().Options.SeparateHeader = false
+	t.Style().Options.SeparateRows = false
+	t.AppendHeader(table.Row{"Type", "SERVICE_ID", "Status", "CREATED_AT", "UPDATED_AT"})
+	for _, s := range r.AppGroups {
+		tCreatedAt := parseTime(s.CreatedAt)
+		tUpdatedAt := parseTime(s.UpdatedAt)
 
-	t.AppendHeader(table.Row{"Filed", "Value"})
-	tCreatedAt := parseTime(c.CreatedAt)
-	tUpdatedAt := parseTime(c.UpdatedAt)
-	t.AppendRow(table.Row{"Name", c.Name})
-	t.AppendRow(table.Row{"ID", c.Id})
-	t.AppendRow(table.Row{"Created At", tCreatedAt})
-	t.AppendRow(table.Row{"Updated At", tUpdatedAt})
-	t.AppendRow(table.Row{"Status", c.Status})
-	t.AppendRow(table.Row{"Contract ID", c.ContractId})
-	t.AppendRow(table.Row{"Csp ID", c.CspId})
-	t.AppendRow(table.Row{"Conf", c.Conf})
-	t.AppendRow(table.Row{"AppGroups", c.AppGroups})
-	t.AppendRow(table.Row{"Kubeconfig", c.Kubeconfig})
-
-	fmt.Println(t.Render())
+		t.AppendRow(table.Row{s.Type, s.AppGroupId, s.Status, tCreatedAt, tUpdatedAt})
+	}
+	if len(r.AppGroups) > 0 {
+		fmt.Println(t.Render())
+	} else {
+		fmt.Println("No services found.")
+	}
 }

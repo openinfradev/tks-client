@@ -26,6 +26,7 @@ import (
 
 	pb "github.com/openinfradev/tks-proto/tks_pb"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -36,7 +37,7 @@ var clusterCreateCmd = &cobra.Command{
 	Long: `Create a TACO Cluster to AWS.
   
 Example:
-tks cluster create <CLUSTERNAME> --contract-id <CONTRACTID> --csp-id <CSPID>`,
+tks cluster create <CLUSTERNAME>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			fmt.Println("You must specify cluster name.")
@@ -44,6 +45,11 @@ tks cluster create <CLUSTERNAME> --contract-id <CONTRACTID> --csp-id <CSPID>`,
 			os.Exit(1)
 		}
 		var conn *grpc.ClientConn
+		tksClusterLcmUrl = viper.GetString("tksClusterLcmUrl")
+		if tksClusterLcmUrl == "" {
+			fmt.Println("You must specify tksClusterLcmUrl at config file")
+			os.Exit(1)
+		}
 		conn, err := grpc.Dial(tksClusterLcmUrl, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("Could not connect to LCM server: %s", err)
@@ -57,8 +63,21 @@ tks cluster create <CLUSTERNAME> --contract-id <CONTRACTID> --csp-id <CSPID>`,
 		/* Parse command line arguments */
 		ClusterName := args[0]
 		ContractId, _ := cmd.Flags().GetString("contract-id")
+		if ContractId == "" {
+			ContractId = viper.GetString("contractId")
+			if ContractId == "" {
+				fmt.Println("You must specify contractId and cspId")
+				os.Exit(1)
+			}
+		}
 		CspId, _ := cmd.Flags().GetString("csp-id")
-
+		if CspId == "" {
+			CspId = viper.GetString("cspId")
+			if CspId == "" {
+				fmt.Println("You must specify contractId and cspId")
+				os.Exit(1)
+			}
+		}
 		conf := pb.ClusterRawConf{}
 		conf.SshKeyName, _ = cmd.Flags().GetString("ssh-key-name")
 		conf.Region, _ = cmd.Flags().GetString("region")
@@ -103,9 +122,7 @@ func init() {
 	// is called directly, e.g.:
 	// clusterCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	clusterCreateCmd.Flags().String("contract-id", "", "Contract ID")
-	clusterCreateCmd.MarkFlagRequired("contract-id")
 	clusterCreateCmd.Flags().String("csp-id", "", "CSP ID")
-	clusterCreateCmd.MarkFlagRequired("csp-id")
 	clusterCreateCmd.Flags().String("region", "", "AWS Region")
 	clusterCreateCmd.Flags().Int("num-of-az", 3, "Number of availability zones in selected region")
 	clusterCreateCmd.Flags().String("ssh-key-name", "", "SSH key name for EC2 instance connection")

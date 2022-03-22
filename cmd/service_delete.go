@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 SK Telecom <https://github.com/openinfradev>
+Copyright © 2021 SK Telecom <https://github.com/openinfradev>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,45 +22,48 @@ import (
 	"os"
 	"time"
 
-	"github.com/jedib0t/go-pretty/table"
+	"google.golang.org/grpc"
+
 	pb "github.com/openinfradev/tks-proto/tks_pb"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-// clusterShowCmd represents the list command
-var clusterShowCmd = &cobra.Command{
-	Use:   "show",
-	Short: "Show cluster details.",
-	Long: `Show cluster details. 
+// serviceDeleteCmd represents the create command
+var serviceDeleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a TACO Service.",
+	Long: `Delete a TACO Service.
 
 Example:
-tks cluster show <CLUSTER_ID>`,
+tks service delete <SERVICE ID>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			fmt.Println("You must specify cluster id.")
-			fmt.Println("Usage: tks cluster show <CLUSTER_ID>")
+			fmt.Println("You must specify service ID.")
+			fmt.Println("Usage: tks service delete <SERVICE ID>")
 			os.Exit(1)
 		}
 		var conn *grpc.ClientConn
-		tksInfoUrl = viper.GetString("tksInfoUrl")
-		if tksInfoUrl == "" {
-			fmt.Println("You must specify tksInfoUrl at config file")
+		tksClusterLcmUrl = viper.GetString("tksClusterLcmUrl")
+		if tksClusterLcmUrl == "" {
+			fmt.Println("You must specify tksClusterLcmUrl at config file")
 			os.Exit(1)
 		}
-		conn, err := grpc.Dial(tksInfoUrl, grpc.WithInsecure())
+		conn, err := grpc.Dial(tksClusterLcmUrl, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %s", err)
 		}
 		defer conn.Close()
 
-		client := pb.NewClusterInfoServiceClient(conn)
+		client := pb.NewClusterLcmServiceClient(conn)
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 		defer cancel()
-		data := pb.GetClusterRequest{}
-		data.ClusterId = args[0]
+
+		serviceId := args[0]
+
+		data := pb.UninstallAppGroupsRequest{}
+		data.AppGroupIds = []string{serviceId}
 
 		m := protojson.MarshalOptions{
 			Indent:        "  ",
@@ -72,45 +75,25 @@ tks cluster show <CLUSTER_ID>`,
 			fmt.Println("Proto Json data...")
 			fmt.Println(string(jsonBytes))
 		}
-		r, err := client.GetCluster(ctx, &data)
+		r, err := client.UninstallAppGroups(ctx, &data)
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			printCluster(r)
+			fmt.Println(r)
 		}
 	},
 }
 
 func init() {
-	clusterCmd.AddCommand(clusterShowCmd)
+	serviceCmd.AddCommand(serviceDeleteCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// clusterShowCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// serviceDeleteCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-}
-
-func printCluster(r *pb.GetClusterResponse) {
-	c := r.Cluster
-	t := table.NewWriter()
-
-	t.AppendHeader(table.Row{"Filed", "Value"})
-	tCreatedAt := parseTime(c.CreatedAt)
-	tUpdatedAt := parseTime(c.UpdatedAt)
-	t.AppendRow(table.Row{"Name", c.Name})
-	t.AppendRow(table.Row{"ID", c.Id})
-	t.AppendRow(table.Row{"Created At", tCreatedAt})
-	t.AppendRow(table.Row{"Updated At", tUpdatedAt})
-	t.AppendRow(table.Row{"Status", c.Status})
-	t.AppendRow(table.Row{"Contract ID", c.ContractId})
-	t.AppendRow(table.Row{"Csp ID", c.CspId})
-	t.AppendRow(table.Row{"Conf", c.Conf})
-	t.AppendRow(table.Row{"AppGroups", c.AppGroups})
-	t.AppendRow(table.Row{"Kubeconfig", c.Kubeconfig})
-
-	fmt.Println(t.Render())
+	// serviceDeleteCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
