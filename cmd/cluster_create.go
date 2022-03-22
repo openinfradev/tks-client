@@ -104,8 +104,14 @@ tks cluster create <CLUSTERNAME>`,
 		jsonBytes, _ := m.Marshal(&data)
 		fmt.Println("Proto Json data: ")
 		fmt.Println(string(jsonBytes))
+
 		r, err := client.CreateCluster(ctx, &data)
-		fmt.Println(r)
+		fmt.Println("Response:\n", r)
+		if err != nil {
+			fmt.Println("Error:", err)
+		} else {
+			fmt.Println("Success: The request to create cluster ", args[0], " was accepted.")
+		}
 	},
 }
 
