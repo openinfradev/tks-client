@@ -33,8 +33,8 @@ import (
 // clusterDeleteCmd represents the delete command
 var clusterDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete a TACO Cluster.",
-	Long: `Delete a TACO Cluster to AWS.
+	Short: "Delete a TKS Cluster.",
+	Long: `Delete a TKS Cluster to AWS.
 	
 Example:
 tks cluster delete <CLUSTER_ID>`,

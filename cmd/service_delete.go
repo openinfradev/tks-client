@@ -33,8 +33,8 @@ import (
 // serviceDeleteCmd represents the create command
 var serviceDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete a TACO Service.",
-	Long: `Delete a TACO Service.
+	Short: "Delete a TKS Service.",
+	Long: `Delete a TKS Service.
 
 Example:
 tks service delete <SERVICE ID>`,

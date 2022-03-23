@@ -35,8 +35,8 @@ import (
 // serviceCreateCmd represents the create command
 var serviceCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a TACO Service.",
-	Long: `Create a TACO Service. supported: LMA,LMA_EFK,SERVICE_MESH
+	Short: "Create a TKS Service.",
+	Long: `Create a TKS Service. supported: LMA,LMA_EFK,SERVICE_MESH
 
 Example:
 tks service create --cluster-id <CLUSTERID> --service-name <LMA,LMA_EFK,SERVICE_MESH>`,

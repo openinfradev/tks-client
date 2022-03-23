@@ -24,8 +24,8 @@ import (
 // clusterCmd represents the cluster command
 var clusterCmd = &cobra.Command{
 	Use:   "cluster",
-	Short: "Operation for TACO Cluster",
-	Long:  `Operation for TACO Cluster`,
+	Short: "Operation for TKS Cluster",
+	Long:  `Operation for TKS Cluster`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("cluster called")
 	},
