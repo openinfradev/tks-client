@@ -58,10 +58,6 @@ tks cluster list (--long)`,
 		defer cancel()
 		data := pb.GetClustersRequest{}
 		data.ContractId = viper.GetString("contractId")
-		if data.ContractId == "" {
-			fmt.Println("You must specify contractId at config file")
-			os.Exit(1)
-		}
 
 		m := protojson.MarshalOptions{
 			Indent:        "  ",

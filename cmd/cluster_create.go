@@ -41,7 +41,7 @@ tks cluster create <CLUSTERNAME>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			fmt.Println("You must specify cluster name.")
-			fmt.Println("Usage: tks cluster create <CLUSTERNAME> --contract-id <CONTRACTID> --csp-id <CSPID>")
+			fmt.Println("Usage: tks cluster create <CLUSTERNAME>")
 			os.Exit(1)
 		}
 		var conn *grpc.ClientConn
@@ -63,21 +63,7 @@ tks cluster create <CLUSTERNAME>`,
 		/* Parse command line arguments */
 		ClusterName := args[0]
 		ContractId, _ := cmd.Flags().GetString("contract-id")
-		if ContractId == "" {
-			ContractId = viper.GetString("contractId")
-			if ContractId == "" {
-				fmt.Println("You must specify contractId and cspId")
-				os.Exit(1)
-			}
-		}
 		CspId, _ := cmd.Flags().GetString("csp-id")
-		if CspId == "" {
-			CspId = viper.GetString("cspId")
-			if CspId == "" {
-				fmt.Println("You must specify contractId and cspId")
-				os.Exit(1)
-			}
-		}
 		conf := pb.ClusterRawConf{}
 		conf.SshKeyName, _ = cmd.Flags().GetString("ssh-key-name")
 		conf.Region, _ = cmd.Flags().GetString("region")
