@@ -33,8 +33,8 @@ import (
 // clusterCreateCmd represents the create command
 var clusterCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a TACO Cluster.",
-	Long: `Create a TACO Cluster to AWS.
+	Short: "Create a TKS Cluster.",
+	Long: `Create a TKS Cluster to AWS.
   
 Example:
 tks cluster create <CLUSTERNAME>`,

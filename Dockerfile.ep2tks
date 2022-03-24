@@ -1,5 +1,5 @@
 FROM golang:1.16.3-stretch AS builder
-LABEL AUTHOR TACO Team (taco.sktelecom@gmail.com)
+LABEL AUTHOR TKS Team (https://github.com/openinfradev)
 
 RUN mkdir -p /build
 WORKDIR /build
