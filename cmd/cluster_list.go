@@ -74,7 +74,7 @@ tks cluster list (--long)`,
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			printClusters(r, long)
+			printClusters(filterResponse(r), long)
 		}
 	},
 }
@@ -94,7 +94,6 @@ func init() {
 }
 
 func printClusters(r *pb.GetClustersResponse, long bool) {
-	fmt.Println(r.Clusters[0].Name)
 	t := table.NewWriter()
 	tTemp := table.Table{}
 	tTemp.Render()
@@ -125,4 +124,16 @@ func printClusters(r *pb.GetClustersResponse, long bool) {
 func parseTime(t *timestamppb.Timestamp) string {
 
 	return t.AsTime().Format("2006-01-02 15:04:05")
+}
+
+func filterResponse(r *pb.GetClustersResponse) *pb.GetClustersResponse {
+	clusters := []*pb.Cluster {}
+	for _, cluster := range r.Clusters {
+		if cluster.GetStatus() != pb.ClusterStatus_DELETED {
+			clusters = append(clusters, cluster)
+		}
+	}
+
+	r.Clusters = clusters
+	return r
 }
