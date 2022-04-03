@@ -38,7 +38,7 @@ var serviceListCmd = &cobra.Command{
 	Long: `Show list of service.
 
 Example:
-tks service list <CLUSTER ID>`,
+tks service list <CLUSTER ID> (--long)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			fmt.Println("You must specify cluster ID.")
@@ -80,7 +80,8 @@ tks service list <CLUSTER ID>`,
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			printAppGroups(r)
+			long, _ := cmd.Flags().GetBool("long")
+			printAppGroups(r, long)
 		}
 	},
 }
@@ -97,9 +98,10 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// serviceListCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	serviceListCmd.Flags().BoolP("long", "l", false, "Print detail information")
 }
 
-func printAppGroups(r *pb.GetAppGroupsResponse) {
+func printAppGroups(r *pb.GetAppGroupsResponse, long bool) {
 	t := table.NewWriter()
 	tTemp := table.Table{}
 	tTemp.Render()
@@ -108,13 +110,25 @@ func printAppGroups(r *pb.GetAppGroupsResponse) {
 	t.Style().Options.SeparateFooter = false
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
-	t.AppendHeader(table.Row{"Type", "SERVICE_ID", "Status", "CREATED_AT", "UPDATED_AT"})
-	for _, s := range r.AppGroups {
-		tCreatedAt := parseTime(s.CreatedAt)
-		tUpdatedAt := parseTime(s.UpdatedAt)
 
-		t.AppendRow(table.Row{s.Type, s.AppGroupId, s.Status, tCreatedAt, tUpdatedAt})
+	if long {
+		t.AppendHeader(table.Row{"TYPE", "SERVICE_ID", "STATUS", "CREATED_AT", "UPDATED_AT", "UPDATE_DESC"})
+		for _, s := range r.AppGroups {
+			tCreatedAt := parseTime(s.CreatedAt)
+			tUpdatedAt := parseTime(s.UpdatedAt)
+
+			t.AppendRow(table.Row{s.Type, s.AppGroupId, s.Status, tCreatedAt, tUpdatedAt, s.StatusDesc})
+		}
+	} else {
+		t.AppendHeader(table.Row{"TYPE", "SERVICE_ID", "STATUS", "CREATED_AT", "UPDATED_AT"})
+		for _, s := range r.AppGroups {
+			tCreatedAt := parseTime(s.CreatedAt)
+			tUpdatedAt := parseTime(s.UpdatedAt)
+
+			t.AppendRow(table.Row{s.Type, s.AppGroupId, s.Status, tCreatedAt, tUpdatedAt})
+		}
 	}
+
 	if len(r.AppGroups) > 0 {
 		fmt.Println(t.Render())
 	} else {

@@ -103,11 +103,11 @@ func printClusters(r *pb.GetClustersResponse, long bool) {
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
 	if long {
-		t.AppendHeader(table.Row{"Name", "ID", "Status", "CREATED_AT", "UPDATED_AT", "CSP_ID", "CONTRACT_ID"})
+		t.AppendHeader(table.Row{"Name", "ID", "Status", "CREATED_AT", "UPDATED_AT", "CSP_ID", "CONTRACT_ID", "STATUS_DESC"})
 		for _, s := range r.Clusters {
 			tCreatedAt := parseTime(s.CreatedAt)
 			tUpdatedAt := parseTime(s.UpdatedAt)
-			t.AppendRow(table.Row{s.Name, s.Id, s.Status, tCreatedAt, tUpdatedAt, s.CspId, s.ContractId})
+			t.AppendRow(table.Row{s.Name, s.Id, s.Status, tCreatedAt, tUpdatedAt, s.CspId, s.ContractId, s.StatusDesc})
 		}
 	} else {
 		t.AppendHeader(table.Row{"Name", "ID", "Status", "CREATED_AT", "UPDATED_AT"})
@@ -127,7 +127,7 @@ func parseTime(t *timestamppb.Timestamp) string {
 }
 
 func filterResponse(r *pb.GetClustersResponse) *pb.GetClustersResponse {
-	clusters := []*pb.Cluster {}
+	clusters := []*pb.Cluster{}
 	for _, cluster := range r.Clusters {
 		if cluster.GetStatus() != pb.ClusterStatus_DELETED {
 			clusters = append(clusters, cluster)
