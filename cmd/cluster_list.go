@@ -74,7 +74,11 @@ tks cluster list (--long)`,
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			printClusters(filterResponse(r), long)
+			if len(r.Clusters) == 0 {
+				fmt.Println("No cluster exists for specified contract!")
+			} else {
+				printClusters(filterResponse(r), long)
+			}
 		}
 	},
 }
@@ -127,7 +131,7 @@ func parseTime(t *timestamppb.Timestamp) string {
 }
 
 func filterResponse(r *pb.GetClustersResponse) *pb.GetClustersResponse {
-	clusters := []*pb.Cluster {}
+	clusters := []*pb.Cluster{}
 	for _, cluster := range r.Clusters {
 		if cluster.GetStatus() != pb.ClusterStatus_DELETED {
 			clusters = append(clusters, cluster)
