@@ -30,7 +30,7 @@ Flags:
 Use "tks [command] --help" for more information about a command.
 ```
 
-`tks-client`의 대한 매뉴얼은 [tks-docs](https://psychic-memory-10267fe9.pages.github.io/releasenotes/tks-cli-manual/overview/)에서 확인하실 수 있습니다.
+`tks-client`의 매뉴얼은 다음 [링크](https://openinfradev.github.io/releases/cli/overview/)에서 확인하실 수 있습니다.
 
 # Installation
 `tks`는 Linux, MAC, Windows 환경에 설치할 수 있습니다. tks github repo에서 바이너리를 다운로드 받거나 소스파일을 직접 빌드하여 설치합니다.
@@ -112,6 +112,21 @@ Use "tks [command] --help" for more information about a command.
 ```
 
 # Configuration & Commands
-`tks-client`의 설정방법과 커맨드 사용법은 [매뉴얼](https://psychic-memory-10267fe9.pages.github.io/releasenotes/tks-cli-manual/overview/)을 참고하시기 바랍니다.
+
+```
+$ tee ~/.tks-client.yaml << EOF
+tksInfoUrl: "tks-info.taco.com:9110"
+tksContractUrl: "tks-contract.taco.com:9110"
+tksClusterLcmUrl: "tks-cluster-lcm.taco.com:9110"
+EOF
+
+$ tks cluster list
+Using config file: /home/ubuntu/.tks-client.yaml
+ NAME             ID                                     STATUS  CREATED_AT           UPDATED_AT
+ test-20220411-2  76fc9f70-75fe-40b8-a82e-9a78402e53c4  RUNNING  2022-04-11 06:16:14  2022-04-11 06:30:28
+ test-20220405-1  15436172-8d62-4d38-a37a-655b8cbeadd4  RUNNING  2022-04-05 05:03:42  2022-04-05 05:19:26
+```
+
+`tks-client`의 자세한 설정방법과 커맨드 사용법은 [매뉴얼](https://openinfradev.github.io/releases/cli/overview/)을 참고하시기 바랍니다.
 
 
