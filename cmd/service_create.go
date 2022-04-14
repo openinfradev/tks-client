@@ -95,8 +95,14 @@ tks service create --cluster-id <CLUSTERID> --service-name <LMA,LMA_EFK,SERVICE_
 		jsonBytes, _ := m.Marshal(&data[0])
 		fmt.Println("Proto Json data...")
 		fmt.Println(string(jsonBytes))
+
 		r, err := client.InstallAppGroups(ctx, &data[0])
-		fmt.Println(r)
+		fmt.Println("Response:\n", r)
+		if err != nil {
+			fmt.Println("Error:", err)
+		} else {
+			fmt.Println("Success: The request to create service ", args[0], " was accepted.")
+		}
 	},
 }
 
