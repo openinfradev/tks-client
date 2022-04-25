@@ -107,11 +107,11 @@ func printClusters(r *pb.GetClustersResponse, long bool) {
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
 	if long {
-		t.AppendHeader(table.Row{"Name", "ID", "Status", "CREATED_AT", "UPDATED_AT", "CSP_ID", "CONTRACT_ID"})
+		t.AppendHeader(table.Row{"Name", "ID", "Status", "CREATED_AT", "UPDATED_AT", "CSP_ID", "CONTRACT_ID", "STATUS_DESC"})
 		for _, s := range r.Clusters {
 			tCreatedAt := parseTime(s.CreatedAt)
 			tUpdatedAt := parseTime(s.UpdatedAt)
-			t.AppendRow(table.Row{s.Name, s.Id, s.Status, tCreatedAt, tUpdatedAt, s.CspId, s.ContractId})
+			t.AppendRow(table.Row{s.Name, s.Id, s.Status, tCreatedAt, tUpdatedAt, s.CspId, s.ContractId, s.StatusDesc})
 		}
 	} else {
 		t.AppendHeader(table.Row{"Name", "ID", "Status", "CREATED_AT", "UPDATED_AT"})
