@@ -101,7 +101,7 @@ tks service create --cluster-id <CLUSTERID> --service-name <LMA,LMA_EFK,SERVICE_
 		if err != nil {
 			fmt.Println("Error:", err)
 		} else {
-			fmt.Println("Success: The request to create service ", args[0], " was accepted.")
+			fmt.Println("Success: The request to create service ", AppGroupName, " was accepted.")
 		}
 	},
 }
