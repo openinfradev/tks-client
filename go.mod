@@ -8,7 +8,7 @@ require (
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/matryer/is v1.4.0
 	github.com/openinfradev/tks-contract v0.1.1-0.20210928021110-fe2b666327cc
-	github.com/openinfradev/tks-proto v0.0.6-0.20220324075944-e471af2c8c49
+	github.com/openinfradev/tks-proto v0.0.6-0.20220406043255-9fffe49c4625
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0
 	golang.org/x/net v0.0.0-20211020060615-d418f374d309 // indirect
