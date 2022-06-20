@@ -79,7 +79,8 @@ $ sudo apt-get install socat ebtables ethtool conntrack
 $ echo "127.0.0.1 $(hostname)" >> /etc/hosts
 
 # Download agent
-$ curl -LO https://github.com/vmware-tanzu/cluster-api-provider-bringyourownhost/releases/download/v0.2.0/byoh-hostagent-linux-amd64
+$ curl -LO https://github.com/openinfradev/tks-file-repo/releases/download/stable/byoh-hostagent-linux-amd64
+$ chmod a+x ./byoh-hostagent-linux-amd64
 
 # Set proper label depending on the node role
 LABEL_OPT="--label role=%s"
@@ -89,7 +90,7 @@ sudo killall byoh-hostagent-linux-amd64 || true
 sudo ./byoh-hostagent-linux-amd64 --kubeconfig mgmt-cluster.conf --namespace $YOUR_CLUSTER_UUID $LABEL_OPT --v 20 2>&1 | tee byoh-agent.log
 
 # Install binary bundle
-$ curl -L -o k8s-v1.22.3-bundle.tar.gz https://www.dropbox.com/s/4v2ug32pl4p8rq1/k8s-v1.22.3.tar.xz?dl=0
+$ curl -L -o k8s-v1.22.3-bundle.tar.xz https://github.com/openinfradev/tks-file-repo/releases/download/stable/k8s-v1.22.3-bundle.tar.xz
 $ sudo mkdir -p /var/lib/byoh/bundles/projects.registry.vmware.com.cluster_api_provider_bringyourownhost
 $ sudo tar xvfJ k8s-v1.22.3-bundle.tar.xz -C /var/lib/byoh/bundles/projects.registry.vmware.com.cluster_api_provider_bringyourownhost
 
