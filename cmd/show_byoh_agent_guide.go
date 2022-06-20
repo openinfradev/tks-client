@@ -18,7 +18,7 @@ package cmd
 import (
 	"fmt"
 	"log"
-  "os"
+	"os"
 	"os/exec"
 
 	"github.com/spf13/cobra"
@@ -43,33 +43,33 @@ Among these types, the 'worker' nodes might needs to be scaled out based on your
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 
-    nodeType, _ := cmd.Flags().GetString("type")
-    if nodeType == "" {
-      fmt.Printf("Usage: tks cluster show-byoh-node-agent-guide --type=$NODE_TYPE\n")
-      os.Exit(1)
-    }
+		nodeType, _ := cmd.Flags().GetString("type")
+		if nodeType == "" {
+			fmt.Printf("Usage: tks cluster show-byoh-node-agent-guide --type=$NODE_TYPE\n")
+			os.Exit(1)
+		}
 
-    if nodeType != "controlplane" && nodeType != "tks" && nodeType != "worker" {
-      fmt.Printf("Wrong node type '%s': please refer to help message.\n", nodeType)
-      os.Exit(1)
-    }
+		if nodeType != "controlplane" && nodeType != "tks" && nodeType != "worker" {
+			fmt.Printf("Wrong node type '%s': please refer to help message.\n", nodeType)
+			os.Exit(1)
+		}
 
-    fmt.Printf("*************************************************\n")
-    fmt.Printf("******** BYOH Agent Installation Process ********\n")
-    fmt.Printf("*************************************************\n\n")
-    fmt.Printf("Follow these steps to install BYOH agent on your machine.\n\n")
+		fmt.Printf("*************************************************\n")
+		fmt.Printf("******** BYOH Agent Installation Process ********\n")
+		fmt.Printf("*************************************************\n\n")
+		fmt.Printf("Follow these steps to install BYOH agent on your machine.\n\n")
 
-    // Print mgmt cluster's kubeconfig
-    cmdStr := "cat ~/.kube/config | base64"
-    out, err := exec.Command("bash", "-c", cmdStr).Output()
-    if err != nil {
-        log.Fatal(err)
-    }
+		// Print mgmt cluster's kubeconfig
+		cmdStr := "cat ~/.kube/config | base64"
+		out, err := exec.Command("bash", "-c", cmdStr).Output()
+		if err != nil {
+			log.Fatal(err)
+		}
 
-    fmt.Printf("Encoded kubeconfig for MGMT cluster:\n%s\n", string(out))
+		fmt.Printf("Encoded kubeconfig for MGMT cluster:\n%s\n", string(out))
 
-    // Print steps for installing the agent
-    guide_str := `# Decode the above string using base64 command as follows.
+		// Print steps for installing the agent
+		guide_str := `# Decode the above string using base64 command as follows.
 $ echo $ENCODED_CONFIG | base64 -d > mgmt-cluster.conf
 
 # Install essential packages
@@ -96,12 +96,12 @@ $ sudo tar xvfJ k8s-v1.22.3-bundle.tar.xz -C /var/lib/byoh/bundles/projects.regi
 That's it! Enjoy BYOH provider!
 *******************************
 `
-    fmt.Printf(guide_str, nodeType)
+		fmt.Printf(guide_str, nodeType)
 
 	},
 }
 
 func init() {
 	clusterCmd.AddCommand(showByohAgentGuideCmd)
-  showByohAgentGuideCmd.Flags().String("type", "", "[mandatory] node type in <controlplane|tks|worker>")
+	showByohAgentGuideCmd.Flags().String("type", "", "[mandatory] node type in <controlplane|tks|worker>")
 }
