@@ -78,6 +78,7 @@ tks service delete <SERVICE ID>`,
 		r, err := client.UninstallAppGroups(ctx, &data)
 		if err != nil {
 			fmt.Println(err)
+			os.Exit(1)
 		} else {
 			fmt.Println(r)
 		}

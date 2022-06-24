@@ -76,6 +76,7 @@ tks cluster delete <CLUSTER_ID>`,
 		fmt.Println(r)
 		if err != nil {
 			fmt.Println(err)
+			os.Exit(1)
 		} else {
 			fmt.Println("The request to delete cluster ", args[0], " was accepted.")
 		}
