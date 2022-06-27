@@ -95,6 +95,7 @@ tks cluster create <CLUSTERNAME>`,
 		fmt.Println("Response:\n", r)
 		if err != nil {
 			fmt.Println("Error:", err)
+			os.Exit(1)
 		} else {
 			fmt.Println("Success: The request to create cluster ", args[0], " was accepted.")
 		}

@@ -79,6 +79,7 @@ tks service list <CLUSTER ID> (--long)`,
 		r, err := client.GetAppGroupsByClusterID(ctx, &data)
 		if err != nil {
 			fmt.Println(err)
+			os.Exit(1)
 		} else {
 			long, _ := cmd.Flags().GetBool("long")
 			printAppGroups(r, long)
