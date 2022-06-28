@@ -17,9 +17,9 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"google.golang.org/grpc"
@@ -38,17 +38,16 @@ var serviceDeleteCmd = &cobra.Command{
 
 Example:
 tks service delete <SERVICE ID>`,
-	Run: func(cmd *cobra.Command, args []string) {
+	SilenceUsage: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			fmt.Println("You must specify service ID.")
-			fmt.Println("Usage: tks service delete <SERVICE ID>")
-			os.Exit(1)
+			return errors.New("Usage: tks service delete <SERVICE ID>")
 		}
 		var conn *grpc.ClientConn
 		tksClusterLcmUrl = viper.GetString("tksClusterLcmUrl")
 		if tksClusterLcmUrl == "" {
-			fmt.Println("You must specify tksClusterLcmUrl at config file")
-			os.Exit(1)
+			return errors.New("You must specify tksClusterLcmUrl at config file")
 		}
 		conn, err := grpc.Dial(tksClusterLcmUrl, grpc.WithInsecure())
 		if err != nil {
@@ -81,6 +80,7 @@ tks service delete <SERVICE ID>`,
 		} else {
 			fmt.Println(r)
 		}
+		return nil
 	},
 }
 

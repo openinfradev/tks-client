@@ -17,9 +17,9 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 	"time"
 
@@ -40,7 +40,8 @@ var serviceCreateCmd = &cobra.Command{
 
 Example:
 tks service create --cluster-id <CLUSTERID> --service-name <LMA,LMA_EFK,SERVICE_MESH>`,
-	Run: func(cmd *cobra.Command, args []string) {
+	SilenceUsage: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("create called")
 		ServiceName, _ := cmd.Flags().GetString("service-name")
 		var Type pb.AppGroupType
@@ -51,15 +52,13 @@ tks service create --cluster-id <CLUSTERID> --service-name <LMA,LMA_EFK,SERVICE_
 		} else if ServiceName == "SERVICE_MESH" {
 			Type = pb.AppGroupType_SERVICE_MESH
 		} else {
-			fmt.Println("You must specify Service Name. LMA | LMA_EFK | SERVICE_MESH")
-			os.Exit(1)
+			return errors.New("You must specify Service Name. LMA | LMA_EFK | SERVICE_MESH")
 		}
 
 		var conn *grpc.ClientConn
 		tksClusterLcmUrl = viper.GetString("tksClusterLcmUrl")
 		if tksClusterLcmUrl == "" {
-			fmt.Println("You must specify tksClusterLcmUrl at config file")
-			os.Exit(1)
+			return errors.New("You must specify tksClusterLcmUrl at config file")
 		}
 		conn, err := grpc.Dial(tksClusterLcmUrl, grpc.WithInsecure())
 		if err != nil {
@@ -103,6 +102,7 @@ tks service create --cluster-id <CLUSTERID> --service-name <LMA,LMA_EFK,SERVICE_
 		} else {
 			fmt.Println("Success: The request to create service ", AppGroupName, " was accepted.")
 		}
+		return nil
 	},
 }
 

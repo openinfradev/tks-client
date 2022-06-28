@@ -91,9 +91,9 @@ func TestClusterCmd(t *testing.T) {
 
 		{[]string{"cluster"}, true, "", ""},
 		{[]string{"cluster", "wrong"}, true, "", ""},
-		// {[]string{"cluster", "create"}, true, "required flag(s) \"contract-id\", \"csp-id\" not set", ""}, 	// It generates Exit(1) and the FAILed test
+		{[]string{"cluster", "create"}, true, "Usage: tks cluster create <CLUSTERNAME>", ""},
 		{[]string{"cluster", "create", "--config"}, true, "flag needs an argument: --config", ""},
-		// {[]string{"cluster", "create", "--config", "xx"}, true, "required flag(s) \"contract-id\", \"csp-id\" not set", ""}, 	// It generates Exit(1) and the FAILed test
+		{[]string{"cluster", "create", "--config", "xx"}, true, "Usage: tks cluster create <CLUSTERNAME>", ""},
 		{[]string{"cluster", "create", "-h"}, false, "", "Create a TKS Cluster to AWS."},
 		{[]string{"cluster", "create", "--contract-id"}, true, "flag needs an argument: --contract-id", ""},
 		{[]string{"cluster", "create", "--contract-id", "1234"}, false, "", ""},
@@ -104,9 +104,9 @@ func TestClusterCmd(t *testing.T) {
 		{[]string{"cluster", "create", "--contract-id", "--csp-id", "2345234", "hihi", "--config"}, true, "flag needs an argument: --config", ""},
 		{[]string{"cluster", "create", "--contract-id", "abcd-efg", "--csp-id", "2345234", "hihi"}, false, "", "Create a TKS Cluster to AWS"},
 
-		// {[]string{"cluster", "list"}, true, "", ""},	// It generates Exit(1) and the FAILed test
+		{[]string{"cluster", "list"}, true, "", ""},
 		{[]string{"cluster", "list", "-h"}, false, "", "A longer description that spans multiple lines and likely contains examples"},
-		{[]string{"cluster", "list", "--config", "xx"}, false, "", "A longer description that spans multiple lines and likely contains examples"}, // It generates Exit(1) and the FAILed test
+		{[]string{"cluster", "list", "--config", "xx"}, false, "", "A longer description that spans multiple lines and likely contains examples"},
 		{[]string{"cluster", "list", "--config"}, true, "flag needs an argument: --config", ""},
 	}
 
@@ -120,9 +120,9 @@ func TestServiceCmd(t *testing.T) {
 		{[]string{"service", "-h"}, false, "", ""},
 		{[]string{"service", "create"}, true, "required flag(s) \"cluster-id\", \"service-name\" not set", ""},
 		{[]string{"service", "create", "--cluster-id"}, true, "flag needs an argument: --cluster-id", ""},
-		// {[]string{"service", "create", "--cluster-id", "--service-name"}, true, "required flag(s) \"service-name\" not set"), ""},
-		// {[]string{"service", "create", "--cluster-id", "aaa", "--service-name"}, true, "flag needs an argument: --service-name"), ""},
-		// {[]string{"service", "create", "--cluster-id", "aaa", "--service-name", "LMA"}, true, "", ""}, // It generates Exit(1) and the FAILed test
+		{[]string{"service", "create", "--cluster-id", "--service-name"}, true, "required flag(s) \"service-name\" not set", ""},
+		{[]string{"service", "create", "--cluster-id", "aaa", "--service-name"}, true, "flag needs an argument: --service-name", ""},
+		{[]string{"service", "create", "--cluster-id", "aaa", "--service-name", "LMA"}, true, "", ""},
 	}
 
 	doTest(t, testcases)

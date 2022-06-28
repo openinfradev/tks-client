@@ -17,9 +17,9 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"google.golang.org/grpc"
@@ -39,17 +39,16 @@ var serviceListCmd = &cobra.Command{
 
 Example:
 tks service list <CLUSTER ID> (--long)`,
-	Run: func(cmd *cobra.Command, args []string) {
+	SilenceUsage: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			fmt.Println("You must specify cluster ID.")
-			fmt.Println("Usage: tks service list <CLUSTER ID>")
-			os.Exit(1)
+			return errors.New("Usage: tks service list <CLUSTER ID>")
 		}
 		var conn *grpc.ClientConn
 		tksInfoUrl = viper.GetString("tksInfoUrl")
 		if tksInfoUrl == "" {
-			fmt.Println("You must specify tksInfoUrl at config file")
-			os.Exit(1)
+			return errors.New("You must specify tksInfoUrl at config file")
 		}
 		conn, err := grpc.Dial(tksInfoUrl, grpc.WithInsecure())
 		if err != nil {
@@ -83,6 +82,7 @@ tks service list <CLUSTER ID> (--long)`,
 			long, _ := cmd.Flags().GetBool("long")
 			printAppGroups(r, long)
 		}
+		return nil
 	},
 }
 
