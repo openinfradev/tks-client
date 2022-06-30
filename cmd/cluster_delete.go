@@ -17,9 +17,9 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"google.golang.org/grpc"
@@ -38,18 +38,18 @@ var clusterDeleteCmd = &cobra.Command{
 	
 Example:
 tks cluster delete <CLUSTER_ID>`,
-	Run: func(cmd *cobra.Command, args []string) {
+	SilenceUsage: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			fmt.Println("You must specify cluster name.")
-			fmt.Println("Usage: tks cluster delete <CLUSTER_ID>")
-			os.Exit(1)
+			return errors.New("Usage: tks cluster delete <CLUSTER_ID>")
 		}
 
 		var conn *grpc.ClientConn
 		tksClusterLcmUrl = viper.GetString("tksClusterLcmUrl")
 		if tksClusterLcmUrl == "" {
 			fmt.Println("You must specify tksClusterLcmUrl at config file")
-			os.Exit(1)
+			return errors.New("You must specify tksClusterLcmUrl at config file")
 		}
 		conn, err := grpc.Dial(tksClusterLcmUrl, grpc.WithInsecure())
 		if err != nil {
@@ -80,6 +80,7 @@ tks cluster delete <CLUSTER_ID>`,
 		} else {
 			fmt.Println("The request to delete cluster ", args[0], " was accepted.")
 		}
+		return nil
 	},
 }
 

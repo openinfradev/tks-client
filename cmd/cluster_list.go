@@ -17,9 +17,9 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"google.golang.org/grpc"
@@ -40,12 +40,12 @@ var clusterListCmd = &cobra.Command{
 
 Example:
 tks cluster list (--long)`,
-	Run: func(cmd *cobra.Command, args []string) {
+	SilenceUsage: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
 		var conn *grpc.ClientConn
 		tksInfoUrl = viper.GetString("tksInfoUrl")
 		if tksInfoUrl == "" {
-			fmt.Println("You must specify tksInfoUrl at config file")
-			os.Exit(1)
+			return errors.New("You must specify tksInfoUrl at config file")
 		}
 		conn, err := grpc.Dial(tksInfoUrl, grpc.WithInsecure())
 		if err != nil {
@@ -81,6 +81,7 @@ tks cluster list (--long)`,
 				printClusters(filterResponse(r), long)
 			}
 		}
+		return nil
 	},
 }
 

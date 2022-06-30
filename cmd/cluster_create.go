@@ -17,9 +17,9 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"google.golang.org/grpc"
@@ -38,17 +38,16 @@ var clusterCreateCmd = &cobra.Command{
   
 Example:
 tks cluster create <CLUSTERNAME>`,
-	Run: func(cmd *cobra.Command, args []string) {
+	SilenceUsage: true,
+	RunE: func(cmd *cobra.Command, args []string) error{
 		if len(args) == 0 {
 			fmt.Println("You must specify cluster name.")
-			fmt.Println("Usage: tks cluster create <CLUSTERNAME>")
-			os.Exit(1)
+			return errors.New("Usage: tks cluster create <CLUSTERNAME>")
 		}
 		var conn *grpc.ClientConn
 		tksClusterLcmUrl = viper.GetString("tksClusterLcmUrl")
 		if tksClusterLcmUrl == "" {
-			fmt.Println("You must specify tksClusterLcmUrl at config file")
-			os.Exit(1)
+			return errors.New("You must specify tksClusterLcmUrl at config file")
 		}
 		conn, err := grpc.Dial(tksClusterLcmUrl, grpc.WithInsecure())
 		if err != nil {
@@ -99,6 +98,8 @@ tks cluster create <CLUSTERNAME>`,
 		} else {
 			fmt.Println("Success: The request to create cluster ", args[0], " was accepted.")
 		}
+
+		return nil
 	},
 }
 

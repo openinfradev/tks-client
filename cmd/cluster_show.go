@@ -17,9 +17,9 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/jedib0t/go-pretty/table"
@@ -38,17 +38,16 @@ var clusterShowCmd = &cobra.Command{
 
 Example:
 tks cluster show <CLUSTER_ID>`,
-	Run: func(cmd *cobra.Command, args []string) {
+	SilenceUsage: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			fmt.Println("You must specify cluster id.")
-			fmt.Println("Usage: tks cluster show <CLUSTER_ID>")
-			os.Exit(1)
+			return errors.New("Usage: tks cluster show <CLUSTER_ID>")
 		}
 		var conn *grpc.ClientConn
 		tksInfoUrl = viper.GetString("tksInfoUrl")
 		if tksInfoUrl == "" {
-			fmt.Println("You must specify tksInfoUrl at config file")
-			os.Exit(1)
+			return errors.New("You must specify tksInfoUrl at config file")
 		}
 		conn, err := grpc.Dial(tksInfoUrl, grpc.WithInsecure())
 		if err != nil {
@@ -79,6 +78,7 @@ tks cluster show <CLUSTER_ID>`,
 		} else {
 			printCluster(r)
 		}
+		return nil
 	},
 }
 
