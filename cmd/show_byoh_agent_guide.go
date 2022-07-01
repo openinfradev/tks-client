@@ -17,8 +17,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"os/exec"
 
 	"github.com/spf13/cobra"
@@ -41,17 +39,15 @@ Standard reference architecture is as follows.
 
 Among these types, the 'worker' nodes might needs to be scaled out based on your application size.
 `,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 
 		nodeType, _ := cmd.Flags().GetString("type")
 		if nodeType == "" {
-			fmt.Printf("Usage: tks cluster show-byoh-node-agent-guide --type=$NODE_TYPE\n")
-			os.Exit(1)
+			return fmt.Errorf("Usage: tks cluster show-byoh-node-agent-guide --type=$NODE_TYPE\n")
 		}
 
 		if nodeType != "controlplane" && nodeType != "tks" && nodeType != "worker" {
-			fmt.Printf("Wrong node type '%s': please refer to help message.\n", nodeType)
-			os.Exit(1)
+			return fmt.Errorf("Wrong node type '%s': please refer to help message.\n", nodeType)
 		}
 
 		fmt.Printf("*************************************************\n")
@@ -63,7 +59,7 @@ Among these types, the 'worker' nodes might needs to be scaled out based on your
 		cmdStr := "cat ~/.kube/config | base64"
 		out, err := exec.Command("bash", "-c", cmdStr).Output()
 		if err != nil {
-			log.Fatal(err)
+			return fmt.Errorf("Error: %s", err)
 		}
 
 		fmt.Printf("Encoded kubeconfig for MGMT cluster:\n%s\n", string(out))
@@ -98,7 +94,7 @@ That's it! Enjoy BYOH provider!
 *******************************
 `
 		fmt.Printf(guide_str, nodeType)
-
+		return nil
 	},
 }
 

@@ -98,8 +98,7 @@ tks service create --cluster-id <CLUSTERID> --service-name <LMA,LMA_EFK,SERVICE_
 		r, err := client.InstallAppGroups(ctx, &data[0])
 		fmt.Println("Response:\n", r)
 		if err != nil {
-			fmt.Println("Error:", err)
-			os.Exit(1)
+			return fmt.Errorf("Error: %s", err)
 		} else {
 			fmt.Println("Success: The request to create service ", AppGroupName, " was accepted.")
 		}

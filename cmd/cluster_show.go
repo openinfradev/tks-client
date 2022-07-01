@@ -73,8 +73,7 @@ tks cluster show <CLUSTER_ID>`,
 		}
 		r, err := client.GetCluster(ctx, &data)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			return fmt.Errorf("Error: %s", err)
 		} else {
 			printCluster(r)
 		}
