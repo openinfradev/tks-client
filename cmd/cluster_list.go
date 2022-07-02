@@ -72,8 +72,7 @@ tks cluster list (--long)`,
 		}
 		r, err := client.GetClusters(ctx, &data)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			return fmt.Errorf("Error: %s", err)
 		} else {
 			if len(r.Clusters) == 0 {
 				fmt.Println("No cluster exists for specified contract!")

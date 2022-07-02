@@ -75,8 +75,7 @@ tks cluster delete <CLUSTER_ID>`,
 		r, err := client.DeleteCluster(ctx, &data)
 		fmt.Println(r)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			return fmt.Errorf("Error: %s", err)
 		} else {
 			fmt.Println("The request to delete cluster ", args[0], " was accepted.")
 		}

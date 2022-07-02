@@ -93,8 +93,7 @@ tks cluster create <CLUSTERNAME>`,
 		r, err := client.CreateCluster(ctx, &data)
 		fmt.Println("Response:\n", r)
 		if err != nil {
-			fmt.Println("Error:", err)
-			os.Exit(1)
+			return fmt.Errorf("Error: %s", err)
 		} else {
 			fmt.Println("Success: The request to create cluster ", args[0], " was accepted.")
 		}
