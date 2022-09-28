@@ -16,9 +16,6 @@ limitations under the License.
 package cmd
 
 var (
-	defaultContractId string
-	defaultCspId      string
 	tksInfoUrl        string
 	tksClusterLcmUrl  string
-	tksContractUrl    string
 )
