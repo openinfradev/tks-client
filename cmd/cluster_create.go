@@ -34,10 +34,10 @@ import (
 var clusterCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a TKS Cluster.",
-	Long: `Create a TKS Cluster to AWS.
+	Long: `Create a TKS Cluster.
   
 Example:
-tks cluster create <CLUSTERNAME>`,
+tks cluster create <CLUSTERNAME> [--template TEMPLATE_NAME]`,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error{
 		if len(args) == 0 {
@@ -74,12 +74,15 @@ tks cluster create <CLUSTERNAME>`,
 		machineReplicas, _ := cmd.Flags().GetInt("machine-replicas")
 		conf.MachineReplicas = int32(machineReplicas)
 
+		templateName, _ := cmd.Flags().GetString("template")
+
 		/* Construct request map */
 		data := pb.CreateClusterRequest{
 			Name:       ClusterName,
 			ContractId: ContractId,
 			CspId:      CspId,
 			Conf:       &conf,
+			TemplateName: templateName,
 		}
 
 		m := protojson.MarshalOptions{
@@ -121,4 +124,5 @@ func init() {
 	clusterCreateCmd.Flags().String("ssh-key-name", "", "SSH key name for EC2 instance connection")
 	clusterCreateCmd.Flags().String("machine-type", "", "machine type of worker node")
 	clusterCreateCmd.Flags().Int("machine-replicas", 3, "machine replicas of worker node")
+	clusterCreateCmd.Flags().String("template", "aws-reference", "Template name for the cluster")
 }
