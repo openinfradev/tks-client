@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,6 +27,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -49,7 +50,7 @@ tks cluster show <CLUSTER_ID>`,
 		if tksInfoUrl == "" {
 			return errors.New("You must specify tksInfoUrl at config file")
 		}
-		conn, err := grpc.Dial(tksInfoUrl, grpc.WithInsecure())
+		conn, err := grpc.Dial(tksInfoUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Fatalf("did not connect: %s", err)
 		}
@@ -66,7 +67,7 @@ tks cluster show <CLUSTER_ID>`,
 			UseProtoNames: true,
 		}
 		jsonBytes, _ := m.Marshal(&data)
-		verbose, err := rootCmd.PersistentFlags().GetBool("verbose")
+		verbose, _ := rootCmd.PersistentFlags().GetBool("verbose")
 		if verbose {
 			fmt.Println("Proto Json data...")
 			fmt.Println(string(jsonBytes))

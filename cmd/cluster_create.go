@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	pb "github.com/openinfradev/tks-proto/tks_pb"
 	"github.com/spf13/cobra"
@@ -34,12 +35,12 @@ import (
 var clusterCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a TKS Cluster.",
-	Long: `Create a TKS Cluster to AWS.
+	Long: `Create a TKS Cluster.
   
 Example:
-tks cluster create <CLUSTERNAME>`,
+tks cluster create <CLUSTERNAME> [--template TEMPLATE_NAME]`,
 	SilenceUsage: true,
-	RunE: func(cmd *cobra.Command, args []string) error{
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			fmt.Println("You must specify cluster name.")
 			return errors.New("Usage: tks cluster create <CLUSTERNAME>")
@@ -49,7 +50,7 @@ tks cluster create <CLUSTERNAME>`,
 		if tksClusterLcmUrl == "" {
 			return errors.New("You must specify tksClusterLcmUrl at config file")
 		}
-		conn, err := grpc.Dial(tksClusterLcmUrl, grpc.WithInsecure())
+		conn, err := grpc.Dial(tksClusterLcmUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Fatalf("Could not connect to LCM server: %s", err)
 		}
@@ -74,12 +75,15 @@ tks cluster create <CLUSTERNAME>`,
 		machineReplicas, _ := cmd.Flags().GetInt("machine-replicas")
 		conf.MachineReplicas = int32(machineReplicas)
 
+		templateName, _ := cmd.Flags().GetString("template")
+
 		/* Construct request map */
 		data := pb.CreateClusterRequest{
-			Name:       ClusterName,
-			ContractId: ContractId,
-			CspId:      CspId,
-			Conf:       &conf,
+			Name:         ClusterName,
+			ContractId:   ContractId,
+			CspId:        CspId,
+			Conf:         &conf,
+			TemplateName: templateName,
 		}
 
 		m := protojson.MarshalOptions{
@@ -121,4 +125,5 @@ func init() {
 	clusterCreateCmd.Flags().String("ssh-key-name", "", "SSH key name for EC2 instance connection")
 	clusterCreateCmd.Flags().String("machine-type", "", "machine type of worker node")
 	clusterCreateCmd.Flags().Int("machine-replicas", 3, "machine replicas of worker node")
+	clusterCreateCmd.Flags().String("template", "aws-reference", "Template name for the cluster")
 }
