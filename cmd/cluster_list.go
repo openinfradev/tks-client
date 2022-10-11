@@ -40,7 +40,7 @@ var clusterListCmd = &cobra.Command{
 	Long: `Show list of clusters.
 
 Example:
-tks cluster list (--long)`,
+tks cluster list <CONTRACT_ID> (--long)`,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var conn *grpc.ClientConn
@@ -58,7 +58,12 @@ tks cluster list (--long)`,
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 		defer cancel()
 		data := pb.GetClustersRequest{}
-		data.ContractId = viper.GetString("contractId")
+
+		if len(args) > 0 && args[0] != "" {
+			data.ContractId = args[0]
+		} else {
+			data.ContractId = viper.GetString("contractId")
+		}
 
 		m := protojson.MarshalOptions{
 			Indent:        "  ",
