@@ -75,6 +75,9 @@ tks service create --cluster-id <CLUSTERID> --service-name <LMA,LMA_EFK,SERVICE_
 		ClusterIdPre := strings.Split(ClusterId, "-")
 		AppGroupName := ClusterIdPre[0] + "_" + ServiceName
 
+		creator, _ := cmd.Flags().GetString("creator")
+		description, _ := cmd.Flags().GetString("description")
+
 		data := make([]pb.InstallAppGroupsRequest, 1)
 		appgroups := make([]pb.AppGroup, 1)
 		appgroups[0].AppGroupId = ""
@@ -85,6 +88,8 @@ tks service create --cluster-id <CLUSTERID> --service-name <LMA,LMA_EFK,SERVICE_
 		appgroups[0].Type = Type
 		appgroups[0].CreatedAt = timestamppb.Now()
 		appgroups[0].UpdatedAt = timestamppb.Now()
+		appgroups[0].Creator = creator
+		appgroups[0].Description = description
 
 		data[0].AppGroups = []*pb.AppGroup{&appgroups[0]}
 
@@ -123,4 +128,7 @@ func init() {
 	_ = serviceCreateCmd.MarkFlagRequired("cluster-id")
 	serviceCreateCmd.Flags().String("service-name", "", "Service Name")
 	_ = serviceCreateCmd.MarkFlagRequired("service-name")
+
+	serviceCreateCmd.Flags().String("creator", "", "Uuid of creator")
+	serviceCreateCmd.Flags().String("description", "", "Description of cluster")
 }

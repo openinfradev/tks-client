@@ -76,6 +76,8 @@ tks cluster create <CLUSTERNAME> [--template TEMPLATE_NAME]`,
 		conf.MachineReplicas = int32(machineReplicas)
 
 		templateName, _ := cmd.Flags().GetString("template")
+		creator, _ := cmd.Flags().GetString("creator")
+		description, _ := cmd.Flags().GetString("description")
 
 		/* Construct request map */
 		data := pb.CreateClusterRequest{
@@ -84,6 +86,8 @@ tks cluster create <CLUSTERNAME> [--template TEMPLATE_NAME]`,
 			CspId:        CspId,
 			Conf:         &conf,
 			TemplateName: templateName,
+			Creator:      creator,
+			Description:  description,
 		}
 
 		m := protojson.MarshalOptions{
@@ -126,4 +130,7 @@ func init() {
 	clusterCreateCmd.Flags().String("machine-type", "", "machine type of worker node")
 	clusterCreateCmd.Flags().Int("machine-replicas", 3, "machine replicas of worker node")
 	clusterCreateCmd.Flags().String("template", "aws-reference", "Template name for the cluster")
+
+	clusterCreateCmd.Flags().String("creator", "", "Uuid of creator")
+	clusterCreateCmd.Flags().String("description", "", "Description of cluster")
 }
