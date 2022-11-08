@@ -16,6 +16,6 @@ limitations under the License.
 package cmd
 
 var (
-	tksInfoUrl        string
-	tksClusterLcmUrl  string
+	tksInfoUrl       string
+	tksClusterLcmUrl string
 )

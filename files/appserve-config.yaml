@@ -1,0 +1,17 @@
+tks_appserve_api_url: http://localhost:9112
+contract_id: psh8wxoj7
+name: my-petclinic 
+version: v1 
+target_cluster_id: cdozqn511 
+task_type: all 
+artifact_url: "http://ab846aadb5b974536a0463a29ed866f5-200924269.ap-northeast-2.elb.amazonaws.com:8081/repository/my-release-repo/default/petclinic/1.0/petclinic-1.0.jar" 
+port: "8080"
+resource_spec: medium 
+profile: default
+persistent_volume:
+  enabled: false
+  storageclass: taco-storage
+  accessMode: ReadWriteOnce
+  size: 5Gi
+  mountPath: /usr/share/temp11
+
