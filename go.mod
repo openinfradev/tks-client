@@ -23,7 +23,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
-	github.com/openinfradev/tks-proto v0.0.6-0.20221018052004-85d1b297f865 // indirect
+	github.com/openinfradev/tks-proto v0.0.6-0.20221108083743-52cfd2c1ce73 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	github.com/rivo/uniseg v0.4.2 // indirect

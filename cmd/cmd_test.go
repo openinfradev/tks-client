@@ -108,6 +108,8 @@ func TestClusterCmd(t *testing.T) {
 		{[]string{"cluster", "list", "-h"}, false, "", "A longer description that spans multiple lines and likely contains examples"},
 		{[]string{"cluster", "list", "--config", "xx"}, false, "", "A longer description that spans multiple lines and likely contains examples"},
 		{[]string{"cluster", "list", "--config"}, true, "flag needs an argument: --config", ""},
+
+		{[]string{"cluster", "import", "--contract-id"}, true, "flag needs an argument: --contract-id", ""},
 	}
 
 	doTest(t, testcases)
