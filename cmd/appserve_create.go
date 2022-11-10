@@ -35,9 +35,9 @@ Example:
 tks appserve create <APPNAME> [--config CONFIGFILE]`,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return errors.New("Usage: tks appserve create <APPNAME>")
-		}
+		//if len(args) == 0 {
+		//	return errors.New("Usage: tks appserve create <APPNAME>")
+		//}
 
 		if cfgFile != "" {
 			// Use config file from the flag.
@@ -97,7 +97,6 @@ tks appserve create <APPNAME> [--config CONFIGFILE]`,
 			str := string(respBody)
 			// TODO: after test run, fix this output msg.
 			fmt.Println("Response:\n", str)
-			fmt.Println("Success: The request to create appserve ", args[0], " was accepted.")
 		}
 
 		return nil
