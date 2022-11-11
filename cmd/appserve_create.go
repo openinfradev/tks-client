@@ -54,10 +54,10 @@ tks appserve create <APPNAME> [--config CONFIGFILE]`,
 		if err := viper.ReadInConfig(); err != nil {
 			if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 				// Config file not found; ignore error if desired
-
+				return errors.New("Config file not found. Aborting..")
 			} else {
 				// Config file was found but another error was produced
-
+				return fmt.Errorf("Error while reading config: %s", err)
 			}
 		} else {
 			fmt.Printf("Using config file: %s\n", viper.ConfigFileUsed())
@@ -73,8 +73,7 @@ tks appserve create <APPNAME> [--config CONFIGFILE]`,
 		delete(c, "tks_appserve_api_url")
 		cBytes, err := json.Marshal(c) // 맵을 JSON 문서로 변환
 		if err != nil {
-			// TODO: %s or %v??
-			return fmt.Errorf("Unable to marshal config to JSON: %v", err)
+			return fmt.Errorf("Unable to marshal config to JSON: %s", err)
 		}
 
 		fmt.Println("========== ")
@@ -85,7 +84,6 @@ tks appserve create <APPNAME> [--config CONFIGFILE]`,
 		buff := bytes.NewBuffer(cBytes)
 		resp, err := http.Post(appserveApiUrl+"/apps", "application/json", buff)
 		if err != nil {
-			//panic(err)
 			return fmt.Errorf("Error from POST req: %s", err)
 		}
 
