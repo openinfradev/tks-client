@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -52,13 +52,7 @@ tks appserve create <APPNAME> [--config CONFIGFILE]`,
 
 		// If a config file is found, read it in.
 		if err := viper.ReadInConfig(); err != nil {
-			if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-				// Config file not found; ignore error if desired
-				return errors.New("Config file not found. Aborting..")
-			} else {
-				// Config file was found but another error was produced
-				return fmt.Errorf("Error while reading config: %s", err)
-			}
+			return fmt.Errorf("Error while reading config: %s", err)
 		} else {
 			fmt.Printf("Using config file: %s\n", viper.ConfigFileUsed())
 		}
@@ -90,7 +84,7 @@ tks appserve create <APPNAME> [--config CONFIGFILE]`,
 		defer resp.Body.Close()
 
 		// Check response
-		respBody, err := ioutil.ReadAll(resp.Body)
+		respBody, err := io.ReadAll(resp.Body)
 		if err == nil {
 			str := string(respBody)
 			// TODO: after test run, fix this output msg.
