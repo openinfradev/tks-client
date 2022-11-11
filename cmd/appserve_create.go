@@ -32,13 +32,9 @@ var appserveCreateCmd = &cobra.Command{
 	Long: `Create an app by AppServing service.
   
 Example:
-tks appserve create <APPNAME> [--config CONFIGFILE]`,
+tks appserve create [--config CONFIGFILE]`,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		//if len(args) == 0 {
-		//	return errors.New("Usage: tks appserve create <APPNAME>")
-		//}
-
 		if cfgFile != "" {
 			// Use config file from the flag.
 			viper.SetConfigFile(cfgFile)
@@ -48,7 +44,8 @@ tks appserve create <APPNAME> [--config CONFIGFILE]`,
 			viper.AddConfigPath(".")               // optionally look for config in the working directory
 		}
 
-		viper.AutomaticEnv() // read in environment variables that match
+		// Don't use this until it's necessary
+		//viper.AutomaticEnv() // read in environment variables that match
 
 		// If a config file is found, read it in.
 		if err := viper.ReadInConfig(); err != nil {
