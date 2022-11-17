@@ -19,6 +19,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"log"
 	"time"
 
@@ -28,7 +29,6 @@ import (
 	pb "github.com/openinfradev/tks-proto/tks_pb"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 // clusterImportCmd represents the import command
@@ -65,17 +65,25 @@ tks cluster import <CLUSTERNAME> [--contract-id CONTRACTID --kubeconfig KUBECONF
 		ContractId, _ := cmd.Flags().GetString("contract-id")
 		creator, _ := cmd.Flags().GetString("creator")
 		description, _ := cmd.Flags().GetString("description")
-		kubeconfig, _ := cmd.Flags().GetString("kubeconfig")
+		templateName, _ := cmd.Flags().GetString("template")
+		kubeconfigPath, _ := cmd.Flags().GetString("kubeconfig-path")
+		kubeconfig, err := os.ReadFile(kubeconfigPath)
+		if err != nil {
+			log.Fatalf("Failed to read kubeconfig from [%s] path", err)
+			log.Fatalf("Failed to read kubeconfig from [%s] path", kubeconfigPath)
+		}
 
 		/* Construct request map */
 		data := pb.ImportClusterRequest{
 			Name:         ClusterName,
 			ContractId:   ContractId,
 			Kubeconfig:   kubeconfig,
+			TemplateName: templateName,
 			Creator:      creator,
 			Description:  description,
 		}
 
+		/* Comment for security
 		m := protojson.MarshalOptions{
 			Indent:        "  ",
 			UseProtoNames: true,
@@ -83,6 +91,7 @@ tks cluster import <CLUSTERNAME> [--contract-id CONTRACTID --kubeconfig KUBECONF
 		jsonBytes, _ := m.Marshal(&data)
 		fmt.Println("Proto Json data: ")
 		fmt.Println(string(jsonBytes))
+		*/
 
 		r, err := client.ImportCluster(ctx, &data)
 		fmt.Println("Response:\n", r)
@@ -109,8 +118,9 @@ func init() {
 	// is called directly, e.g.:
 	// clusterCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	clusterImportCmd.Flags().String("contract-id", "", "Contract ID")
-	_ = clusterImportCmd.MarkFlagRequired("contract-id")
-	clusterImportCmd.Flags().String("kubeconfig", "", "Kubeconfig of the cluster")
+	clusterImportCmd.Flags().String("kubeconfig-path", "", "Path of Kubeconfig for importing cluster")
+	_ = clusterImportCmd.MarkFlagRequired("kubeconfig-path")
+	clusterImportCmd.Flags().String("template", "aws-reference", "Template name for the cluster")
 
 	clusterImportCmd.Flags().String("creator", "", "Uuid of creator")
 	clusterImportCmd.Flags().String("description", "", "Description of cluster")
