@@ -22,9 +22,34 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 	"io"
+	"io/ioutil"
 	"net/http"
 )
+
+var appserveCfgFile string
+
+// Member variables are named as snake_case on purpose
+// to be marshalled into json object later.
+type conf struct {
+	Contract_id  string `yaml:"contract_id"`
+	Name         string `yaml:"name"`
+	Version      string `yaml:"version"`
+	Task_type    string `yaml:"task_type"`
+	Artifact_url string `yaml:"artifact_url"`
+	Port         string `yaml:"port"`
+	Profile      string `yaml:"profile"`
+
+	Resource_spec     string `yaml:"resource_spec"`
+	Target_cluster_id string `yaml:"target_cluster_id"`
+
+	Pv_enabled       bool   `yaml:"pv_enabled"`
+	Pv_storage_class string `yaml:"pv_storage_class"`
+	Pv_access_mode   string `yaml:"pv_access_mode"`
+	Pv_size          string `yaml:"pv_size"`
+	Pv_mount_path    string `yaml:"pv_mount_path"`
+}
 
 var appserveCreateCmd = &cobra.Command{
 	Use:   "create",
@@ -32,37 +57,35 @@ var appserveCreateCmd = &cobra.Command{
 	Long: `Create an app by AppServing service.
   
 Example:
-tks appserve create [--config CONFIGFILE]`,
+tks appserve create --appserve-config CONFIGFILE`,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if cfgFile != "" {
-			// Use config file from the flag.
-			viper.SetConfigFile(cfgFile)
-		} else {
-			viper.SetConfigName("appserve-config") // name of config file (without extension)
-			viper.SetConfigType("yaml")            // REQUIRED if the config file does not have the extension in the name
-			viper.AddConfigPath(".")               // optionally look for config in the working directory
-		}
-
-		// Don't use this until it's necessary
-		//viper.AutomaticEnv() // read in environment variables that match
-
-		// If a config file is found, read it in.
-		if err := viper.ReadInConfig(); err != nil {
-			return fmt.Errorf("Error while reading config: %s", err)
-		} else {
-			fmt.Printf("Using config file: %s\n", viper.ConfigFileUsed())
-		}
-
+		// Get API Url
 		appserveApiUrl := viper.GetString("tks_appserve_api_url")
 		if appserveApiUrl == "" {
-			return errors.New("tks_appserve_api_url is mandatory in config file")
+			return errors.New("tks_appserve_api_url is mandatory.")
 		}
 
-		c := viper.AllSettings()
-		//fmt.Printf("viper map: %v\n\n", c)
-		delete(c, "tks_appserve_api_url")
-		cBytes, err := json.Marshal(c) // 맵을 JSON 문서로 변환
+		var c conf
+		if appserveCfgFile == "" {
+			return fmt.Errorf("--appservce-config is mandatory param.")
+		}
+
+		// Get Appserving request params from config file
+		yamlData, err := ioutil.ReadFile(appserveCfgFile)
+		if err != nil {
+			fmt.Errorf("error: %s", err)
+		}
+
+		fmt.Printf("*******\nConfig:\n%+s\n*******\n", yamlData)
+
+		err = yaml.Unmarshal(yamlData, &c)
+		if err != nil {
+			fmt.Errorf("error: %s", err)
+		}
+
+		// Convert map to Json
+		cBytes, err := json.Marshal(&c)
 		if err != nil {
 			return fmt.Errorf("Unable to marshal config to JSON: %s", err)
 		}
@@ -95,7 +118,7 @@ tks appserve create [--config CONFIGFILE]`,
 func init() {
 	appserveCmd.AddCommand(appserveCreateCmd)
 
-	appserveCreateCmd.Flags().StringVar(&cfgFile, "config", "", "config file (default is ./appserve-config.yaml)")
+	appserveCreateCmd.Flags().StringVar(&appserveCfgFile, "appserve-config", "", "config file for AppServing service")
 
 	// Here you will define your flags and configuration settings.
 

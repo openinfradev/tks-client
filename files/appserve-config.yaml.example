@@ -1,6 +1,3 @@
-## API_URL ##
-tks_appserve_api_url: http://localhost:9112
-
 ## App Info ##
 contract_id: psh8wxoj7
 name: petclinic
@@ -19,4 +16,4 @@ pv_enabled: false
 pv_storage_class: taco-storage
 pv_access_mode: ReadWriteOnce
 pv_size: 5Gi
-pv_mount_path: /usr/share/temp1
+pv_mount_path: "/usr/share/temp1"
