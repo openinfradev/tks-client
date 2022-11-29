@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 	"io"
-	"io/ioutil"
+	"os"
 	"net/http"
 )
 
@@ -68,20 +68,20 @@ tks appserve create --appserve-config CONFIGFILE`,
 
 		var c conf
 		if appserveCfgFile == "" {
-			return fmt.Errorf("--appservce-config is mandatory param.")
+			return errors.New("--appservce-config is mandatory param.")
 		}
 
 		// Get Appserving request params from config file
-		yamlData, err := ioutil.ReadFile(appserveCfgFile)
+		yamlData, err := os.ReadFile(appserveCfgFile)
 		if err != nil {
-			fmt.Errorf("error: %s", err)
+			return fmt.Errorf("error: %s", err)
 		}
 
 		fmt.Printf("*******\nConfig:\n%+s\n*******\n", yamlData)
 
 		err = yaml.Unmarshal(yamlData, &c)
 		if err != nil {
-			fmt.Errorf("error: %s", err)
+			return fmt.Errorf("error: %s", err)
 		}
 
 		// Convert map to Json
