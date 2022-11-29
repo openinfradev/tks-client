@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/matryer/is v1.4.0
+	github.com/openinfradev/tks-proto v0.0.6-0.20221117013032-f3e8aa863671
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.13.0
 	google.golang.org/grpc v1.49.0
@@ -23,7 +24,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
-	github.com/openinfradev/tks-proto v0.0.6-0.20221018052004-85d1b297f865 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	github.com/rivo/uniseg v0.4.2 // indirect
@@ -44,3 +44,5 @@ require (
 )
 
 replace github.com/openinfradev/tks-client => ./
+
+//replace github.com/openinfradev/tks-proto => ../tks-proto

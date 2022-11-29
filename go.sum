@@ -177,10 +177,8 @@ github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe/go.mod h1:wL8QJ
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/oklog/ulid v1.3.1 h1:EGfNDEx6MqHz8B3uNV6QAib1UR2Lm97sHi3ocA6ESJ4=
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
-github.com/openinfradev/tks-proto v0.0.6-0.20220927101958-ec0ec0085191 h1:+9bYv05jGgzZ6s9amFLHl0CTDLf0mAzmhraquoVPX+A=
-github.com/openinfradev/tks-proto v0.0.6-0.20220927101958-ec0ec0085191/go.mod h1:IIxiwEZVfqLXm/O4KGiD0q/ELlyKxXx44TCM5ZWhpJs=
-github.com/openinfradev/tks-proto v0.0.6-0.20221018052004-85d1b297f865 h1:YGJloolf98NRDFeiwdm3qrk+8FmzDqROgoOg8D+20Cw=
-github.com/openinfradev/tks-proto v0.0.6-0.20221018052004-85d1b297f865/go.mod h1:IIxiwEZVfqLXm/O4KGiD0q/ELlyKxXx44TCM5ZWhpJs=
+github.com/openinfradev/tks-proto v0.0.6-0.20221117013032-f3e8aa863671 h1:zcGUqoU2N0tE+G2aZTZE63dX2xT72mos7amCJiAk1s8=
+github.com/openinfradev/tks-proto v0.0.6-0.20221117013032-f3e8aa863671/go.mod h1:IIxiwEZVfqLXm/O4KGiD0q/ELlyKxXx44TCM5ZWhpJs=
 github.com/pelletier/go-toml v1.9.5 h1:4yBQzkHv+7BHq2PQUZF3Mx0IYxG7LsP222s7Agd3ve8=
 github.com/pelletier/go-toml v1.9.5/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
 github.com/pelletier/go-toml/v2 v2.0.5 h1:ipoSadvV8oGUjnUbMub59IDPPwfxF694nG/jwbMiyQg=
