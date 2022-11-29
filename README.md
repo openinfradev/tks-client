@@ -118,6 +118,7 @@ $ tee ~/.tks-client.yaml << EOF
 tksInfoUrl: "tks-info.taco.com:9110"
 tksContractUrl: "tks-contract.taco.com:9110"
 tksClusterLcmUrl: "tks-cluster-lcm.taco.com:9110"
+tksAppServeLcmUrl: "tks-appserve-lcm.taco.com:9110"
 EOF
 
 $ tks cluster list

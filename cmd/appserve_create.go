@@ -61,7 +61,7 @@ tks appserve create --appserve-config CONFIGFILE`,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Get API Url
-		appserveApiUrl := viper.GetString("tks_appserve_api_url")
+		appserveApiUrl := viper.GetString("tksAppServeLcmUrl")
 		if appserveApiUrl == "" {
 			return errors.New("tks_appserve_api_url is mandatory.")
 		}
