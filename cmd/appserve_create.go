@@ -24,8 +24,8 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 	"io"
-	"os"
 	"net/http"
+	"os"
 )
 
 var appserveCfgFile string
@@ -36,7 +36,7 @@ type conf struct {
 	Contract_id  string `yaml:"contract_id"`
 	Name         string `yaml:"name"`
 	Version      string `yaml:"version"`
-	Task_type    string `yaml:"task_type"`
+	Type         string `yaml:"type"`
 	Artifact_url string `yaml:"artifact_url"`
 	Port         string `yaml:"port"`
 	Profile      string `yaml:"profile"`
