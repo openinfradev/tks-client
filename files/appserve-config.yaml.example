@@ -2,7 +2,7 @@
 contract_id: psh8wxoj7
 name: petclinic
 version: v1
-task_type: all
+type: all
 artifact_url: "http://ab846aadb5b974536a0463a29ed866f5-200924269.ap-northeast-2.elb.amazonaws.com:8081/repository/my-release-repo/default/petclinic/1.0/petclinic-1.0.jar"
 port: "8080"
 profile: default
