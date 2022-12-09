@@ -37,6 +37,7 @@ type conf struct {
 	Name         string `yaml:"name"`
 	Version      string `yaml:"version"`
 	Type         string `yaml:"type"`
+	App_type     string `yaml:"app_type"`
 	Artifact_url string `yaml:"artifact_url"`
 	Port         string `yaml:"port"`
 	Profile      string `yaml:"profile"`
