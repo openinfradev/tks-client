@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/matryer/is v1.4.0
-	github.com/openinfradev/tks-proto v0.0.6-0.20221117013032-f3e8aa863671
+	github.com/openinfradev/tks-proto v0.0.6-0.20221212083008-53c4931d7edb
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.13.0
 	google.golang.org/grpc v1.49.0
@@ -34,9 +34,9 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
 	go.mongodb.org/mongo-driver v1.10.2 // indirect
-	golang.org/x/net v0.0.0-20220927171203-f486391704dc // indirect
-	golang.org/x/sys v0.0.0-20220927170352-d9d178bc13c6 // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/net v0.2.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	google.golang.org/genproto v0.0.0-20220927151529-dcaddaf36704 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
