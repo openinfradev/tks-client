@@ -29,6 +29,7 @@ import (
 )
 
 var appserveCfgFile string
+var appCfgFile string
 
 // Member variables are named as snake_case on purpose
 // to be marshalled into json object later.
@@ -41,6 +42,7 @@ type conf struct {
 	Artifact_url string `yaml:"artifact_url"`
 	Port         string `yaml:"port"`
 	Profile      string `yaml:"profile"`
+	App_config   string
 
 	Resource_spec     string `yaml:"resource_spec"`
 	Target_cluster_id string `yaml:"target_cluster_id"`
@@ -80,10 +82,20 @@ tks appserve create --appserve-config CONFIGFILE`,
 
 		fmt.Printf("*******\nConfig:\n%+s\n*******\n", yamlData)
 
+		// Get application config from file
+		appCfg, err := os.ReadFile(appCfgFile)
+		if err != nil {
+			return fmt.Errorf("error: %s", err)
+		}
+
+		// Unmarshal yaml content into struct
 		err = yaml.Unmarshal(yamlData, &c)
 		if err != nil {
 			return fmt.Errorf("error: %s", err)
 		}
+
+		// Add appCfg to existing struct
+		c.App_config = string(appCfg)
 
 		// Convert map to Json
 		cBytes, err := json.Marshal(&c)
@@ -120,6 +132,7 @@ func init() {
 	appserveCmd.AddCommand(appserveCreateCmd)
 
 	appserveCreateCmd.Flags().StringVar(&appserveCfgFile, "appserve-config", "", "config file for AppServing service")
+	appserveCreateCmd.Flags().StringVar(&appCfgFile, "app-config", "", "custom config file for user application")
 
 	// Here you will define your flags and configuration settings.
 
