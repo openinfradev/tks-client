@@ -34,15 +34,17 @@ var appCfgFile string
 // Member variables are named as snake_case on purpose
 // to be marshalled into json object later.
 type conf struct {
-	Contract_id  string `yaml:"contract_id"`
-	Name         string `yaml:"name"`
-	Version      string `yaml:"version"`
-	Type         string `yaml:"type"`
-	App_type     string `yaml:"app_type"`
-	Artifact_url string `yaml:"artifact_url"`
-	Port         string `yaml:"port"`
-	Profile      string `yaml:"profile"`
-	App_config   string
+	Contract_id     string `yaml:"contract_id"`
+	Name            string `yaml:"name"`
+	Version         string `yaml:"version"`
+	Type            string `yaml:"type"`
+	App_type        string `yaml:"app_type"`
+	Artifact_url    string `yaml:"artifact_url"`
+	Image_url       string `yaml:"image_url"`
+	Executable_path string `yaml:"executable_path"`
+	Port            string `yaml:"port"`
+	Profile         string `yaml:"profile"`
+	App_config      string
 
 	Resource_spec     string `yaml:"resource_spec"`
 	Target_cluster_id string `yaml:"target_cluster_id"`
