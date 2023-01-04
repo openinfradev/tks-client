@@ -44,6 +44,7 @@ type conf struct {
 	Executable_path string `yaml:"executable_path"`
 	Port            string `yaml:"port"`
 	Profile         string `yaml:"profile"`
+	Extra_env       string `yaml:"extra_env"`
 	App_config      string
 
 	Resource_spec     string `yaml:"resource_spec"`
