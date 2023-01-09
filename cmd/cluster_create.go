@@ -125,10 +125,10 @@ func init() {
 	clusterCreateCmd.Flags().String("contract-id", "", "Contract ID")
 	clusterCreateCmd.Flags().String("csp-id", "", "CSP ID")
 	clusterCreateCmd.Flags().String("region", "", "AWS Region")
-	clusterCreateCmd.Flags().Int("num-of-az", 3, "Number of availability zones in selected region")
+	clusterCreateCmd.Flags().Int("num-of-az", 1, "Number of availability zones in selected region")
 	clusterCreateCmd.Flags().String("ssh-key-name", "", "SSH key name for EC2 instance connection")
 	clusterCreateCmd.Flags().String("machine-type", "", "machine type of worker node")
-	clusterCreateCmd.Flags().Int("machine-replicas", 3, "machine replicas of worker node")
+	clusterCreateCmd.Flags().Int("machine-replicas", 1, "machine replicas of worker node")
 	clusterCreateCmd.Flags().String("template", "aws-reference", "Template name for the cluster")
 
 	clusterCreateCmd.Flags().String("creator", "", "Uuid of creator")
