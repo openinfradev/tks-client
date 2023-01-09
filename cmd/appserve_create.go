@@ -30,6 +30,7 @@ import (
 
 var appserveCfgFile string
 var appCfgFile string
+var appSecretFile string
 
 // Member variables are named as snake_case on purpose
 // to be marshalled into json object later.
@@ -46,6 +47,7 @@ type conf struct {
 	Profile         string `yaml:"profile"`
 	Extra_env       string `yaml:"extra_env"`
 	App_config      string
+	App_secret      string
 
 	Resource_spec     string `yaml:"resource_spec"`
 	Target_cluster_id string `yaml:"target_cluster_id"`
@@ -86,9 +88,22 @@ tks appserve create --appserve-config CONFIGFILE`,
 		fmt.Printf("*******\nConfig:\n%+s\n*******\n", yamlData)
 
 		// Get application config from file
-		appCfg, err := os.ReadFile(appCfgFile)
-		if err != nil {
-			return fmt.Errorf("error: %s", err)
+		if appCfgFile != "" {
+			appCfgBytes, err := os.ReadFile(appCfgFile)
+			if err != nil {
+				return fmt.Errorf("error: %s", err)
+			}
+			// Add appCfg to existing struct
+			c.App_config = string(appCfgBytes)
+		}
+
+		// Get application secret from file
+		if appSecretFile != "" {
+			appSecretBytes, err := os.ReadFile(appSecretFile)
+			if err != nil {
+				return fmt.Errorf("error: %s", err)
+			}
+			c.App_secret = string(appSecretBytes)
 		}
 
 		// Unmarshal yaml content into struct
@@ -96,9 +111,6 @@ tks appserve create --appserve-config CONFIGFILE`,
 		if err != nil {
 			return fmt.Errorf("error: %s", err)
 		}
-
-		// Add appCfg to existing struct
-		c.App_config = string(appCfg)
 
 		// Convert map to Json
 		cBytes, err := json.Marshal(&c)
@@ -136,6 +148,7 @@ func init() {
 
 	appserveCreateCmd.Flags().StringVar(&appserveCfgFile, "appserve-config", "", "config file for AppServing service")
 	appserveCreateCmd.Flags().StringVar(&appCfgFile, "app-config", "", "custom config file for user application")
+	appserveCreateCmd.Flags().StringVar(&appSecretFile, "app-secret", "", "custom secret file for user application")
 
 	// Here you will define your flags and configuration settings.
 
