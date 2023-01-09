@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/matryer/is v1.4.0
-	github.com/openinfradev/tks-proto v0.0.6-0.20221212083008-53c4931d7edb
+	github.com/openinfradev/tks-proto v0.0.6-0.20230109015028-accc9c8271b3
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.13.0
 	google.golang.org/grpc v1.49.0
