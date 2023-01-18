@@ -1,0 +1,37 @@
+# local, dev, prod 공통 설정
+application:
+  version: 1.0.0
+  title: bo
+
+spring:
+  profiles:
+    active: local # profiles 선언하여 적용할 profile을 선택 한다.
+    
+  thymeleaf:
+    view-names: thymeleaf/*
+    prefix: classpath:templates/
+    suffix: .html
+    cache: false
+
+--- # local 환경
+spring:
+  profiles: local
+logging:
+  level:
+    root: debug
+  
+--- # dev 환경
+spring:
+  profiles: dev
+logging:
+  level:
+    root: info
+
+--- # prod 환경
+spring:
+  profiles: prod
+server:
+  port: 9090
+logging:
+  level:
+    root: error

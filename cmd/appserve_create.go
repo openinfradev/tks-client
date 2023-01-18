@@ -29,18 +29,25 @@ import (
 )
 
 var appserveCfgFile string
+var appCfgFile string
+var appSecretFile string
 
 // Member variables are named as snake_case on purpose
 // to be marshalled into json object later.
 type conf struct {
-	Contract_id  string `yaml:"contract_id"`
-	Name         string `yaml:"name"`
-	Version      string `yaml:"version"`
-	Type         string `yaml:"type"`
-	App_type     string `yaml:"app_type"`
-	Artifact_url string `yaml:"artifact_url"`
-	Port         string `yaml:"port"`
-	Profile      string `yaml:"profile"`
+	Contract_id     string `yaml:"contract_id"`
+	Name            string `yaml:"name"`
+	Version         string `yaml:"version"`
+	Type            string `yaml:"type"`
+	App_type        string `yaml:"app_type"`
+	Artifact_url    string `yaml:"artifact_url"`
+	Image_url       string `yaml:"image_url"`
+	Executable_path string `yaml:"executable_path"`
+	Port            string `yaml:"port"`
+	Profile         string `yaml:"profile"`
+	Extra_env       string `yaml:"extra_env"`
+	App_config      string
+	App_secret      string
 
 	Resource_spec     string `yaml:"resource_spec"`
 	Target_cluster_id string `yaml:"target_cluster_id"`
@@ -80,6 +87,26 @@ tks appserve create --appserve-config CONFIGFILE`,
 
 		fmt.Printf("*******\nConfig:\n%+s\n*******\n", yamlData)
 
+		// Get application config from file
+		if appCfgFile != "" {
+			appCfgBytes, err := os.ReadFile(appCfgFile)
+			if err != nil {
+				return fmt.Errorf("error: %s", err)
+			}
+			// Add appCfg to existing struct
+			c.App_config = string(appCfgBytes)
+		}
+
+		// Get application secret from file
+		if appSecretFile != "" {
+			appSecretBytes, err := os.ReadFile(appSecretFile)
+			if err != nil {
+				return fmt.Errorf("error: %s", err)
+			}
+			c.App_secret = string(appSecretBytes)
+		}
+
+		// Unmarshal yaml content into struct
 		err = yaml.Unmarshal(yamlData, &c)
 		if err != nil {
 			return fmt.Errorf("error: %s", err)
@@ -120,6 +147,8 @@ func init() {
 	appserveCmd.AddCommand(appserveCreateCmd)
 
 	appserveCreateCmd.Flags().StringVar(&appserveCfgFile, "appserve-config", "", "config file for AppServing service")
+	appserveCreateCmd.Flags().StringVar(&appCfgFile, "app-config", "", "custom config file for user application")
+	appserveCreateCmd.Flags().StringVar(&appSecretFile, "app-secret", "", "custom secret file for user application")
 
 	// Here you will define your flags and configuration settings.
 

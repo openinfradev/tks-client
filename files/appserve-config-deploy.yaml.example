@@ -1,18 +1,21 @@
 ## App Info ##
-contract_id: psh8wxoj7
-name: petclinic
+contract_id: py08lgph8
+name: pet2
 version: v1
 # type should be one of ['build', 'deploy', 'all']
-type: all
+type: deploy
 # app_type should be one of ['spring', 'springboot']
 app_type: springboot
-artifact_url: "http://ab846aadb5b974536a0463a29ed866f5-200924269.ap-northeast-2.elb.amazonaws.com:8081/repository/my-release-repo/default/petclinic/1.0/petclinic-1.0.jar"
+image_url: "harbor-dev.taco-cat.xyz/appserving/pet2:v1"
+executable_path: "/usr/src/myapp/spring-petclinic-2.7.0-SNAPSHOT.jar"
 port: "8080"
 profile: default
+# extra_env should be json-formatted string
+extra_env: "{\\\"key1\\\": \\\"val1\\\", \\\"key2\\\": \\\"val2\\\"}"
 
 ## Deployment Info ##
 resource_spec: medium
-target_cluster_id: cdozqn511
+target_cluster_id: c1xawq0ti
 
 ## Persistent Volume ##
 pv_enabled: false
