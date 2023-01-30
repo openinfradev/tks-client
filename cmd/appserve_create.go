@@ -39,6 +39,7 @@ type conf struct {
 	Name            string `yaml:"name"`
 	Version         string `yaml:"version"`
 	Type            string `yaml:"type"`
+	Strategy        string `yaml:"strategy"`
 	App_type        string `yaml:"app_type"`
 	Artifact_url    string `yaml:"artifact_url"`
 	Image_url       string `yaml:"image_url"`
