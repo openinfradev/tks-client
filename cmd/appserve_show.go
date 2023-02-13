@@ -129,6 +129,8 @@ func printAppInfo(app appServeAppTaskCombined, long bool) error {
 	var m map[string]interface{}
 	json.Unmarshal(cBytes, &m)
 
+	// TODO: show fields in proper order manually
+	// or use some ordered-json library
 	fmt.Println("\n**************")
 	fmt.Println("* Basic Info *")
 	fmt.Println("**************")

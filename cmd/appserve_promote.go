@@ -16,7 +16,6 @@ limitations under the License.
 package cmd
 
 import (
-	"strings"
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
@@ -24,6 +23,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 var appservePromoteCmd = &cobra.Command{
@@ -48,9 +48,9 @@ tks appserve promote <APP_ID>`,
 		/* Parse command line params */
 		appId := args[0]
 
-    // Prepare request body
+		// Prepare request body
 		data := url.Values{}
-    data.Set("promote", "true")
+		data.Set("promote", "true")
 
 		// Initialize http client
 		client := &http.Client{}
