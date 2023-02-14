@@ -171,5 +171,10 @@ func printAppInfo(app appServeAppTaskCombined, long bool) error {
 	}
 	fmt.Println(t.Render())
 
+	fmt.Println("\n**************")
+	fmt.Println("* Recent Log *")
+	fmt.Println("**************")
+	fmt.Println(app.Tasks[0].Output)
+
 	return nil
 }
