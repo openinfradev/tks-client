@@ -136,7 +136,6 @@ tks appserve update <APP_ID> --appserve-config <CONFIGFILE>`,
 		respBody, err := io.ReadAll(resp.Body)
 		if err == nil {
 			str := string(respBody)
-			// TODO: after test run, fix this output msg.
 			fmt.Println("Response:\n", str)
 		}
 
