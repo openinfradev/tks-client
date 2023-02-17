@@ -4,6 +4,8 @@ name: pet2
 version: v1
 # type should be one of ['build', 'deploy', 'all']
 type: deploy
+# strategy should be one of ['rolling-update', 'blue-green', 'canary']
+strategy: rolling-update
 # app_type should be one of ['spring', 'springboot']
 app_type: springboot
 image_url: "harbor-dev.taco-cat.xyz/appserving/pet2:v1"

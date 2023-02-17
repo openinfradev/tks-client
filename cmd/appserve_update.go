@@ -28,47 +28,19 @@ import (
 	"os"
 )
 
-var appserveCfgFile string
-var appCfgFile string
-var appSecretFile string
-
-// Member variables are named as snake_case on purpose
-// to be marshalled into json object later.
-type conf struct {
-	Contract_id     string `yaml:"contract_id"`
-	Name            string `yaml:"name"`
-	Version         string `yaml:"version"`
-	Type            string `yaml:"type"`
-	Strategy        string `yaml:"strategy"`
-	App_type        string `yaml:"app_type"`
-	Artifact_url    string `yaml:"artifact_url"`
-	Image_url       string `yaml:"image_url"`
-	Executable_path string `yaml:"executable_path"`
-	Port            string `yaml:"port"`
-	Profile         string `yaml:"profile"`
-	Extra_env       string `yaml:"extra_env"`
-	App_config      string
-	App_secret      string
-
-	Resource_spec     string `yaml:"resource_spec"`
-	Target_cluster_id string `yaml:"target_cluster_id"`
-
-	Pv_enabled       bool   `yaml:"pv_enabled"`
-	Pv_storage_class string `yaml:"pv_storage_class"`
-	Pv_access_mode   string `yaml:"pv_access_mode"`
-	Pv_size          string `yaml:"pv_size"`
-	Pv_mount_path    string `yaml:"pv_mount_path"`
-}
-
-var appserveCreateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create an app by AppServing service",
-	Long: `Create an app by AppServing service.
+var appserveUpdateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update an app deployed by AppServing service",
+	Long: `Update an app deployed by AppServing service.
   
 Example:
-tks appserve create --appserve-config CONFIGFILE`,
+tks appserve update <APP_ID> --appserve-config <CONFIGFILE>`,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return errors.New("APP_ID is mandatory! Run 'tks appserve update --help'.")
+		}
+
 		// Get API Url
 		appserveApiUrl := viper.GetString("tksAppServeLcmUrl")
 		if appserveApiUrl == "" {
@@ -79,6 +51,9 @@ tks appserve create --appserve-config CONFIGFILE`,
 		if appserveCfgFile == "" {
 			return errors.New("--appservce-config is mandatory param.")
 		}
+
+		/* Parse command line params */
+		appId := args[0]
 
 		// Get Appserving request params from config file
 		yamlData, err := os.ReadFile(appserveCfgFile)
@@ -113,6 +88,19 @@ tks appserve create --appserve-config CONFIGFILE`,
 			return fmt.Errorf("error: %s", err)
 		}
 
+		// Exclude immutable params
+		if c.Name != "" || c.Type != "" || c.App_type != "" {
+			fmt.Println(`Following params are immutable in update action, so they're ignored.
+- name
+- type
+- app_type
+- target_cluster`)
+			c.Name = ""
+			c.Type = ""
+			c.App_type = ""
+			c.Target_cluster_id = ""
+		}
+
 		// Convert map to Json
 		cBytes, err := json.Marshal(&c)
 		if err != nil {
@@ -125,9 +113,21 @@ tks appserve create --appserve-config CONFIGFILE`,
 		fmt.Println("========== ")
 
 		buff := bytes.NewBuffer(cBytes)
-		resp, err := http.Post(appserveApiUrl+"/apps", "application/json", buff)
+
+		// Initialize http client
+		client := &http.Client{}
+
+		// set the HTTP method, url, and request body
+		req, err := http.NewRequest(http.MethodPut, appserveApiUrl+"/apps/"+appId, buff)
 		if err != nil {
-			return fmt.Errorf("Error from POST req: %s", err)
+			return fmt.Errorf("Error while constructing req: %s", err)
+		}
+
+		// set the request header Content-Type for json
+		req.Header.Set("Content-Type", "application/json; charset=utf-8")
+		resp, err := client.Do(req)
+		if err != nil {
+			return fmt.Errorf("Error from update req: %s", err)
 		}
 
 		defer resp.Body.Close()
@@ -144,19 +144,9 @@ tks appserve create --appserve-config CONFIGFILE`,
 }
 
 func init() {
-	appserveCmd.AddCommand(appserveCreateCmd)
+	appserveCmd.AddCommand(appserveUpdateCmd)
 
-	appserveCreateCmd.Flags().StringVar(&appserveCfgFile, "appserve-config", "", "config file for AppServing service")
-	appserveCreateCmd.Flags().StringVar(&appCfgFile, "app-config", "", "custom config file for user application")
-	appserveCreateCmd.Flags().StringVar(&appSecretFile, "app-secret", "", "custom secret file for user application")
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// appserveCreateCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// appserveCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	appserveUpdateCmd.Flags().StringVar(&appserveCfgFile, "appserve-config", "", "config file for AppServing service")
+	appserveUpdateCmd.Flags().StringVar(&appCfgFile, "app-config", "", "custom config file for user application")
+	appserveUpdateCmd.Flags().StringVar(&appSecretFile, "app-secret", "", "custom secret file for user application")
 }
