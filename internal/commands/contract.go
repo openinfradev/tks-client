@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package cmd
+package commands
 
 import (
 	"fmt"
@@ -21,26 +21,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// serviceCmd represents the service command
-var serviceCmd = &cobra.Command{
-	Use:   "service",
-	Short: "Operation for TKS Service",
-	Long:  `Operation for TKS Service`,
+// contractCmd represents the contract command
+var contractCmd = &cobra.Command{
+	Use:   "contract",
+	Short: "Operation for TKS Contract",
+	Long:  `Operation for TKS Contract`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("service called")
+		fmt.Println("contract called")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(serviceCmd)
+	//rootCmd.AddCommand(contractCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// serviceCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// contractCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// serviceCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// contractCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

@@ -13,9 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package cmd
+package main
 
-var (
-	tksInfoUrl       string
-	tksClusterLcmUrl string
+import (
+	"os"
+
+	"github.com/openinfradev/tks-client/internal/commands"
 )
+
+func main() {
+	cmd := commands.NewCommand()
+
+	if err := cmd.Execute(); err != nil {
+		os.Exit(1)
+	}
+}

@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 SK Telecom <https://github.com/openinfradev>
+Copyright © 2022 SK Telecom <https://github.com/openinfradev>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,10 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package main
+package commands
 
-import "github.com/openinfradev/tks-client/cmd"
-
-func main() {
-	cmd.Execute()
-}
+var (
+	defaultContractId string
+	defaultCspId      string
+	tksInfoUrl        string
+	tksClusterLcmUrl  string
+	tksContractUrl    string
+)
