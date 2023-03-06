@@ -17,6 +17,7 @@ func NewOrganizationCommand(globalOpts *GlobalOptions) *cobra.Command {
 	}
 
 	command.AddCommand(NewOrganizationListCommand(globalOpts))
+	command.AddCommand(NewOrganizationCreateCommand(globalOpts))
 
 	return command
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"runtime/debug"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -44,4 +45,13 @@ func CheckError(err error) {
 		debug.PrintStack()
 		os.Exit(-1)
 	}
+}
+
+func PanicWithError(message string) {
+	fmt.Println(message)
+	os.Exit(-1)
+}
+
+func ParseTime(t time.Time) string {
+	return t.Format("2006-01-02 15:04:05")
 }

@@ -80,7 +80,7 @@ func NewLoginCommand(globalOpts *GlobalOptions) *cobra.Command {
 		},
 	}
 
-	command.Flags().StringVar(&accountId, "accountId", "", "the accountId of an account to authenticate")
+	command.Flags().StringVar(&accountId, "account-id", "", "the accountId of an account to authenticate")
 	command.Flags().StringVar(&password, "password", "", "the password of an account to authenticate")
 
 	return command
