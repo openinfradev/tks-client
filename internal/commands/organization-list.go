@@ -35,7 +35,6 @@ func NewOrganizationListCommand(globalOpts *GlobalOptions) *cobra.Command {
 
 			printOrganizations(out.Organizations, true)
 
-			fmt.Println("Success")
 			return nil
 		},
 	}

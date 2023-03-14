@@ -25,9 +25,10 @@ type Server struct {
 
 // User contains user authentication information
 type User struct {
-	Name         string `json:"name"`
-	AuthToken    string `json:"auth-token,omitempty"`
-	RefreshToken string `json:"refresh-token,omitempty"`
+	OrganizationId string `json:"organizationId"`
+	Name           string `json:"name"`
+	AuthToken      string `json:"auth-token,omitempty"`
+	RefreshToken   string `json:"refresh-token,omitempty"`
 }
 
 // Claims returns the standard claims from the JWT claims

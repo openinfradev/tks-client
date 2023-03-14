@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"fmt"
+
 	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
 	"github.com/openinfradev/tks-api/pkg/domain"
 	"github.com/openinfradev/tks-client/internal/helper"
@@ -15,6 +17,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		creator         string
 		template        string
 		region          string
+		cloudSettingId  string
 		machineType     string
 		numOfAz         int
 		machineReplicas int
@@ -36,22 +39,12 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				helper.PanicWithError("You must specify name")
 			}
 
-			type CreateClusterRequest struct {
-				OrganizationId  string `json:"organizationId"`
-				TemplateId      string `json:"templateId"`
-				Name            string `json:"name"`
-				Description     string `json:"description"`
-				NumberOfAz      string `json:"numberOfAz"`
-				MachineType     string `json:"machineType"`
-				Region          string `json:"region"`
-				MachineReplicas int    `json:"machineReplicas"`
-			}
-
 			input := domain.CreateClusterRequest{
 				OrganizationId:  organizationId,
 				TemplateId:      template,
 				Name:            name,
 				Description:     description,
+				CloudSettingId:  cloudSettingId,
 				NumberOfAz:      numOfAz,
 				MachineType:     machineType,
 				Region:          region,
@@ -72,15 +65,20 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 			var out = DataInterface{}
 			helper.Transcode(body, &out)
 
+			fmt.Println("clusterId : ", out.ClusterId)
+
 			return nil
 		},
 	}
 
-	command.Flags().StringVar(&organizationId, "organization-id", "", "the organizationId with clusters")
+	command.Flags().StringVarP(&organizationId, "organization-id", "o", "", "the organizationId with clusters")
 	helper.CheckError(command.MarkFlagRequired("organization-id"))
 
-	command.Flags().StringVar(&name, "name", "", "the name of organization")
-	command.Flags().StringVar(&description, "description", "", "the description of organization")
+	command.Flags().StringVarP(&cloudSettingId, "cloud-setting-id", "s", "", "the cloudSettingId for cluster")
+	helper.CheckError(command.MarkFlagRequired("cloud-setting-id"))
+
+	command.Flags().StringVarP(&name, "name", "n", "", "the name of organization")
+	command.Flags().StringVarP(&description, "description", "d", "", "the description of organization")
 	command.Flags().StringVar(&creator, "creator", "", "the user's uuid for creating organization")
 	command.Flags().StringVar(&template, "template", "aws-reference", "the template for installation")
 

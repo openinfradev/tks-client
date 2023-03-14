@@ -34,7 +34,6 @@ func NewOrganizationCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 			input := domain.CreateOrganizationRequest{
 				Name:        name,
 				Description: description,
-				Creator:     creator,
 			}
 
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)

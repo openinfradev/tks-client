@@ -40,15 +40,15 @@ func NewCommand() *cobra.Command {
 	)
 
 	var command = &cobra.Command{
-		Use:   "tksadmin",
-		Short: "CLI Client for admin TKS Service",
+		Use:   "tks",
+		Short: "CLI Client for TKS Service",
 		Long: ` ______ __ __ ____  ___      __        _         _____ __ _            __ 
 	/_  __// //_// __/ / _ | ___/ /__ _   (_)___    / ___// /(_)___  ___  / /_
 	 / /  / ,<  _\ \  / __ |/ _  //  ' \ / // _ \  / /__ / // // -_)/ _ \/ __/
 	/_/  /_/|_|/___/ /_/ |_|\_,_//_/_/_//_//_//_/  \___//_//_/ \__//_//_/\__/ 
 																			  
-	TKS Admin Client is CLI client for admin TKS Service.
-	For more: https://github.com/openinfradev/tksadmin-client/`,
+	TKS Client is CLI client for TKS Service.
+	For more: https://github.com/openinfradev/tks-client/`,
 		Run: func(c *cobra.Command, args []string) {
 			c.HelpFunc()(c, args)
 		},
@@ -59,6 +59,7 @@ func NewCommand() *cobra.Command {
 	command.AddCommand(NewLoginCommand(&opts))
 	command.AddCommand(NewOrganizationCommand(&opts))
 	command.AddCommand(NewClusterCommand(&opts))
+	command.AddCommand(NewAppGroupCommand(&opts))
 	defaultLocalConfigPath, err := config.DefaultLocalConfigPath()
 	helper.CheckError(err)
 
@@ -66,8 +67,11 @@ func NewCommand() *cobra.Command {
 	helper.CheckError(err)
 
 	command.PersistentFlags().StringVar(&opts.ConfigPath, "config", config.GetFlag("config", defaultLocalConfigPath), "Path to TKS config")
-	command.PersistentFlags().StringVar(&opts.ServerAddr, "server", localCfg.GetServer().Server, "TKS server address")
-	command.PersistentFlags().StringVar(&opts.AuthToken, "auth-token", localCfg.GetUser().AuthToken, "Authentication token")
+
+	if localCfg != nil {
+		command.PersistentFlags().StringVar(&opts.ServerAddr, "server", localCfg.GetServer().Server, "TKS server address")
+		command.PersistentFlags().StringVar(&opts.AuthToken, "auth-token", localCfg.GetUser().AuthToken, "Authentication token")
+	}
 
 	return command
 }

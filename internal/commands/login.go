@@ -16,15 +16,16 @@ import (
 
 func NewLoginCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
-		accountId string
-		password  string
+		organizationId string
+		accountId      string
+		password       string
 	)
 
 	var command = &cobra.Command{
 		Use:   "login SERVER",
 		Short: "Log in to TKS",
 		Long:  "Log in to TKS",
-		Example: `# Login to TKS using a accountId and password
+		Example: `# Login to TKS using a accountId and password and organizationId
 	tks login tks-api.tks.io`,
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -34,17 +35,18 @@ func NewLoginCommand(globalOpts *GlobalOptions) *cobra.Command {
 			}
 			server := args[0]
 
-			accountId, password := PromptCredentials(accountId, password)
-			input := domain.SignInRequest{
-				AccountId: accountId,
-				Password:  password,
+			organizationId, accountId, password := PromptCredentials(organizationId, accountId, password)
+			input := domain.LoginRequest{
+				OrganizationId: organizationId,
+				AccountId:      accountId,
+				Password:       password,
 			}
 
 			var err error
 			apiClient, err := _apiClient.New(server, "")
 			helper.CheckError(err)
 
-			body, err := apiClient.Post("auth/signin", input)
+			body, err := apiClient.Post("auth/login", input)
 			if err != nil {
 				return err
 			}
@@ -67,9 +69,10 @@ func NewLoginCommand(globalOpts *GlobalOptions) *cobra.Command {
 			})
 
 			localCfg.UpsertUser(config.User{
-				Name:         accountId,
-				AuthToken:    out.User.Token,
-				RefreshToken: "TODO",
+				OrganizationId: organizationId,
+				Name:           accountId,
+				AuthToken:      out.User.Token,
+				RefreshToken:   "TODO",
 			})
 
 			err = config.WriteLocalConfig(*localCfg, globalOpts.ConfigPath)
@@ -80,18 +83,23 @@ func NewLoginCommand(globalOpts *GlobalOptions) *cobra.Command {
 		},
 	}
 
+	command.Flags().StringVar(&organizationId, "organization-id", "", "the organizationId of an account to authenticate")
 	command.Flags().StringVar(&accountId, "account-id", "", "the accountId of an account to authenticate")
 	command.Flags().StringVar(&password, "password", "", "the password of an account to authenticate")
 
 	return command
 }
 
-func PromptCredentials(accountId string, password string) (string, string) {
-	return PromptUsername(accountId), PromptPassword(password)
+func PromptCredentials(organizationId string, accountId string, password string) (string, string, string) {
+	return PromptOrganizationId(organizationId), PromptUsername(accountId), PromptPassword(password)
 }
 
 func PromptUsername(accountId string) string {
 	return PromptMessage("AccountId", accountId)
+}
+
+func PromptOrganizationId(organizationId string) string {
+	return PromptMessage("OrganizationId", organizationId)
 }
 
 func PromptMessage(message, value string) string {

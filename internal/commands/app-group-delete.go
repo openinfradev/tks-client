@@ -6,31 +6,31 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewClusterDeleteCommand(globalOpts *GlobalOptions) *cobra.Command {
+func NewAppGroupDeleteCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
-		clusterId string
+		appGroupId string
 	)
 
 	var command = &cobra.Command{
 		Use:   "delete",
-		Short: "Delete a TKS Cluster.",
-		Long: `Delete a TKS Cluster.
+		Short: "Delete a AppGroup in cluster.",
+		Long: `Delete a AppGroup in cluster.
 	  
 	Example:
-	tks cluster delete <CLUSTERNAME>`,
+	tks appgroup delete <APP_GROUP_ID>`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 1 {
-				clusterId = args[0]
+				appGroupId = args[0]
 			}
 
-			if clusterId == "" {
-				helper.PanicWithError("You must specify clusterId")
+			if appGroupId == "" {
+				helper.PanicWithError("You must specify appGroupId")
 			}
 
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			body, err := apiClient.Delete("clusters/"+clusterId, nil)
+			body, err := apiClient.Delete("app-groups/"+appGroupId, nil)
 			if err != nil {
 				return err
 			}
@@ -45,6 +45,6 @@ func NewClusterDeleteCommand(globalOpts *GlobalOptions) *cobra.Command {
 		},
 	}
 
-	command.Flags().StringVarP(&clusterId, "cluster-id", "c", "", "the Id for deleting cluster")
+	command.Flags().StringVarP(&appGroupId, "appgroup-id", "a", "", "the Id of appGroup")
 	return command
 }
