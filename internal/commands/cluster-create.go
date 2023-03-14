@@ -73,7 +73,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 
 	command.Flags().StringVarP(&organizationId, "organization-id", "o", "", "the organizationId with clusters")
 	helper.CheckError(command.MarkFlagRequired("organization-id"))
-
+	
 	command.Flags().StringVarP(&cloudSettingId, "cloud-setting-id", "s", "", "the cloudSettingId for cluster")
 	helper.CheckError(command.MarkFlagRequired("cloud-setting-id"))
 
