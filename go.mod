@@ -1,6 +1,6 @@
 module github.com/openinfradev/tks-client
 
-go 1.19
+go 1.18
 
 require (
 	github.com/golang-jwt/jwt/v4 v4.5.0
@@ -35,4 +35,4 @@ require (
 
 replace github.com/openinfradev/tks-client => ./
 
-replace github.com/openinfradev/tks-api => ../tks-api
+replace github.com/openinfradev/tks-api => ./tks-api
