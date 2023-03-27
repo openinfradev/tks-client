@@ -40,7 +40,6 @@ func NewOrganizationCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 			helper.CheckError(err)
 			body, err := apiClient.Post("organizations", input)
 			if err != nil {
-				fmt.Println(err)
 				return err
 			}
 

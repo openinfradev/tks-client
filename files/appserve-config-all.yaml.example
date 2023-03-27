@@ -1,5 +1,5 @@
 ## App Info ##
-contract_id: py08lgph8
+organization_id: py08lgph8
 name: petclinic
 version: v1
 # type should be one of ['build', 'deploy', 'all']
