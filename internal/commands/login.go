@@ -51,10 +51,7 @@ func NewLoginCommand(globalOpts *GlobalOptions) *cobra.Command {
 				return err
 			}
 
-			type DataInterface struct {
-				User domain.User `json:"user"`
-			}
-			var out = DataInterface{}
+			var out domain.LoginResponse
 			helper.Transcode(body, &out)
 
 			fmt.Println(globalOpts.ConfigPath)
@@ -71,7 +68,7 @@ func NewLoginCommand(globalOpts *GlobalOptions) *cobra.Command {
 			localCfg.UpsertUser(config.User{
 				OrganizationId: organizationId,
 				Name:           accountId,
-				AuthToken:      out.User.Token,
+				AuthToken:      out.Token,
 				RefreshToken:   "TODO",
 			})
 

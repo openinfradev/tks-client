@@ -6,6 +6,7 @@ import (
 	"runtime/debug"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 
 	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
 	"github.com/openinfradev/tks-client/internal/config"
@@ -74,7 +75,24 @@ func NewCommand() *cobra.Command {
 		command.PersistentFlags().StringVar(&opts.AuthToken, "auth-token", localCfg.GetUser().AuthToken, "Authentication token")
 	}
 
+	// Set hidden auth-token
+	command.PersistentFlags().VisitAll(func(flag *pflag.Flag) {
+		name := flag.Name
+		if name == "auth-token" {
+			flag.Hidden = true
+		}
+	})
+
 	return command
+}
+
+func contains(b []string, i string) bool {
+	for _, s := range b {
+		if s == i {
+			return true
+		}
+	}
+	return false
 }
 
 func CheckError(err error) {
