@@ -45,7 +45,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				Name:            name,
 				Description:     description,
 				CloudSettingId:  cloudSettingId,
-				NumberOfAz:      numOfAz,
+				NumOfAz:         numOfAz,
 				MachineType:     machineType,
 				Region:          region,
 				MachineReplicas: machineReplicas,
@@ -59,13 +59,10 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				return err
 			}
 
-			type DataInterface struct {
-				ClusterId string `json:"clusterId"`
-			}
-			var out = DataInterface{}
+			var out domain.CreateClusterResponse
 			helper.Transcode(body, &out)
 
-			fmt.Println("clusterId : ", out.ClusterId)
+			fmt.Println("clusterId : ", out.ID)
 
 			return nil
 		},

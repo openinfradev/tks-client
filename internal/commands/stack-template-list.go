@@ -11,31 +11,31 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewCloudSettingListCommand(globalOpts *GlobalOptions) *cobra.Command {
+func NewStackTemplateListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
 		all bool
 	)
 
 	var command = &cobra.Command{
 		Use:   "list",
-		Short: "Show list of cloud-setting.",
-		Long: `Show list of cloud-setting.
+		Short: "Show list of stack-template.",
+		Long: `Show list of stack-template.
 	
 	Example:
-	tks cloud-setting list`,
+	tks stack-template list`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			body, err := apiClient.Get("cloud-settings?all=" + strconv.FormatBool(all))
+			body, err := apiClient.Get("stack-templates?all=" + strconv.FormatBool(all))
 			if err != nil {
 				return err
 			}
 
-			var out = domain.GetCloudSettingsResponse{}
+			var out = domain.GetStackTemplatesResponse{}
 			helper.Transcode(body, &out)
 
-			printCloudSettings(out.CloudSettings)
+			printStackTemplates(out.StackTemplates)
 
 			return nil
 		},
@@ -46,9 +46,9 @@ func NewCloudSettingListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	return command
 }
 
-func printCloudSettings(r []domain.CloudSettingResponse) {
+func printStackTemplates(r []domain.StackTemplateResponse) {
 	if len(r) == 0 {
-		fmt.Println("No cloudSetting exists for user organization!")
+		fmt.Println("No stackTemplate exists for user organization!")
 		return
 	}
 
@@ -60,11 +60,11 @@ func printCloudSettings(r []domain.CloudSettingResponse) {
 	t.Style().Options.SeparateFooter = false
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
-	t.AppendHeader(table.Row{"ORGANIZATION_ID", "ID", "NAME", "DESCRIPTION", "CLOUD_SERVICE", "RESOURCE", "CLUSTERS", "CREATED_AT", "UPDATED_AT"})
+	t.AppendHeader(table.Row{"ORGANIZATION_ID", "ID", "NAME", "DESCRIPTION", "VERSION", "CLOUD_SERVICE", "PLATFORM", "TEMPLATE", "CREATED_AT", "UPDATED_AT"})
 	for _, s := range r {
 		tCreatedAt := helper.ParseTime(s.CreatedAt)
 		tUpdatedAt := helper.ParseTime(s.UpdatedAt)
-		t.AppendRow(table.Row{s.OrganizationId, s.ID, s.Name, s.Description, s.CloudService, s.Resource, s.Clusters, tCreatedAt, tUpdatedAt})
+		t.AppendRow(table.Row{s.OrganizationId, s.ID, s.Name, s.Description, s.Version, s.CloudService, s.Platform, s.Template, tCreatedAt, tUpdatedAt})
 	}
 	fmt.Println(t.Render())
 }
