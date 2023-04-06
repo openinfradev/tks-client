@@ -35,11 +35,10 @@ func NewAppGroupCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			input := domain.CreateAppGroupRequest{
-				Name:        name,
-				Description: description,
-				ClusterId:   clusterId,
-				Type:        appGroupType,
-				Creator:     creator,
+				Name:         name,
+				Description:  description,
+				ClusterId:    domain.ClusterId(clusterId),
+				AppGroupType: appGroupType,
 			}
 
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
@@ -50,13 +49,10 @@ func NewAppGroupCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				return err
 			}
 
-			type DataInterface struct {
-				AppGroupId string `json:"appGroupId"`
-			}
-			var out = DataInterface{}
+			var out domain.CreateAppGroupResponse
 			helper.Transcode(body, &out)
 
-			fmt.Println("appGroupId : ", out.AppGroupId)
+			fmt.Println("appGroupId : ", out.ID)
 
 			return nil
 		},
