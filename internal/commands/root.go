@@ -62,6 +62,7 @@ func NewCommand() *cobra.Command {
 	command.AddCommand(NewClusterCommand(&opts))
 	command.AddCommand(NewAppGroupCommand(&opts))
 	command.AddCommand(NewCloudSettingCommand(&opts))
+	command.AddCommand(NewAppserveCommand(&opts))
 	command.AddCommand(NewStackTemplateCommand(&opts))
 
 	defaultLocalConfigPath, err := config.DefaultLocalConfigPath()
