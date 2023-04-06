@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
 	"github.com/openinfradev/tks-client/internal/config"
 	"github.com/openinfradev/tks-client/internal/helper"
 )
@@ -22,17 +21,6 @@ type GlobalOptions struct {
 type LocalConfig struct {
 	Server string `yaml:"server"`
 	Token  string `yaml:"token"`
-}
-
-var (
-	apiClient _apiClient.ApiClient
-)
-
-func init() {
-	cobra.OnInitialize(initConfig)
-}
-
-func initConfig() {
 }
 
 func NewCommand() *cobra.Command {
@@ -87,15 +75,6 @@ func NewCommand() *cobra.Command {
 	})
 
 	return command
-}
-
-func contains(b []string, i string) bool {
-	for _, s := range b {
-		if s == i {
-			return true
-		}
-	}
-	return false
 }
 
 func CheckError(err error) {

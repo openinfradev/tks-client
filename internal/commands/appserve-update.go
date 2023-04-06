@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+
 	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
 	"github.com/openinfradev/tks-client/internal/helper"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v2"
-	"os"
+	yaml "gopkg.in/yaml.v2"
 )
 
 func NewAppserveUpdateCmd(globalOpts *GlobalOptions) *cobra.Command {

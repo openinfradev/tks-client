@@ -9,7 +9,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/golang-jwt/jwt/v4"
+	jwt "github.com/golang-jwt/jwt/v4"
 	"sigs.k8s.io/yaml"
 )
 

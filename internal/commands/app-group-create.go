@@ -13,7 +13,6 @@ func NewAppGroupCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
 		name         string
 		description  string
-		creator      string
 		clusterId    string
 		appGroupType string
 	)
@@ -64,7 +63,6 @@ func NewAppGroupCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().StringVarP(&name, "name", "n", "", "the name of appGroup")
 
 	command.Flags().StringVarP(&description, "description", "d", "", "the description of appGroup")
-	command.Flags().StringVar(&creator, "creator", "", "the user's uuid for creating organization")
 	command.Flags().StringVarP(&appGroupType, "type", "t", "LMA", "the type of appgroup. ex) LMA, SERVICE_MESH")
 	helper.CheckError(command.MarkFlagRequired("type"))
 

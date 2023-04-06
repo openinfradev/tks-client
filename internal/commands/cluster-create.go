@@ -14,7 +14,6 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		name            string
 		organizationId  string
 		description     string
-		creator         string
 		template        string
 		region          string
 		cloudSettingId  string
@@ -76,7 +75,6 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 
 	command.Flags().StringVarP(&name, "name", "n", "", "the name of organization")
 	command.Flags().StringVarP(&description, "description", "d", "", "the description of organization")
-	command.Flags().StringVar(&creator, "creator", "", "the user's uuid for creating organization")
 	command.Flags().StringVar(&template, "template", "aws-reference", "the template for installation")
 
 	command.Flags().StringVar(&region, "region", "ap-northeast-2", "AWS region")

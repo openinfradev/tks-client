@@ -11,7 +11,7 @@ import (
 	"github.com/openinfradev/tks-client/internal/config"
 	"github.com/openinfradev/tks-client/internal/helper"
 	"github.com/spf13/cobra"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
 func NewLoginCommand(globalOpts *GlobalOptions) *cobra.Command {
@@ -113,7 +113,7 @@ func PromptMessage(message, value string) string {
 func PromptPassword(password string) string {
 	for password == "" {
 		fmt.Print("Password: ")
-		passwordRaw, err := terminal.ReadPassword(int(os.Stdin.Fd()))
+		passwordRaw, err := term.ReadPassword(int(os.Stdin.Fd()))
 		helper.CheckError(err)
 		password = string(passwordRaw)
 		fmt.Print("\n")

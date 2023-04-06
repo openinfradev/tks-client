@@ -13,7 +13,6 @@ func NewOrganizationCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
 		name        string
 		description string
-		creator     string
 	)
 
 	var command = &cobra.Command{
@@ -56,7 +55,6 @@ func NewOrganizationCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	}
 	command.Flags().StringVar(&name, "name", "", "the name of organization")
 	command.Flags().StringVar(&description, "description", "", "the description of organization")
-	command.Flags().StringVar(&creator, "creator", "", "the user's uuid for creating organization")
 
 	return command
 }

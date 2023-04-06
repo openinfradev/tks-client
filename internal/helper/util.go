@@ -35,8 +35,14 @@ func ModelToJson(in any) string {
 
 func Transcode(in, out interface{}) {
 	buf := new(bytes.Buffer)
-	json.NewEncoder(buf).Encode(in)
-	json.NewDecoder(buf).Decode(out)
+	err := json.NewEncoder(buf).Encode(in)
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = json.NewDecoder(buf).Decode(out)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func CheckError(err error) {

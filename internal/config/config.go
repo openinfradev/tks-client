@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/kballard/go-shellquote"
+	shellquote "github.com/kballard/go-shellquote"
 )
 
 var flags map[string]string
