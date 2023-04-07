@@ -64,6 +64,9 @@ func NewCommand() *cobra.Command {
 	if localCfg != nil {
 		command.PersistentFlags().StringVar(&opts.ServerAddr, "server", localCfg.GetServer().Server, "TKS server address")
 		command.PersistentFlags().StringVar(&opts.AuthToken, "auth-token", localCfg.GetUser().AuthToken, "Authentication token")
+
+		fmt.Printf("CURRENT SESSION [ %s | %s | %s ] \n\n",
+			localCfg.GetServer().Server, localCfg.GetUser().Name, localCfg.GetUser().OrganizationId)
 	}
 
 	// Set hidden auth-token

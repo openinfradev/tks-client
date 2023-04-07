@@ -36,10 +36,7 @@ func NewAppGroupListCommand(globalOpts *GlobalOptions) *cobra.Command {
 				return err
 			}
 
-			type DataInterface struct {
-				AppGroups []domain.AppGroup `json:"appGroups"`
-			}
-			var out = DataInterface{}
+			var out domain.GetAppGroupsResponse
 			helper.Transcode(body, &out)
 
 			printAppGroups(out.AppGroups)
@@ -53,7 +50,7 @@ func NewAppGroupListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	return command
 }
 
-func printAppGroups(r []domain.AppGroup) {
+func printAppGroups(r []domain.AppGroupResponse) {
 	if len(r) == 0 {
 		fmt.Println("No appGroup exists for specified cluster!")
 		return

@@ -30,16 +30,10 @@ func NewClusterDeleteCommand(globalOpts *GlobalOptions) *cobra.Command {
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			body, err := apiClient.Delete("clusters/"+clusterId, nil)
+			_, err = apiClient.Delete("clusters/"+clusterId, nil)
 			if err != nil {
 				return err
 			}
-
-			type DataInterface struct {
-				ClusterId string `json:"clusterId"`
-			}
-			var out = DataInterface{}
-			helper.Transcode(body, &out)
 
 			return nil
 		},

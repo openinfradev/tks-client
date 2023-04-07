@@ -60,11 +60,11 @@ func printStackTemplates(r []domain.StackTemplateResponse) {
 	t.Style().Options.SeparateFooter = false
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
-	t.AppendHeader(table.Row{"ORGANIZATION_ID", "ID", "NAME", "DESCRIPTION", "VERSION", "CLOUD_SERVICE", "PLATFORM", "TEMPLATE", "CREATED_AT", "UPDATED_AT"})
+	t.AppendHeader(table.Row{"ID", "NAME", "DESCRIPTION", "VERSION", "CLOUD_SERVICE", "PLATFORM", "TEMPLATE", "CREATED_AT", "UPDATED_AT"})
 	for _, s := range r {
 		tCreatedAt := helper.ParseTime(s.CreatedAt)
 		tUpdatedAt := helper.ParseTime(s.UpdatedAt)
-		t.AppendRow(table.Row{s.OrganizationId, s.ID, s.Name, s.Description, s.Version, s.CloudService, s.Platform, s.Template, tCreatedAt, tUpdatedAt})
+		t.AppendRow(table.Row{s.ID, s.Name, s.Description, s.Version, s.CloudService, s.Platform, s.Template, tCreatedAt, tUpdatedAt})
 	}
 	fmt.Println(t.Render())
 }

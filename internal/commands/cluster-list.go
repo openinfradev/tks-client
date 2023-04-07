@@ -37,10 +37,7 @@ func NewClusterListCommand(globalOpts *GlobalOptions) *cobra.Command {
 				return err
 			}
 
-			type DataInterface struct {
-				Clusters []domain.Cluster `json:"clusters"`
-			}
-			var out = DataInterface{}
+			var out domain.GetClustersResponse
 			helper.Transcode(body, &out)
 
 			printClusters(out.Clusters)
@@ -54,7 +51,7 @@ func NewClusterListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	return command
 }
 
-func printClusters(r []domain.Cluster) {
+func printClusters(r []domain.ClusterResponse) {
 	if len(r) == 0 {
 		fmt.Println("No cluster exists for specified organization!")
 		return

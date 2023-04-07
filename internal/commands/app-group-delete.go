@@ -30,16 +30,10 @@ func NewAppGroupDeleteCommand(globalOpts *GlobalOptions) *cobra.Command {
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			body, err := apiClient.Delete("app-groups/"+appGroupId, nil)
+			_, err = apiClient.Delete("app-groups/"+appGroupId, nil)
 			if err != nil {
 				return err
 			}
-
-			type DataInterface struct {
-				ClusterId string `json:"clusterId"`
-			}
-			var out = DataInterface{}
-			helper.Transcode(body, &out)
 
 			return nil
 		},
