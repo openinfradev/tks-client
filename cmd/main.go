@@ -15,8 +15,16 @@ limitations under the License.
 */
 package main
 
-import "github.com/openinfradev/tks-client/cmd"
+import (
+	"os"
+
+	"github.com/openinfradev/tks-client/internal/commands"
+)
 
 func main() {
-	cmd.Execute()
+	cmd := commands.NewCommand()
+
+	if err := cmd.Execute(); err != nil {
+		os.Exit(1)
+	}
 }
