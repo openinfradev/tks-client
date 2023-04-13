@@ -14,6 +14,7 @@ import (
 func NewClusterListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
 		organizationId string
+		long           bool
 	)
 
 	var command = &cobra.Command{
@@ -40,18 +41,19 @@ func NewClusterListCommand(globalOpts *GlobalOptions) *cobra.Command {
 			var out domain.GetClustersResponse
 			helper.Transcode(body, &out)
 
-			printClusters(out.Clusters)
+			printClusters(out.Clusters, long)
 
 			return nil
 		},
 	}
 
 	command.Flags().StringVarP(&organizationId, "organization-id", "o", "", "the organizationId with clusters")
+	command.Flags().BoolVarP(&long, "long", "l", false, "enabled detail information")
 
 	return command
 }
 
-func printClusters(r []domain.ClusterResponse) {
+func printClusters(r []domain.ClusterResponse, long bool) {
 	if len(r) == 0 {
 		fmt.Println("No cluster exists for specified organization!")
 		return
@@ -65,13 +67,27 @@ func printClusters(r []domain.ClusterResponse) {
 	t.Style().Options.SeparateFooter = false
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
+
 	t.AppendHeader(table.Row{"ORGANIZATION_ID", "NAME", "ID", "STATUS", "CREATED_AT", "UPDATED_AT"})
 	for _, s := range r {
+		fmt.Println(s.Status)
+
+		if !long {
+			if s.Status == "DELETED" {
+				continue
+			}
+		}
+
 		tCreatedAt := helper.ParseTime(s.CreatedAt)
 		tUpdatedAt := helper.ParseTime(s.UpdatedAt)
 		t.AppendRow(table.Row{s.OrganizationId, s.Name, s.ID, s.Status, tCreatedAt, tUpdatedAt})
 	}
-	fmt.Println(t.Render())
+
+	if len(r) > 0 {
+		fmt.Println(t.Render())
+	} else {
+		fmt.Println("No organization found.")
+	}
 }
 
 func ModelToJson(in any) string {
