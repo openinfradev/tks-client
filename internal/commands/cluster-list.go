@@ -68,19 +68,16 @@ func printClusters(r []domain.ClusterResponse, long bool) {
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
 
-	t.AppendHeader(table.Row{"ORGANIZATION_ID", "NAME", "ID", "STATUS", "CREATED_AT", "UPDATED_AT"})
+	t.AppendHeader(table.Row{"ORGANIZATION_ID", "NAME", "ID", "STATUS", "STACK_TEMPLATE", "CLOUD_SETTING", "CREATED_AT", "UPDATED_AT"})
 	for _, s := range r {
-		fmt.Println(s.Status)
-
 		if !long {
 			if s.Status == "DELETED" {
 				continue
 			}
 		}
-
 		tCreatedAt := helper.ParseTime(s.CreatedAt)
 		tUpdatedAt := helper.ParseTime(s.UpdatedAt)
-		t.AppendRow(table.Row{s.OrganizationId, s.Name, s.ID, s.Status, tCreatedAt, tUpdatedAt})
+		t.AppendRow(table.Row{s.OrganizationId, s.Name, s.ID, s.Status, s.StackTemplate.Template, s.CloudSetting.Name, tCreatedAt, tUpdatedAt})
 	}
 
 	if len(r) > 0 {
