@@ -6,17 +6,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewCloudSettingCommand(globalOpts *GlobalOptions) *cobra.Command {
+func NewCloudAccountCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var command = &cobra.Command{
-		Use:   "cloud-setting",
+		Use:   "cloud-account",
 		Short: "Operation for cloud setting",
 		Long:  `Operation for cloud setting`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("cloud-setting called")
+			fmt.Println("cloud-account called")
 		},
 	}
 
-	command.AddCommand(NewCloudSettingListCommand(globalOpts))
+	command.AddCommand(NewCloudAccountListCommand(globalOpts))
 
 	return command
 }

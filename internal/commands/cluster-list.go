@@ -77,7 +77,7 @@ func printClusters(r []domain.ClusterResponse, long bool) {
 		}
 		tCreatedAt := helper.ParseTime(s.CreatedAt)
 		tUpdatedAt := helper.ParseTime(s.UpdatedAt)
-		t.AppendRow(table.Row{s.OrganizationId, s.Name, s.ID, s.Status, s.StackTemplate.Template, s.CloudSetting.Name, tCreatedAt, tUpdatedAt})
+		t.AppendRow(table.Row{s.OrganizationId, s.Name, s.ID, s.Status, s.StackTemplate.Template, s.CloudAccount.Name, tCreatedAt, tUpdatedAt})
 	}
 
 	if len(r) > 0 {
