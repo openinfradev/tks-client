@@ -68,7 +68,7 @@ func printClusters(r []domain.ClusterResponse, long bool) {
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
 
-	t.AppendHeader(table.Row{"ORGANIZATION_ID", "NAME", "ID", "STATUS", "STACK_TEMPLATE", "CLOUD_SETTING", "CREATED_AT", "UPDATED_AT"})
+	t.AppendHeader(table.Row{"ORGANIZATION_ID", "NAME", "ID", "STATUS", "STACK_TEMPLATE", "CLOUD_ACCOUNT", "CREATED_AT", "UPDATED_AT"})
 	for _, s := range r {
 		if !long {
 			if s.Status == "DELETED" {
