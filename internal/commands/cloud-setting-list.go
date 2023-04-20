@@ -11,31 +11,31 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewCloudSettingListCommand(globalOpts *GlobalOptions) *cobra.Command {
+func NewCloudAccountListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
 		all bool
 	)
 
 	var command = &cobra.Command{
 		Use:   "list",
-		Short: "Show list of cloud-setting.",
-		Long: `Show list of cloud-setting.
+		Short: "Show list of cloud-account.",
+		Long: `Show list of cloud-account.
 	
 	Example:
-	tks cloud-setting list`,
+	tks cloud-account list`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			body, err := apiClient.Get("cloud-settings?all=" + strconv.FormatBool(all))
+			body, err := apiClient.Get("cloud-accounts?all=" + strconv.FormatBool(all))
 			if err != nil {
 				return err
 			}
 
-			var out = domain.GetCloudSettingsResponse{}
+			var out = domain.GetCloudAccountsResponse{}
 			helper.Transcode(body, &out)
 
-			printCloudSettings(out.CloudSettings)
+			printCloudAccounts(out.CloudAccounts)
 
 			return nil
 		},
@@ -46,9 +46,9 @@ func NewCloudSettingListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	return command
 }
 
-func printCloudSettings(r []domain.CloudSettingResponse) {
+func printCloudAccounts(r []domain.CloudAccountResponse) {
 	if len(r) == 0 {
-		fmt.Println("No cloudSetting exists for user organization!")
+		fmt.Println("No cloudAccount exists for user organization!")
 		return
 	}
 

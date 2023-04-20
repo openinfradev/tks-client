@@ -49,7 +49,7 @@ func NewCommand() *cobra.Command {
 	command.AddCommand(NewOrganizationCommand(&opts))
 	command.AddCommand(NewClusterCommand(&opts))
 	command.AddCommand(NewAppGroupCommand(&opts))
-	command.AddCommand(NewCloudSettingCommand(&opts))
+	command.AddCommand(NewCloudAccountCommand(&opts))
 	command.AddCommand(NewAppserveCommand(&opts))
 	command.AddCommand(NewStackTemplateCommand(&opts))
 

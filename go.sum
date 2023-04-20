@@ -271,8 +271,8 @@ github.com/onsi/gomega v0.0.0-20170829124025-dcabb60a477c/go.mod h1:C1qb7wdrVGGV
 github.com/onsi/gomega v1.7.1/go.mod h1:XdKZgCCFLUoM/7CFJVPcG8C1xQ1AJ0vpAezJrB7JYyY=
 github.com/onsi/gomega v1.10.1 h1:o0+MgICZLuZ7xjH7Vx6zS/zcu93/BEp1VwkIW1mEXCE=
 github.com/onsi/gomega v1.10.1/go.mod h1:iN09h71vgCQne3DLsj+A5owkum+a2tYe+TOCB1ybHNo=
-github.com/openinfradev/tks-api v0.0.0-20230406025714-cfa98b05e0d3 h1:QD5HZvQShnhbZYrmXlMKFI3FUpxVX8UELkOuk+5PW4E=
-github.com/openinfradev/tks-api v0.0.0-20230406025714-cfa98b05e0d3/go.mod h1:fTG0QJFcjqGFhuM2zleg9F94GRjJU73tbAR+XJs+/tk=
+github.com/openinfradev/tks-api v0.0.0-20230417012534-773be3cf5d2b h1:FKmzrGsJw5j1nEhNwsYqhHKQNRAMEOjPsOJBkACgcjk=
+github.com/openinfradev/tks-api v0.0.0-20230417012534-773be3cf5d2b/go.mod h1:wq+m4x6XWGvXw1Bx7hJiJWHWr5iPT2l34LYmZUaIWjk=
 github.com/pelletier/go-toml v1.9.5 h1:4yBQzkHv+7BHq2PQUZF3Mx0IYxG7LsP222s7Agd3ve8=
 github.com/pelletier/go-toml v1.9.5/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
 github.com/pelletier/go-toml/v2 v2.0.1 h1:8e3L2cCQzLFi2CR4g7vGFuFxX7Jl1kKX8gW+iV0GUKU=

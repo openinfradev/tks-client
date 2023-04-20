@@ -14,9 +14,9 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		name            string
 		organizationId  string
 		description     string
-		template        string
+		stackTemplateId string
 		region          string
-		cloudSettingId  string
+		cloudAccountId  string
 		machineType     string
 		numOfAz         int
 		machineReplicas int
@@ -40,10 +40,10 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 
 			input := domain.CreateClusterRequest{
 				OrganizationId:  organizationId,
-				TemplateId:      template,
+				StackTemplateId: stackTemplateId,
 				Name:            name,
 				Description:     description,
-				CloudSettingId:  cloudSettingId,
+				CloudAccountId:  cloudAccountId,
 				NumOfAz:         numOfAz,
 				MachineType:     machineType,
 				Region:          region,
@@ -70,12 +70,14 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().StringVarP(&organizationId, "organization-id", "o", "", "the organizationId with clusters")
 	helper.CheckError(command.MarkFlagRequired("organization-id"))
 
-	command.Flags().StringVarP(&cloudSettingId, "cloud-setting-id", "s", "", "the cloudSettingId for cluster")
-	helper.CheckError(command.MarkFlagRequired("cloud-setting-id"))
+	command.Flags().StringVarP(&cloudAccountId, "cloud-account-id", "s", "", "the cloudAccountId for cluster")
+	helper.CheckError(command.MarkFlagRequired("cloud-account-id"))
+
+	command.Flags().StringVarP(&stackTemplateId, "stack-template-id", "t", "", "the template for installation")
+	helper.CheckError(command.MarkFlagRequired("stack-template-id"))
 
 	command.Flags().StringVarP(&name, "name", "n", "", "the name of organization")
 	command.Flags().StringVarP(&description, "description", "d", "", "the description of organization")
-	command.Flags().StringVar(&template, "template", "aws-reference", "the template for installation")
 
 	command.Flags().StringVar(&region, "region", "ap-northeast-2", "AWS region")
 	command.Flags().StringVar(&machineType, "machine-type", "", "machine type for user node")
