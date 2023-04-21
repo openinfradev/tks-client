@@ -28,9 +28,9 @@ func NewAppservePromoteCmd(globalOpts *GlobalOptions) *cobra.Command {
 			helper.CheckError(err)
 
 			url := fmt.Sprintf("app-serve-apps/%v", appId)
-			params := conf{Promote: true}
+			params := conf{Strategy: "blue-green", Promote: true}
 
-			body, err := apiClient.Post(url, params)
+			body, err := apiClient.Put(url, params)
 			if err != nil {
 				return err
 			}
