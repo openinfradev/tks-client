@@ -7,7 +7,6 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
-	github.com/openinfradev/tks-api v0.0.0-20230417012534-773be3cf5d2b
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/pflag v1.0.5
 	golang.org/x/term v0.6.0
@@ -47,6 +46,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
+	github.com/openinfradev/tks-api v0.0.0-20230424040853-49ddee29fa8e // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
@@ -82,4 +82,4 @@ require (
 
 replace github.com/openinfradev/tks-client => ./
 
-replace github.com/openinfradev/tks-api => ../tks-api
+//replace github.com/openinfradev/tks-api => ../tks-api
