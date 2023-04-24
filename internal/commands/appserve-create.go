@@ -2,8 +2,8 @@ package commands
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 	"os"
 
 	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
@@ -15,7 +15,7 @@ import (
 type conf struct {
 	// App
 	Name            string `yaml:"name" json:"name"`
-	OrganizationId  string `yaml:"organization_id" json:"organization_id"`
+	Namespace       string `yaml:"namespace" json:"namespace"`
 	Type            string `yaml:"type" json:"type"`
 	AppType         string `yaml:"app_type" json:"app_type"`
 	TargetClusterId string `yaml:"target_cluster_id" json:"target_cluster_id"`
@@ -45,6 +45,13 @@ type conf struct {
 
 func NewAppserveCreateCmd(globalOpts *GlobalOptions) *cobra.Command {
 	var (
+		organizationId  string
+		targetClusterId string
+		artifactUrl     string
+		namespace       string
+		deployType      string
+		appType         string
+		port            string
 		appserveCfgFile string
 		appCfgFile      string
 		appSecretFile   string
@@ -56,21 +63,26 @@ func NewAppserveCreateCmd(globalOpts *GlobalOptions) *cobra.Command {
 		Long: `Create an app by AppServing service.
   
 	Example:
-	tks appserve create --appserve-config CONFIGFILE`,
+	tks appserve create <APP_NAME> --organization-id <ORG_ID> [--artifact-url <URL> --namespace <NAMESPACE> --type <all|build|deploy> --app-type <springboot|spring> --port <PORT_NUMBER> --appserve-config <CONFIGFILE>]`,
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var c conf
-			if appserveCfgFile == "" {
-				return errors.New("--appserve-config is mandatory param")
-			}
+			var err error
+			var yamlData []byte
 
-			// Get Appserving request params from config file
-			yamlData, err := os.ReadFile(appserveCfgFile)
-			if err != nil {
-				return fmt.Errorf("error: %s", err)
-			}
+			if appserveCfgFile != "" {
+				// Get Appserving request params from config file
+				yamlData, err = os.ReadFile(appserveCfgFile)
+				if err != nil {
+					return fmt.Errorf("error: %s", err)
+				}
+				fmt.Printf("*******\nConfig:\n%s\n*******\n", yamlData)
 
-			fmt.Printf("*******\nConfig:\n%s\n*******\n", yamlData)
+				// Unmarshal yaml content into struct
+				if err = yaml.Unmarshal(yamlData, &c); err != nil {
+					return fmt.Errorf("error: %s", err)
+				}
+			}
 
 			// Get application config from file
 			if appCfgFile != "" {
@@ -91,9 +103,32 @@ func NewAppserveCreateCmd(globalOpts *GlobalOptions) *cobra.Command {
 				c.AppSecret = string(appSecretBytes)
 			}
 
-			// Unmarshal yaml content into struct
-			if err = yaml.Unmarshal(yamlData, &c); err != nil {
-				return fmt.Errorf("error: %s", err)
+			name := args[0]
+			if name != "" {
+				c.Name = name
+			}
+			if organizationId == "" {
+				return errors.Errorf("orgnization ID is mendantory")
+			}
+			if c.TargetClusterId == "" && targetClusterId == "" {
+				return errors.Errorf("cluster ID is mendantory")
+			} else if targetClusterId != "" {
+				c.TargetClusterId = targetClusterId
+			}
+			if artifactUrl != "" {
+				c.ArtifactUrl = artifactUrl
+			}
+			if namespace != "" {
+				c.Namespace = namespace
+			}
+			if deployType != "" {
+				c.Type = deployType
+			}
+			if appType != "" {
+				c.AppType = appType
+			}
+			if port != "" {
+				c.Port = port
 			}
 
 			// Convert map to Json
@@ -126,7 +161,9 @@ func NewAppserveCreateCmd(globalOpts *GlobalOptions) *cobra.Command {
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			body, err := apiClient.Post("app-serve-apps", c)
+			url := fmt.Sprintf("organizations/%v/app-serve-apps", organizationId)
+
+			body, err := apiClient.Post(url, c)
 			if err != nil {
 				return err
 			}
@@ -143,6 +180,13 @@ func NewAppserveCreateCmd(globalOpts *GlobalOptions) *cobra.Command {
 		},
 	}
 
+	command.Flags().StringVar(&organizationId, "organization-id", "", "organization ID for AppServing service")
+	command.Flags().StringVar(&targetClusterId, "target-cluster-id", "", "cluster ID for AppServing service")
+	command.Flags().StringVar(&artifactUrl, "artifact-url", "", "jar url for AppServing service")
+	command.Flags().StringVar(&namespace, "namespace", "", "namespace for AppServing service")
+	command.Flags().StringVar(&deployType, "type", "", "type for AppServing service")
+	command.Flags().StringVar(&appType, "app-type", "", "app type for AppServing service")
+	command.Flags().StringVar(&port, "port", "", "port for AppServing service")
 	command.Flags().StringVar(&appserveCfgFile, "appserve-config", "", "config file for AppServing service")
 	command.Flags().StringVar(&appCfgFile, "app-config", "", "custom config file for user application")
 	command.Flags().StringVar(&appSecretFile, "app-secret", "", "custom secret file for user application")
