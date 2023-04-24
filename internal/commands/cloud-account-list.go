@@ -2,18 +2,18 @@ package commands
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/jedib0t/go-pretty/table"
 	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
 	"github.com/openinfradev/tks-api/pkg/domain"
+	"github.com/openinfradev/tks-client/internal/config"
 	"github.com/openinfradev/tks-client/internal/helper"
 	"github.com/spf13/cobra"
 )
 
 func NewCloudAccountListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
-		all bool
+		organizationId string
 	)
 
 	var command = &cobra.Command{
@@ -24,10 +24,17 @@ func NewCloudAccountListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	Example:
 	tks cloud-account list`,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if len(args) == 0 && organizationId == "" {
+				localCfg, err := config.ReadLocalConfig(globalOpts.ConfigPath)
+				if err == nil {
+					organizationId = localCfg.GetUser().OrganizationId
+				}
+			}
+
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			body, err := apiClient.Get("cloud-accounts?all=" + strconv.FormatBool(all))
+			body, err := apiClient.Get("/organizations/" + organizationId + "/cloud-accounts")
 			if err != nil {
 				return err
 			}
@@ -41,7 +48,7 @@ func NewCloudAccountListCommand(globalOpts *GlobalOptions) *cobra.Command {
 		},
 	}
 
-	command.Flags().BoolVarP(&all, "all", "A", false, "show all organizations")
+	command.Flags().StringVarP(&organizationId, "organization-id", "o", "", "the organizationId with clusters")
 
 	return command
 }

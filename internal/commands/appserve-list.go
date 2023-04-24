@@ -33,8 +33,8 @@ func NewAppServeListCmd(globalOpts *GlobalOptions) *cobra.Command {
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			api := fmt.Sprintf("app-serve-apps?organizationId=%s&showAll=%s", organizationId, showAll)
-			body, err := apiClient.Get(api)
+			url := fmt.Sprintf("organizations/%v/app-serve-apps?showAll=%s", organizationId, showAll)
+			body, err := apiClient.Get(url)
 			if err != nil {
 				return err
 			}
