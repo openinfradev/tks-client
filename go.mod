@@ -82,4 +82,4 @@ require (
 
 replace github.com/openinfradev/tks-client => ./
 
-//replace github.com/openinfradev/tks-api => ../tks-api
+replace github.com/openinfradev/tks-api => ../tks-api

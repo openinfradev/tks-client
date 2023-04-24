@@ -11,15 +11,17 @@ import (
 
 func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
-		name            string
-		organizationId  string
-		description     string
-		stackTemplateId string
-		region          string
-		cloudAccountId  string
-		machineType     string
-		numOfAz         int
-		machineReplicas int
+		name                string
+		organizationId      string
+		description         string
+		stackTemplateId     string
+		cloudAccountId      string
+		cpNodeCnt           int
+		cpNodeMachineType   string
+		tksNodeCnt          int
+		tksNodeMachineType  string
+		userNodeCnt         int
+		userNodeMachineType string
 	)
 
 	var command = &cobra.Command{
@@ -39,15 +41,17 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			input := domain.CreateClusterRequest{
-				OrganizationId:  organizationId,
-				StackTemplateId: stackTemplateId,
-				Name:            name,
-				Description:     description,
-				CloudAccountId:  cloudAccountId,
-				NumOfAz:         numOfAz,
-				MachineType:     machineType,
-				Region:          region,
-				MachineReplicas: machineReplicas,
+				OrganizationId:      organizationId,
+				StackTemplateId:     stackTemplateId,
+				Name:                name,
+				Description:         description,
+				CloudAccountId:      cloudAccountId,
+				CpNodeCnt:           cpNodeCnt,
+				CpNodeMachineType:   cpNodeMachineType,
+				TksNodeCnt:          tksNodeCnt,
+				TksNodeMachineType:  tksNodeMachineType,
+				UserNodeCnt:         userNodeCnt,
+				UserNodeMachineType: userNodeMachineType,
 			}
 
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
@@ -79,10 +83,12 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().StringVarP(&name, "name", "n", "", "the name of organization")
 	command.Flags().StringVarP(&description, "description", "d", "", "the description of organization")
 
-	command.Flags().StringVar(&region, "region", "ap-northeast-2", "AWS region")
-	command.Flags().StringVar(&machineType, "machine-type", "", "machine type for user node")
-	command.Flags().IntVar(&numOfAz, "num-of-az", 1, "number of available zone")
-	command.Flags().IntVar(&machineReplicas, "machine-replicas", 1, "the number of machine replica")
+	command.Flags().IntVar(&cpNodeCnt, "cp-node-cnt", 3, "number of control-plane nodes")
+	command.Flags().StringVar(&cpNodeMachineType, "cp-node-machine-type", "t3.large", "machine type for tks cp node")
+	command.Flags().IntVar(&tksNodeCnt, "tks-node-cnt", 3, "number of tks nodes")
+	command.Flags().StringVar(&tksNodeMachineType, "tks-node-machine-type", "t3.2xlarge", "machine type for tks node")
+	command.Flags().IntVar(&userNodeCnt, "user-node-cnt", 1, "number of control-plane nodes")
+	command.Flags().StringVar(&userNodeMachineType, "user-node-machine-type", "t3.large", "machine type for user node")
 
 	return command
 }
