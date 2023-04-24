@@ -68,8 +68,8 @@ func NewAppserveCreateCmd(globalOpts *GlobalOptions) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var c conf
 			var err error
+			var yamlData []byte
 
-			yamlData := make([]byte, 0)
 			if appserveCfgFile != "" {
 				// Get Appserving request params from config file
 				yamlData, err = os.ReadFile(appserveCfgFile)
