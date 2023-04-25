@@ -17,26 +17,26 @@ type conf struct {
 	Name            string `yaml:"name" json:"name"`
 	Namespace       string `yaml:"namespace" json:"namespace"`
 	Type            string `yaml:"type" json:"type"`
-	AppType         string `yaml:"app_type" json:"app_type"`
-	TargetClusterId string `yaml:"target_cluster_id" json:"target_cluster_id"`
+	AppType         string `yaml:"app_type" json:"appType"`
+	TargetClusterId string `yaml:"target_cluster_id" json:"targetClusterId"`
 
 	// AppType
 	Version        string `yaml:"version" json:"version"`
 	Strategy       string `yaml:"strategy" json:"strategy"`
-	ArtifactUrl    string `yaml:"artifact_url" json:"artifact_url"`
-	ImageUrl       string `yaml:"image_url" json:"image_url"`
-	ExecutablePath string `yaml:"executable_path" json:"executable_path"`
-	ResourceSpec   string `yaml:"resource_spec" json:"resource_spec"`
+	ArtifactUrl    string `yaml:"artifact_url" json:"artifactUrl"`
+	ImageUrl       string `yaml:"image_url" json:"imageUrl"`
+	ExecutablePath string `yaml:"executable_path" json:"executablePath"`
+	ResourceSpec   string `yaml:"resource_spec" json:"resourceSpec"`
 	Profile        string `yaml:"profile" json:"profile"`
-	AppConfig      string `yaml:"app_config" json:"app_config"`
-	AppSecret      string `yaml:"app_secret" json:"app_secret"`
-	ExtraEnv       string `yaml:"extra_env" json:"extra_env"`
+	AppConfig      string `yaml:"app_config" json:"appConfig"`
+	AppSecret      string `yaml:"app_secret" json:"appSecret"`
+	ExtraEnv       string `yaml:"extra_env" json:"extraEnv"`
 	Port           string `yaml:"port" json:"port"`
-	PvEnabled      bool   `yaml:"pv_enabled" json:"pv_enabled"`
-	PvStorageClass string `yaml:"pv_storage_class" json:"pv_storage_class"`
-	PvAccessMode   string `yaml:"pv_access_mode" json:"pv_access_mode"`
-	PvSize         string `yaml:"pv_size" json:"pv_size"`
-	PvMountPath    string `yaml:"pv_mount_path" json:"pv_mount_path"`
+	PvEnabled      bool   `yaml:"pv_enabled" json:"pvEnabled"`
+	PvStorageClass string `yaml:"pv_storage_class" json:"pvStorageClass"`
+	PvAccessMode   string `yaml:"pv_access_mode" json:"pvAccessMode"`
+	PvSize         string `yaml:"pv_size" json:"pvSize"`
+	PvMountPath    string `yaml:"pv_mount_path" json:"pvMountPath"`
 
 	// Update Strategy
 	Promote bool `yaml:"promote" json:"promote"`
@@ -47,9 +47,10 @@ func NewAppserveCreateCmd(globalOpts *GlobalOptions) *cobra.Command {
 	var (
 		organizationId  string
 		targetClusterId string
-		artifactUrl     string
-		namespace       string
 		deployType      string
+		artifactUrl     string
+		imageUrl        string
+		namespace       string
 		appType         string
 		port            string
 		appserveCfgFile string
@@ -63,7 +64,7 @@ func NewAppserveCreateCmd(globalOpts *GlobalOptions) *cobra.Command {
 		Long: `Create an app by AppServing service.
   
 	Example:
-	tks appserve create <APP_NAME> --organization-id <ORG_ID> [--artifact-url <URL> --namespace <NAMESPACE> --type <all|build|deploy> --app-type <springboot|spring> --port <PORT_NUMBER> --appserve-config <CONFIGFILE>]`,
+	tks appserve create <APP_NAME> --organization-id <ORG_ID> --type <all|build|deploy> [--artifact-url <URL>|--image-url <URL>] [--namespace <NAMESPACE> --app-type <springboot|spring> --port <PORT_NUMBER> --appserve-config <CONFIGFILE>]`,
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var c conf
@@ -108,21 +109,24 @@ func NewAppserveCreateCmd(globalOpts *GlobalOptions) *cobra.Command {
 				c.Name = name
 			}
 			if organizationId == "" {
-				return errors.Errorf("orgnization ID is mendantory")
+				return errors.Errorf("organization ID is mandatory")
 			}
 			if c.TargetClusterId == "" && targetClusterId == "" {
-				return errors.Errorf("cluster ID is mendantory")
+				return errors.Errorf("cluster ID is mandatory")
 			} else if targetClusterId != "" {
 				c.TargetClusterId = targetClusterId
+			}
+			if deployType != "" {
+				c.Type = deployType
 			}
 			if artifactUrl != "" {
 				c.ArtifactUrl = artifactUrl
 			}
+			if imageUrl != "" {
+				c.ImageUrl = imageUrl
+			}
 			if namespace != "" {
 				c.Namespace = namespace
-			}
-			if deployType != "" {
-				c.Type = deployType
 			}
 			if appType != "" {
 				c.AppType = appType
@@ -182,9 +186,10 @@ func NewAppserveCreateCmd(globalOpts *GlobalOptions) *cobra.Command {
 
 	command.Flags().StringVar(&organizationId, "organization-id", "", "organization ID for AppServing service")
 	command.Flags().StringVar(&targetClusterId, "target-cluster-id", "", "cluster ID for AppServing service")
-	command.Flags().StringVar(&artifactUrl, "artifact-url", "", "jar url for AppServing service")
-	command.Flags().StringVar(&namespace, "namespace", "", "namespace for AppServing service")
 	command.Flags().StringVar(&deployType, "type", "", "type for AppServing service")
+	command.Flags().StringVar(&artifactUrl, "artifact-url", "", "jar url for AppServing service")
+	command.Flags().StringVar(&imageUrl, "image-url", "", "image url for AppServing service")
+	command.Flags().StringVar(&namespace, "namespace", "", "namespace for AppServing service")
 	command.Flags().StringVar(&appType, "app-type", "", "app type for AppServing service")
 	command.Flags().StringVar(&port, "port", "", "port for AppServing service")
 	command.Flags().StringVar(&appserveCfgFile, "appserve-config", "", "config file for AppServing service")

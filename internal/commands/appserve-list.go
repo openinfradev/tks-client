@@ -40,7 +40,7 @@ func NewAppServeListCmd(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			type DataInterface struct {
-				AppServeApps []domain.AppServeApp `json:"app_serve_apps"`
+				AppServeApps []domain.AppServeApp `json:"appServeApps"`
 			}
 			var out = DataInterface{}
 			helper.Transcode(body, &out)
