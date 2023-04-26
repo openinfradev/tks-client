@@ -66,7 +66,7 @@ func printAppServeShow(d domain.AppServeApp, long bool) {
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
 	if long {
-		t.AppendHeader(table.Row{"Version", "Status", "Strategy", "Revision",
+		t.AppendHeader(table.Row{"ID", "Version", "Status", "Strategy", "Revision",
 			"Image URL", "Profile", "CREATED_AT", "UPDATED_AT"})
 		for _, i := range d.AppServeAppTasks {
 			tCreatedAt := helper.ParseTime(i.CreatedAt)
@@ -74,7 +74,7 @@ func printAppServeShow(d domain.AppServeApp, long bool) {
 			if i.UpdatedAt != nil {
 				tUpdatedAt = helper.ParseTime(*i.UpdatedAt)
 			}
-			t.AppendRow(table.Row{i.Version, i.Status, i.Strategy, strconv.Itoa(int(i.HelmRevision)),
+			t.AppendRow(table.Row{i.ID, i.Version, i.Status, i.Strategy, strconv.Itoa(int(i.HelmRevision)),
 				i.ImageUrl, i.Profile, tCreatedAt, tUpdatedAt})
 		}
 	} else {
