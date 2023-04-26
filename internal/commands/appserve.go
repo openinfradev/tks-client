@@ -23,6 +23,7 @@ func NewAppserveCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.AddCommand(NewAppserveDeleteCmd(globalOpts))
 	command.AddCommand(NewAppservePromoteCmd(globalOpts))
 	command.AddCommand(NewAppserveAbortCmd(globalOpts))
+	command.AddCommand(NewAppserveRollbackCmd(globalOpts))
 
 	return command
 }
