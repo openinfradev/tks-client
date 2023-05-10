@@ -1,14 +1,17 @@
 package commands
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/jedib0t/go-pretty/table"
+	"github.com/spf13/cobra"
+
 	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
 	"github.com/openinfradev/tks-api/pkg/domain"
 	"github.com/openinfradev/tks-client/internal/helper"
-	"github.com/spf13/cobra"
-	"strconv"
 )
 
 func NewAppServeShowCmd(globalOpts *GlobalOptions) *cobra.Command {
@@ -33,6 +36,24 @@ func NewAppServeShowCmd(globalOpts *GlobalOptions) *cobra.Command {
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
+			//url := fmt.Sprintf("organizations/%v/app-serve-apps/%s/exist", organizationId, appId)
+			//body, err := apiClient.Get(url)
+			//if err != nil {
+			//	return err
+			//}
+			//
+			//type DataInterface struct {
+			//	Exist bool `json:"exist"`
+			//}
+			//var out = DataInterface{}
+			//helper.Transcode(body, &out)
+			//
+			//fmt.Println("============================================ ")
+			//fmt.Println("Json data: ")
+			//data, _ := json.Marshal(out)
+			//fmt.Println(string(data))
+			//fmt.Println("============================================ ")
+
 			url := fmt.Sprintf("organizations/%v/app-serve-apps/%s", organizationId, appId)
 			body, err := apiClient.Get(url)
 			if err != nil {
@@ -40,10 +61,17 @@ func NewAppServeShowCmd(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			type DataInterface struct {
-				AppServeApp domain.AppServeApp `json:"app_serve_app"`
+				AppServeApp domain.AppServeApp     `json:"appServeApp"`
+				Stages      []domain.StageResponse `json:"stages"`
 			}
 			var out = DataInterface{}
 			helper.Transcode(body, &out)
+
+			fmt.Println("============================================ ")
+			fmt.Println("Json data: ")
+			data, _ := json.Marshal(out)
+			fmt.Println(string(data))
+			fmt.Println("============================================ ")
 
 			printAppServeShow(out.AppServeApp, true)
 
@@ -66,7 +94,7 @@ func printAppServeShow(d domain.AppServeApp, long bool) {
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
 	if long {
-		t.AppendHeader(table.Row{"Version", "Status", "Strategy", "Revision",
+		t.AppendHeader(table.Row{"ID", "Version", "Status", "Available Rollback", "Strategy", "Revision",
 			"Image URL", "Profile", "CREATED_AT", "UPDATED_AT"})
 		for _, i := range d.AppServeAppTasks {
 			tCreatedAt := helper.ParseTime(i.CreatedAt)
@@ -74,7 +102,7 @@ func printAppServeShow(d domain.AppServeApp, long bool) {
 			if i.UpdatedAt != nil {
 				tUpdatedAt = helper.ParseTime(*i.UpdatedAt)
 			}
-			t.AppendRow(table.Row{i.Version, i.Status, i.Strategy, strconv.Itoa(int(i.HelmRevision)),
+			t.AppendRow(table.Row{i.ID, i.Version, i.Status, i.AvailableRollback, i.Strategy, strconv.Itoa(int(i.HelmRevision)),
 				i.ImageUrl, i.Profile, tCreatedAt, tUpdatedAt})
 		}
 	} else {

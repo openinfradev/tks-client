@@ -12,11 +12,36 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+type updateConf struct {
+	// App
+	Type    string `yaml:"type" json:"type"`
+	AppType string `yaml:"app_type" json:"appType"`
+
+	// AppTask
+	Strategy       string `yaml:"strategy" json:"strategy"`
+	ArtifactUrl    string `yaml:"artifact_url" json:"artifactUrl"`
+	ImageUrl       string `yaml:"image_url" json:"imageUrl"`
+	ExecutablePath string `yaml:"executable_path" json:"executablePath"`
+	ResourceSpec   string `yaml:"resource_spec" json:"resourceSpec"`
+	Profile        string `yaml:"profile" json:"profile"`
+	AppConfig      string `yaml:"app_config" json:"appConfig"`
+	AppSecret      string `yaml:"app_secret" json:"appSecret"`
+	ExtraEnv       string `yaml:"extra_env" json:"extraEnv"`
+	Port           string `yaml:"port" json:"port"`
+}
+
 func NewAppserveUpdateCmd(globalOpts *GlobalOptions) *cobra.Command {
 	var (
+		organizationId  string
+		deployType      string
+		artifactUrl     string
+		imageUrl        string
+		strategy        string
+		appType         string
 		appserveCfgFile string
 		appCfgFile      string
 		appSecretFile   string
+		port            string
 	)
 
 	var command = &cobra.Command{
@@ -25,27 +50,26 @@ func NewAppserveUpdateCmd(globalOpts *GlobalOptions) *cobra.Command {
 		Long: `Update an app deployed by AppServing service.
   
 	Example:
-	tks appserve update <APP_ID> --appserve-config <CONFIGFILE>`,
+	tks appserve update <APP_ID> --organization-id <ORG_ID> --type <all|build|deploy> [--artifact-url <URL>|--image-url <URL>] [--strategy <rolling-update|blue-green> --app-type <springboot|spring> --port <PORT_NUMBER> --appserve-config <CONFIGFILE>]`,
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			appId := args[0]
+			var c updateConf
+			var err error
+			var yamlData []byte
 
-			if len(appId) < 1 {
-				return errors.New("APP_ID is mandatory! Run 'tks appserve update --help'")
+			if appserveCfgFile != "" {
+				// Get Appserving request params from config file
+				yamlData, err = os.ReadFile(appserveCfgFile)
+				if err != nil {
+					return fmt.Errorf("error: %s", err)
+				}
+				fmt.Printf("*******\nConfig:\n%s\n*******\n", yamlData)
+
+				// Unmarshal yaml content into struct
+				if err = yaml.Unmarshal(yamlData, &c); err != nil {
+					return fmt.Errorf("error: %s", err)
+				}
 			}
-
-			var c conf
-			if appserveCfgFile == "" {
-				return errors.New("--appserve-config is mandatory param")
-			}
-
-			// Get Appserving request params from config file
-			yamlData, err := os.ReadFile(appserveCfgFile)
-			if err != nil {
-				return fmt.Errorf("error: %s", err)
-			}
-
-			fmt.Printf("*******\nConfig:\n%s\n*******\n", yamlData)
 
 			// Get application config from file
 			if appCfgFile != "" {
@@ -66,19 +90,31 @@ func NewAppserveUpdateCmd(globalOpts *GlobalOptions) *cobra.Command {
 				c.AppSecret = string(appSecretBytes)
 			}
 
-			// Unmarshal yaml content into struct
-			if err = yaml.Unmarshal(yamlData, &c); err != nil {
-				return fmt.Errorf("error: %s", err)
+			appId := args[0]
+			if len(appId) < 1 {
+				return errors.New("APP_ID is mandatory! Run 'tks appserve update --help'")
 			}
 
-			// Exclude immutable params
-			if c.Name != "" || c.Type != "" || c.AppType != "" {
-				fmt.Println("Following params are immutable in update action, " +
-					"so they're ignored.\n\t- name\n\t- type\n\t- app_type\n\t- target_cluster")
-				c.Name = ""
-				c.Type = ""
-				c.AppType = ""
-				c.TargetClusterId = ""
+			if organizationId == "" {
+				return errors.New("organization ID is mandatory")
+			}
+			if deployType != "" {
+				c.Type = deployType
+			}
+			if artifactUrl != "" {
+				c.ArtifactUrl = artifactUrl
+			}
+			if imageUrl != "" {
+				c.ImageUrl = imageUrl
+			}
+			if strategy != "" {
+				c.Strategy = strategy
+			}
+			if appType != "" {
+				c.AppType = appType
+			}
+			if port != "" {
+				c.Port = port
 			}
 
 			// Convert map to Json
@@ -95,7 +131,7 @@ func NewAppserveUpdateCmd(globalOpts *GlobalOptions) *cobra.Command {
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			url := fmt.Sprintf("app-serve-apps/%v", appId)
+			url := fmt.Sprintf("organizations/%v/app-serve-apps/%v", organizationId, appId)
 
 			body, err := apiClient.Put(url, c)
 			if err != nil {
@@ -108,6 +144,13 @@ func NewAppserveUpdateCmd(globalOpts *GlobalOptions) *cobra.Command {
 		},
 	}
 
+	command.Flags().StringVar(&organizationId, "organization-id", "", "organization ID for AppServing service")
+	command.Flags().StringVar(&deployType, "type", "", "type for AppServing service")
+	command.Flags().StringVar(&artifactUrl, "artifact-url", "", "jar url for AppServing service")
+	command.Flags().StringVar(&imageUrl, "image-url", "", "image url for AppServing service")
+	command.Flags().StringVar(&strategy, "strategy", "", "strategy for AppServing service")
+	command.Flags().StringVar(&appType, "app-type", "", "app type for AppServing service")
+	command.Flags().StringVar(&port, "port", "", "port for AppServing service")
 	command.Flags().StringVar(&appserveCfgFile, "appserve-config", "", "config file for AppServing service")
 	command.Flags().StringVar(&appCfgFile, "app-config", "", "custom config file for user application")
 	command.Flags().StringVar(&appSecretFile, "app-secret", "", "custom secret file for user application")
