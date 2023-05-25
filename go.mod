@@ -7,7 +7,8 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
-	github.com/openinfradev/tks-api v0.0.0-20230522141716-16168a2879a6
+	github.com/openinfradev/tks-api v0.0.0-20230524113357-3bbb1e773fe1
+	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/pflag v1.0.5
