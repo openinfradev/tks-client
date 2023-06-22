@@ -12,6 +12,7 @@ import (
 func NewOrganizationCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
 		name        string
+		email       string
 		description string
 	)
 
@@ -32,6 +33,7 @@ func NewOrganizationCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 
 			input := domain.CreateOrganizationRequest{
 				Name:        name,
+				Email:       email,
 				Description: description,
 			}
 
@@ -54,6 +56,9 @@ func NewOrganizationCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		},
 	}
 	command.Flags().StringVar(&name, "name", "", "the name of organization")
+	command.Flags().StringVar(&email, "email", "", "the email for creator")
+	helper.CheckError(command.MarkFlagRequired("email"))
+
 	command.Flags().StringVar(&description, "description", "", "the description of organization")
 
 	return command
