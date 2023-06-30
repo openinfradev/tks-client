@@ -16,6 +16,7 @@ func NewCloudAccountCommand(globalOpts *GlobalOptions) *cobra.Command {
 		},
 	}
 
+	command.AddCommand(NewCloudAccountCreateCommand(globalOpts))
 	command.AddCommand(NewCloudAccountListCommand(globalOpts))
 
 	return command
