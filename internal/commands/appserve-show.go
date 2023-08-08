@@ -94,16 +94,14 @@ func printAppServeShow(d domain.AppServeApp, long bool) {
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
 	if long {
-		t.AppendHeader(table.Row{"ID", "Version", "Status", "Available Rollback", "Strategy", "Revision",
-			"Image URL", "Profile", "CREATED_AT", "UPDATED_AT"})
+		t.AppendHeader(table.Row{"ID", "Version", "Status", "Available Rollback", "Strategy", "Revision", "Image URL", "Profile", "CREATED_AT", "UPDATED_AT"})
 		for _, i := range d.AppServeAppTasks {
 			tCreatedAt := helper.ParseTime(i.CreatedAt)
 			var tUpdatedAt string
 			if i.UpdatedAt != nil {
 				tUpdatedAt = helper.ParseTime(*i.UpdatedAt)
 			}
-			t.AppendRow(table.Row{i.ID, i.Version, i.Status, i.AvailableRollback, i.Strategy, strconv.Itoa(int(i.HelmRevision)),
-				i.ImageUrl, i.Profile, tCreatedAt, tUpdatedAt})
+			t.AppendRow(table.Row{i.ID, i.Version, i.Status, i.AvailableRollback, i.Strategy, strconv.Itoa(int(i.HelmRevision)), i.ImageUrl, i.Profile, tCreatedAt, tUpdatedAt})
 		}
 	} else {
 		fmt.Println("Not implemented yet.")
