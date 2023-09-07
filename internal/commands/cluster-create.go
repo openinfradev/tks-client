@@ -11,17 +11,20 @@ import (
 
 func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
-		name                string
-		organizationId      string
-		description         string
-		stackTemplateId     string
-		cloudAccountId      string
-		cpNodeCnt           int
-		cpNodeMachineType   string
-		tksNodeCnt          int
-		tksNodeMachineType  string
-		userNodeCnt         int
-		userNodeMachineType string
+		name             string
+		organizationId   string
+		description      string
+		stackTemplateId  string
+		cloudAccountId   string
+		tksCpNode        int
+		tksCpNodeMax     int
+		tksCpNodeType    string
+		tksInfraNode     int
+		tksInfraNodeMax  int
+		tksInfraNodeType string
+		tksUserNode      int
+		tksUserNodeMax   int
+		tksUserNodeType  string
 	)
 
 	var command = &cobra.Command{
@@ -41,17 +44,20 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			input := domain.CreateClusterRequest{
-				OrganizationId:      organizationId,
-				StackTemplateId:     stackTemplateId,
-				Name:                name,
-				Description:         description,
-				CloudAccountId:      cloudAccountId,
-				CpNodeCnt:           cpNodeCnt,
-				CpNodeMachineType:   cpNodeMachineType,
-				TksNodeCnt:          tksNodeCnt,
-				TksNodeMachineType:  tksNodeMachineType,
-				UserNodeCnt:         userNodeCnt,
-				UserNodeMachineType: userNodeMachineType,
+				OrganizationId:   organizationId,
+				StackTemplateId:  stackTemplateId,
+				Name:             name,
+				Description:      description,
+				CloudAccountId:   cloudAccountId,
+				TksCpNode:        tksCpNode,
+				TksCpNodeMax:     tksCpNodeMax,
+				TksCpNodeType:    tksCpNodeType,
+				TksInfraNode:     tksInfraNode,
+				TksInfraNodeMax:  tksInfraNodeMax,
+				TksInfraNodeType: tksInfraNodeType,
+				TksUserNode:      tksUserNode,
+				TksUserNodeMax:   tksUserNodeMax,
+				TksUserNodeType:  tksUserNodeType,
 			}
 
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
@@ -83,12 +89,17 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().StringVarP(&name, "name", "n", "", "the name of organization")
 	command.Flags().StringVarP(&description, "description", "d", "", "the description of organization")
 
-	command.Flags().IntVar(&cpNodeCnt, "cp-node-cnt", 3, "number of control-plane nodes")
-	command.Flags().StringVar(&cpNodeMachineType, "cp-node-machine-type", "t3.large", "machine type for tks cp node")
-	command.Flags().IntVar(&tksNodeCnt, "tks-node-cnt", 3, "number of tks nodes")
-	command.Flags().StringVar(&tksNodeMachineType, "tks-node-machine-type", "t3.2xlarge", "machine type for tks node")
-	command.Flags().IntVar(&userNodeCnt, "user-node-cnt", 1, "number of control-plane nodes")
-	command.Flags().StringVar(&userNodeMachineType, "user-node-machine-type", "t3.large", "machine type for user node")
+	command.Flags().IntVar(&tksCpNode, "tks-cp-node", 0, "number of control-plane nodes")
+	command.Flags().IntVar(&tksCpNodeMax, "tks-cp-node-max", 0, "max number of control-plane nodes")
+	command.Flags().StringVar(&tksCpNodeType, "tks-cp-node-type", "t3.large", "machine type for tks cp node")
+
+	command.Flags().IntVar(&tksInfraNode, "tks-infra-node", 1, "number of tks infra nodes")
+	command.Flags().IntVar(&tksInfraNodeMax, "tks-infra-node-max", 1, "max number of tks infra nodes")
+	command.Flags().StringVar(&tksInfraNodeType, "tks-infra-node-type", "t3.2xlarge", "machine type for tks infra node")
+
+	command.Flags().IntVar(&tksUserNode, "tks-user-node", 1, "number of user nodes")
+	command.Flags().IntVar(&tksUserNodeMax, "tks-user-node-max", 1, "max number of user nodes")
+	command.Flags().StringVar(&tksUserNodeType, "tks-user-node-type", "t3.large", "machine type for user node")
 
 	return command
 }
