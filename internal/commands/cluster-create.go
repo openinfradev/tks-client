@@ -13,6 +13,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
 		name             string
 		organizationId   string
+		stackId          string
 		description      string
 		stackTemplateId  string
 		cloudAccountId   string
@@ -45,6 +46,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 
 			input := domain.CreateClusterRequest{
 				OrganizationId:   organizationId,
+				StackId:          domain.StackId(stackId),
 				StackTemplateId:  stackTemplateId,
 				Name:             name,
 				Description:      description,
@@ -79,6 +81,8 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 
 	command.Flags().StringVarP(&organizationId, "organization-id", "o", "", "the organizationId with clusters")
 	helper.CheckError(command.MarkFlagRequired("organization-id"))
+
+	command.Flags().StringVarP(&stackId, "stack-id", "s", "", "the stackId")
 
 	command.Flags().StringVarP(&cloudAccountId, "cloud-account-id", "s", "", "the cloudAccountId for cluster")
 	helper.CheckError(command.MarkFlagRequired("cloud-account-id"))
