@@ -84,7 +84,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 
 	command.Flags().StringVarP(&stackId, "stack-id", "s", "", "the stackId")
 
-	command.Flags().StringVarP(&cloudAccountId, "cloud-account-id", "s", "", "the cloudAccountId for cluster")
+	command.Flags().StringVarP(&cloudAccountId, "cloud-account-id", "a", "", "the cloudAccountId for cluster")
 	helper.CheckError(command.MarkFlagRequired("cloud-account-id"))
 
 	command.Flags().StringVarP(&stackTemplateId, "stack-template-id", "t", "", "the template for installation")
