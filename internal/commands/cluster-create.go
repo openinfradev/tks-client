@@ -12,9 +12,11 @@ import (
 func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
 		name             string
+		clusterType      string
 		organizationId   string
 		description      string
 		stackTemplateId  string
+		cloudService     string
 		cloudAccountId   string
 		tksCpNode        int
 		tksCpNodeMax     int
@@ -44,10 +46,12 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			input := domain.CreateClusterRequest{
-				OrganizationId:   organizationId,
-				StackTemplateId:  stackTemplateId,
 				Name:             name,
 				Description:      description,
+				ClusterType:      clusterType,
+				CloudService:     cloudService,
+				OrganizationId:   organizationId,
+				StackTemplateId:  stackTemplateId,
 				CloudAccountId:   cloudAccountId,
 				TksCpNode:        tksCpNode,
 				TksCpNodeMax:     tksCpNodeMax,
@@ -79,6 +83,9 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 
 	command.Flags().StringVarP(&organizationId, "organization-id", "o", "", "the organizationId with clusters")
 	helper.CheckError(command.MarkFlagRequired("organization-id"))
+
+	command.Flags().StringVar(&cloudService, "cloud-service", "AWS", "the cloud service for cluster (AWS | BYOH)")
+	command.Flags().StringVar(&clusterType, "cluster-type", "USER", "the cluster type (USER | ADMIN)")
 
 	command.Flags().StringVarP(&cloudAccountId, "cloud-account-id", "s", "", "the cloudAccountId for cluster")
 	helper.CheckError(command.MarkFlagRequired("cloud-account-id"))
