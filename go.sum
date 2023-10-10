@@ -171,8 +171,8 @@ github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWb
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/oklog/ulid v1.3.1 h1:EGfNDEx6MqHz8B3uNV6QAib1UR2Lm97sHi3ocA6ESJ4=
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
-github.com/openinfradev/tks-api v0.0.0-20230524113357-3bbb1e773fe1 h1:jz69LegV1HmNYGkE31ZPuQ9DfquQy99vP67/V81yE/U=
-github.com/openinfradev/tks-api v0.0.0-20230524113357-3bbb1e773fe1/go.mod h1:FfhP5GE5TpRaHGUgTlMyxSjRsr6szNy+KhzXWBkMQ4g=
+github.com/openinfradev/tks-api v0.0.0-20231005011154-4d038e916d4b h1:ZUz3vwT58Rsjj7qgCN54q/fUMX3HqEa09My1A2WIJ9c=
+github.com/openinfradev/tks-api v0.0.0-20231005011154-4d038e916d4b/go.mod h1:v6SsQIxemJ3j1rTI3kvhmzyUCREHK0W09ShVII3XRhg=
 github.com/pelletier/go-toml v1.9.5 h1:4yBQzkHv+7BHq2PQUZF3Mx0IYxG7LsP222s7Agd3ve8=
 github.com/pelletier/go-toml v1.9.5/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
 github.com/pelletier/go-toml/v2 v2.0.1 h1:8e3L2cCQzLFi2CR4g7vGFuFxX7Jl1kKX8gW+iV0GUKU=

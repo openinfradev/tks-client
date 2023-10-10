@@ -35,7 +35,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		Long: `Create a TKS Cluster.
 	  
 	Example:
-	tks cluster create <CLUSTERNAME> [--template TEMPLATE_NAME]`,
+	tks cluster create <CLUSTERNAME> [--cloud-service AWS] [--template TEMPLATE_NAME]`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 1 {
 				name = args[0]
@@ -88,7 +88,6 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().StringVar(&clusterType, "cluster-type", "USER", "the cluster type (USER | ADMIN)")
 
 	command.Flags().StringVarP(&cloudAccountId, "cloud-account-id", "s", "", "the cloudAccountId for cluster")
-	helper.CheckError(command.MarkFlagRequired("cloud-account-id"))
 
 	command.Flags().StringVarP(&stackTemplateId, "stack-template-id", "t", "", "the template for installation")
 	helper.CheckError(command.MarkFlagRequired("stack-template-id"))
