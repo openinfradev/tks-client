@@ -12,8 +12,7 @@ import (
 
 func NewClusterNodeListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
-		organizationId string
-		clusterId      string
+		clusterId string
 	)
 
 	var command = &cobra.Command{
@@ -24,20 +23,16 @@ func NewClusterNodeListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	Example:
 	tks cluster node list`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) == 1 {
-				organizationId = args[0]
-			}
-
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			api := fmt.Sprintf("organizations/%s/stacks/%s/nodes", organizationId, clusterId)
+			api := fmt.Sprintf("clusters/%s/nodes", clusterId)
 			body, err := apiClient.Get(api)
 			if err != nil {
 				return err
 			}
 
-			var out domain.GetStackNodesResponse
+			var out domain.GetClusterNodesResponse
 			helper.Transcode(body, &out)
 
 			printClusterHosts(out.Nodes)
@@ -46,16 +41,13 @@ func NewClusterNodeListCommand(globalOpts *GlobalOptions) *cobra.Command {
 		},
 	}
 
-	command.Flags().StringVarP(&organizationId, "organization-id", "o", "", "the organizationId with clusters")
-	helper.CheckError(command.MarkFlagRequired("organization-id"))
-
 	command.Flags().StringVarP(&clusterId, "cluster-id", "c", "", "the clusterId for nodes")
 	helper.CheckError(command.MarkFlagRequired("cluster-id"))
 
 	return command
 }
 
-func printClusterHosts(r []domain.StackNode) {
+func printClusterHosts(r []domain.ClusterNode) {
 	if len(r) == 0 {
 		fmt.Println("No cluster nodes exists for specified cluster!")
 		return

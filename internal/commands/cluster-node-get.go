@@ -12,9 +12,8 @@ import (
 
 func NewClusterNodeGetCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
-		organizationId string
-		clusterId      string
-		long           bool
+		clusterId string
+		long      bool
 	)
 
 	var command = &cobra.Command{
@@ -25,20 +24,16 @@ func NewClusterNodeGetCommand(globalOpts *GlobalOptions) *cobra.Command {
 	Example:
 	tks cluster node get`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) == 1 {
-				organizationId = args[0]
-			}
-
 			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			api := fmt.Sprintf("organizations/%s/stacks/%s/nodes", organizationId, clusterId)
+			api := fmt.Sprintf("clusters/%s/nodes", clusterId)
 			body, err := apiClient.Get(api)
 			if err != nil {
 				return err
 			}
 
-			var out domain.GetStackNodesResponse
+			var out domain.GetClusterNodesResponse
 			helper.Transcode(body, &out)
 
 			printClusterNodes(out.Nodes, long)
@@ -46,9 +41,6 @@ func NewClusterNodeGetCommand(globalOpts *GlobalOptions) *cobra.Command {
 			return nil
 		},
 	}
-
-	command.Flags().StringVarP(&organizationId, "organization-id", "o", "", "the organizationId with clusters")
-	helper.CheckError(command.MarkFlagRequired("organization-id"))
 
 	command.Flags().StringVarP(&clusterId, "cluster-id", "c", "", "the clusterId for nodes")
 	helper.CheckError(command.MarkFlagRequired("cluster-id"))
@@ -58,7 +50,7 @@ func NewClusterNodeGetCommand(globalOpts *GlobalOptions) *cobra.Command {
 	return command
 }
 
-func printClusterNodes(r []domain.StackNode, long bool) {
+func printClusterNodes(r []domain.ClusterNode, long bool) {
 	if len(r) == 0 {
 		fmt.Println("No cluster nodes exists for specified cluster!")
 		return

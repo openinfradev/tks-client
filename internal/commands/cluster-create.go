@@ -18,6 +18,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		stackTemplateId  string
 		cloudService     string
 		cloudAccountId   string
+		stack            int
 		tksCpNode        int
 		tksCpNodeMax     int
 		tksCpNodeType    string
@@ -45,6 +46,11 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				helper.PanicWithError("You must specify name")
 			}
 
+			isStack := false
+			if stack > 0 {
+				isStack = true
+			}
+
 			input := domain.CreateClusterRequest{
 				Name:             name,
 				Description:      description,
@@ -53,6 +59,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				OrganizationId:   organizationId,
 				StackTemplateId:  stackTemplateId,
 				CloudAccountId:   cloudAccountId,
+				IsStack:          isStack,
 				TksCpNode:        tksCpNode,
 				TksCpNodeMax:     tksCpNodeMax,
 				TksCpNodeType:    tksCpNodeType,
@@ -106,6 +113,8 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().IntVar(&tksUserNode, "tks-user-node", 1, "number of user nodes")
 	command.Flags().IntVar(&tksUserNodeMax, "tks-user-node-max", 1, "max number of user nodes")
 	command.Flags().StringVar(&tksUserNodeType, "tks-user-node-type", "t3.large", "machine type for user node")
+
+	command.Flags().IntVar(&stack, "stack", 0, "enable creating stack")
 
 	return command
 }
