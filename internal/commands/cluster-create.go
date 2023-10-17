@@ -12,10 +12,13 @@ import (
 func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
 		name             string
+		clusterType      string
 		organizationId   string
 		description      string
 		stackTemplateId  string
+		cloudService     string
 		cloudAccountId   string
+		stack            int
 		tksCpNode        int
 		tksCpNodeMax     int
 		tksCpNodeType    string
@@ -33,7 +36,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		Long: `Create a TKS Cluster.
 	  
 	Example:
-	tks cluster create <CLUSTERNAME> [--template TEMPLATE_NAME]`,
+	tks cluster create <CLUSTERNAME> [--cloud-service AWS] [--template TEMPLATE_NAME]`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 1 {
 				name = args[0]
@@ -43,12 +46,20 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				helper.PanicWithError("You must specify name")
 			}
 
+			isStack := false
+			if stack > 0 {
+				isStack = true
+			}
+
 			input := domain.CreateClusterRequest{
-				OrganizationId:   organizationId,
-				StackTemplateId:  stackTemplateId,
 				Name:             name,
 				Description:      description,
+				ClusterType:      clusterType,
+				CloudService:     cloudService,
+				OrganizationId:   organizationId,
+				StackTemplateId:  stackTemplateId,
 				CloudAccountId:   cloudAccountId,
+				IsStack:          isStack,
 				TksCpNode:        tksCpNode,
 				TksCpNodeMax:     tksCpNodeMax,
 				TksCpNodeType:    tksCpNodeType,
@@ -80,8 +91,10 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().StringVarP(&organizationId, "organization-id", "o", "", "the organizationId with clusters")
 	helper.CheckError(command.MarkFlagRequired("organization-id"))
 
+	command.Flags().StringVar(&cloudService, "cloud-service", "AWS", "the cloud service for cluster (AWS | BYOH)")
+	command.Flags().StringVar(&clusterType, "cluster-type", "USER", "the cluster type (USER | ADMIN)")
+
 	command.Flags().StringVarP(&cloudAccountId, "cloud-account-id", "s", "", "the cloudAccountId for cluster")
-	helper.CheckError(command.MarkFlagRequired("cloud-account-id"))
 
 	command.Flags().StringVarP(&stackTemplateId, "stack-template-id", "t", "", "the template for installation")
 	helper.CheckError(command.MarkFlagRequired("stack-template-id"))
@@ -100,6 +113,8 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().IntVar(&tksUserNode, "tks-user-node", 1, "number of user nodes")
 	command.Flags().IntVar(&tksUserNodeMax, "tks-user-node-max", 1, "max number of user nodes")
 	command.Flags().StringVar(&tksUserNodeType, "tks-user-node-type", "t3.large", "machine type for user node")
+
+	command.Flags().IntVar(&stack, "stack", 0, "enable creating stack")
 
 	return command
 }

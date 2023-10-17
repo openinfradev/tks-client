@@ -7,13 +7,13 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
-	github.com/openinfradev/tks-api v0.0.0-20230524113357-3bbb1e773fe1
+	github.com/openinfradev/tks-api v0.0.0-20231017022609-fe95bb67dc60
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/pflag v1.0.5
 	golang.org/x/term v0.6.0
 	gopkg.in/yaml.v2 v2.4.0
-	sigs.k8s.io/yaml v1.2.0
+	sigs.k8s.io/yaml v1.3.0
 )
 
 require (
