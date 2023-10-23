@@ -91,7 +91,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				TksUserNodeType:        tksUserNodeType,
 			}
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			body, err := apiClient.Post("clusters", input)

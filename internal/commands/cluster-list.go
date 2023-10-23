@@ -29,7 +29,7 @@ func NewClusterListCommand(globalOpts *GlobalOptions) *cobra.Command {
 				organizationId = args[0]
 			}
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			api := fmt.Sprintf("clusters?organizationId=%s", organizationId)

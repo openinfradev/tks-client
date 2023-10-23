@@ -27,7 +27,7 @@ func NewAppGroupDeleteCommand(globalOpts *GlobalOptions) *cobra.Command {
 				helper.PanicWithError("You must specify appGroupId")
 			}
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			_, err = apiClient.Delete("app-groups/"+appGroupId, nil)

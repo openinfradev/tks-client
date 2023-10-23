@@ -31,7 +31,7 @@ func NewCloudAccountListCommand(globalOpts *GlobalOptions) *cobra.Command {
 				}
 			}
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			body, err := apiClient.Get("/organizations/" + organizationId + "/cloud-accounts")

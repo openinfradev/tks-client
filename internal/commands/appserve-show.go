@@ -33,7 +33,7 @@ func NewAppServeShowCmd(globalOpts *GlobalOptions) *cobra.Command {
 				return errors.New("--organization-id is mandatory param")
 			}
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			//url := fmt.Sprintf("organizations/%v/app-serve-apps/%s/exist", organizationId, appId)
