@@ -27,7 +27,7 @@ func NewClusterDeleteCommand(globalOpts *GlobalOptions) *cobra.Command {
 				helper.PanicWithError("You must specify clusterId")
 			}
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			_, err = apiClient.Delete("clusters/"+clusterId, nil)

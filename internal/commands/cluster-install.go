@@ -23,7 +23,7 @@ func NewClusterInstallCommand(globalOpts *GlobalOptions) *cobra.Command {
 				clusterId = args[0]
 			}
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			_, err = apiClient.Post("clusters/"+clusterId+"/install", nil)

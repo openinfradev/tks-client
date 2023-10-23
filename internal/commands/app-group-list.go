@@ -27,7 +27,7 @@ func NewAppGroupListCommand(globalOpts *GlobalOptions) *cobra.Command {
 				clusterId = args[0]
 			}
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			api := fmt.Sprintf("app-groups?clusterId=%s", clusterId)

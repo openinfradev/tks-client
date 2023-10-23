@@ -2,6 +2,8 @@ package commands
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
 	"github.com/openinfradev/tks-api/pkg/domain"
@@ -28,6 +30,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		tksUserNode      int
 		tksUserNodeMax   int
 		tksUserNodeType  string
+		clusterEndpoint  string
 	)
 
 	var command = &cobra.Command{
@@ -51,27 +54,44 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				isStack = true
 			}
 
-			input := domain.CreateClusterRequest{
-				Name:             name,
-				Description:      description,
-				ClusterType:      clusterType,
-				CloudService:     cloudService,
-				OrganizationId:   organizationId,
-				StackTemplateId:  stackTemplateId,
-				CloudAccountId:   cloudAccountId,
-				IsStack:          isStack,
-				TksCpNode:        tksCpNode,
-				TksCpNodeMax:     tksCpNodeMax,
-				TksCpNodeType:    tksCpNodeType,
-				TksInfraNode:     tksInfraNode,
-				TksInfraNodeMax:  tksInfraNodeMax,
-				TksInfraNodeType: tksInfraNodeType,
-				TksUserNode:      tksUserNode,
-				TksUserNodeMax:   tksUserNodeMax,
-				TksUserNodeType:  tksUserNodeType,
+			byoClusterEndpointHost := ""
+			byoClusterEndpointPort := 0
+			if cloudService == domain.CloudService_BYOH {
+				if clusterEndpoint == "" {
+					return fmt.Errorf("invalid clusterEndpoint")
+				}
+
+				arr := strings.Split(clusterEndpoint, ":")
+				if len(arr) != 2 {
+					return fmt.Errorf("invalid clusterEndpoint")
+				}
+				byoClusterEndpointHost = arr[0]
+				byoClusterEndpointPort, _ = strconv.Atoi(arr[1])
 			}
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			input := domain.CreateClusterRequest{
+				Name:                   name,
+				Description:            description,
+				ClusterType:            clusterType,
+				CloudService:           cloudService,
+				OrganizationId:         organizationId,
+				StackTemplateId:        stackTemplateId,
+				CloudAccountId:         cloudAccountId,
+				ByoClusterEndpointHost: byoClusterEndpointHost,
+				ByoClusterEndpointPort: byoClusterEndpointPort,
+				IsStack:                isStack,
+				TksCpNode:              tksCpNode,
+				TksCpNodeMax:           tksCpNodeMax,
+				TksCpNodeType:          tksCpNodeType,
+				TksInfraNode:           tksInfraNode,
+				TksInfraNodeMax:        tksInfraNodeMax,
+				TksInfraNodeType:       tksInfraNodeType,
+				TksUserNode:            tksUserNode,
+				TksUserNodeMax:         tksUserNodeMax,
+				TksUserNodeType:        tksUserNodeType,
+			}
+
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			body, err := apiClient.Post("clusters", input)
@@ -115,6 +135,8 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().StringVar(&tksUserNodeType, "tks-user-node-type", "t3.large", "machine type for user node")
 
 	command.Flags().IntVar(&stack, "stack", 0, "enable creating stack")
+
+	command.Flags().StringVar(&clusterEndpoint, "cluster-endpoint", "", "cluster endpoint host for byoh")
 
 	return command
 }

@@ -3,6 +3,7 @@ package commands
 import (
 	"errors"
 	"fmt"
+
 	"github.com/jedib0t/go-pretty/table"
 	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
 	"github.com/openinfradev/tks-api/pkg/domain"
@@ -30,7 +31,7 @@ func NewAppServeListCmd(globalOpts *GlobalOptions) *cobra.Command {
 				showAll = "true"
 			}
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			url := fmt.Sprintf("organizations/%v/app-serve-apps?showAll=%s", organizationId, showAll)
