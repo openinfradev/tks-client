@@ -59,12 +59,22 @@ func NewUserCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	}
 
 	command.Flags().StringVar(&accountId, "account-id", "", "[required, unique] user accountId")
+	helper.CheckError(command.MarkFlagRequired("account-id"))
+
 	command.Flags().StringVar(&name, "name", "", "[required] name")
+	helper.CheckError(command.MarkFlagRequired("name"))
+
 	command.Flags().StringVar(&email, "email", "", "[required, unique] email")
+	helper.CheckError(command.MarkFlagRequired("email"))
+
 	command.Flags().StringVar(&role, "role", "", "[required] role( one of admin, user)")
+	helper.CheckError(command.MarkFlagRequired("role"))
+
+	command.Flags().StringVar(&password, "password", "", "[required] password")
+	helper.CheckError(command.MarkFlagRequired("password"))
+
 	command.Flags().StringVar(&department, "department", "", "[optional] department")
 	command.Flags().StringVar(&description, "description", "", "[optional] description")
-	command.Flags().StringVar(&password, "password", "", "[required] password")
 
 	return command
 }

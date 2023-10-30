@@ -41,6 +41,7 @@ func NewUserDeleteCommand(globalOpts *GlobalOptions) *cobra.Command {
 	}
 
 	command.Flags().StringVar(&accountId, "account-id", "", "user accountId")
+	helper.CheckError(command.MarkFlagRequired("account-id"))
 
 	return command
 }

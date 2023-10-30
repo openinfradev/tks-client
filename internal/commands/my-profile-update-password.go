@@ -54,7 +54,10 @@ func NewMyProfileUpdatePasswordCommand(globalOpts *GlobalOptions) *cobra.Command
 	}
 
 	command.Flags().StringVar(&originPassword, "origin-password", "", "a current Password")
+	helper.CheckError(command.MarkFlagRequired("origin-password"))
+
 	command.Flags().StringVar(&newPassword, "new-password", "", "a new Password")
+	helper.CheckError(command.MarkFlagRequired("new-password"))
 
 	return command
 }
