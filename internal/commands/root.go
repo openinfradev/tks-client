@@ -13,14 +13,16 @@ import (
 )
 
 type GlobalOptions struct {
-	ServerAddr string
-	AuthToken  string
-	ConfigPath string
+	ServerAddr            string
+	AuthToken             string
+	ConfigPath            string
+	CurrentOrganizationId string
 }
 
 type LocalConfig struct {
-	Server string `yaml:"server"`
-	Token  string `yaml:"token"`
+	Server      string       `yaml:"server"`
+	Token       string       `yaml:"token"`
+	CurrentUser *config.User `yaml:"user"`
 }
 
 func NewCommand() *cobra.Command {
@@ -52,6 +54,8 @@ func NewCommand() *cobra.Command {
 	command.AddCommand(NewCloudAccountCommand(&opts))
 	command.AddCommand(NewAppserveCommand(&opts))
 	command.AddCommand(NewStackTemplateCommand(&opts))
+	command.AddCommand(NewUserCommand(&opts))
+	command.AddCommand(NewMyProfileCommand(&opts))
 
 	defaultLocalConfigPath, err := config.DefaultLocalConfigPath()
 	helper.CheckError(err)
@@ -64,6 +68,7 @@ func NewCommand() *cobra.Command {
 	if localCfg != nil {
 		command.PersistentFlags().StringVar(&opts.ServerAddr, "server", localCfg.GetServer().Server, "TKS server address")
 		command.PersistentFlags().StringVar(&opts.AuthToken, "auth-token", localCfg.GetUser().AuthToken, "Authentication token")
+		command.PersistentFlags().StringVar(&opts.CurrentOrganizationId, "organization-id", localCfg.GetUser().OrganizationId, "Current organization id")
 
 		fmt.Printf("CURRENT SESSION [ %s | %s | %s ] \n\n",
 			localCfg.GetServer().Server, localCfg.GetUser().Name, localCfg.GetUser().OrganizationId)
