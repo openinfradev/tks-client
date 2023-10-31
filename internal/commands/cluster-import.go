@@ -20,6 +20,7 @@ func NewClusterImportCommand(globalOpts *GlobalOptions) *cobra.Command {
 		description     string
 		stackTemplateId string
 		kubeconfigPath  string
+		cloudService    string
 	)
 
 	var command = &cobra.Command{
@@ -51,6 +52,7 @@ func NewClusterImportCommand(globalOpts *GlobalOptions) *cobra.Command {
 				Description:     description,
 				ClusterType:     clusterType,
 				Kubeconfig:      kubeconfig,
+				CloudService:    cloudService,
 			}
 
 			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
@@ -73,6 +75,7 @@ func NewClusterImportCommand(globalOpts *GlobalOptions) *cobra.Command {
 	helper.CheckError(command.MarkFlagRequired("organization-id"))
 
 	command.Flags().StringVar(&clusterType, "cluster-type", "USER", "the cluster type (USER | ADMIN)")
+	command.Flags().StringVar(&cloudService, "cloud-service", "AWS", "the cloud service (AWS | BYOH)")
 
 	command.Flags().StringVarP(&stackTemplateId, "stack-template-id", "t", "", "the template for installation")
 	helper.CheckError(command.MarkFlagRequired("stack-template-id"))
