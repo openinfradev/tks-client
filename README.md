@@ -1,6 +1,6 @@
 # TKS Client
 
-**TKS**는 **Taco Kubernetes Service**의 약자로, SK Telecom이 만든 GitOps기반의 서비스 시스템을 의미합니다. `tks-client`는 TKS 쿠버네티스 클러스터와 서비스에 대한 관리기능을 제공하는 CLI 툴로써 TKS API서비스와 gRPC 프로토콜을 사용하여 통신합니다. 
+**TKS**는 **Taco Kubernetes Service**의 약자로, SK Telecom이 만든 GitOps기반의 서비스 시스템을 의미합니다. `tks-client`는 TKS 쿠버네티스 클러스터와 서비스에 대한 관리기능을 제공하는 CLI 툴로써 TKS API서비스와 gRPC 프로토콜을 사용하여 통신합니다.
 
 ```
 $ tks
@@ -33,6 +33,7 @@ Use "tks [command] --help" for more information about a command.
 `tks-client`의 매뉴얼은 다음 [링크](https://openinfradev.github.io/releases/cli/overview/)에서 확인하실 수 있습니다.
 
 # Installation
+
 `tks`는 Linux, MAC, Windows 환경에 설치할 수 있습니다. tks github repo에서 바이너리를 다운로드 받거나 소스파일을 직접 빌드하여 설치합니다.
 
 ## Github Repo에서 다운로드
@@ -77,7 +78,8 @@ Use "tks [command] --help" for more information about a command.
 
 ## 소스 빌드
 
-`tks`는  [task](https://taskfile.dev/)를 사용하여 소스 빌드를 할 수 있습니다.
+`tks`는 [task](https://taskfile.dev/)를 사용하여 소스 빌드를 할 수 있습니다.
+
 ```
 $ git clone git@github.com:openinfradev/tks-client.git
 $ cd tks-client/
@@ -130,4 +132,12 @@ Using config file: /home/ubuntu/.tks-client.yaml
 
 `tks-client`의 자세한 설정방법과 커맨드 사용법은 [매뉴얼](https://openinfradev.github.io/releases/cli/overview/)을 참고하시기 바랍니다.
 
+# Release & Commands
 
+반드시 git 의 모든 내용이 clean 해야 합니다.
+
+```
+$ export GITHUB_TOKEN={YOUR_TOKEN}
+$ cd cmd
+$ goreleaser release --clean
+```
