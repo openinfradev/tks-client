@@ -128,7 +128,7 @@ func NewAppserveUpdateCmd(globalOpts *GlobalOptions) *cobra.Command {
 			fmt.Println(string(cBytes))
 			fmt.Println("========== ")
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			url := fmt.Sprintf("organizations/%v/app-serve-apps/%v", organizationId, appId)

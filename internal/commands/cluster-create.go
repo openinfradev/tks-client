@@ -2,6 +2,8 @@ package commands
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
 	"github.com/openinfradev/tks-api/pkg/domain"
@@ -11,17 +13,24 @@ import (
 
 func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
-		name                string
-		organizationId      string
-		description         string
-		stackTemplateId     string
-		cloudAccountId      string
-		cpNodeCnt           int
-		cpNodeMachineType   string
-		tksNodeCnt          int
-		tksNodeMachineType  string
-		userNodeCnt         int
-		userNodeMachineType string
+		name             string
+		clusterType      string
+		organizationId   string
+		description      string
+		stackTemplateId  string
+		cloudService     string
+		cloudAccountId   string
+		stack            int
+		tksCpNode        int
+		tksCpNodeMax     int
+		tksCpNodeType    string
+		tksInfraNode     int
+		tksInfraNodeMax  int
+		tksInfraNodeType string
+		tksUserNode      int
+		tksUserNodeMax   int
+		tksUserNodeType  string
+		clusterEndpoint  string
 	)
 
 	var command = &cobra.Command{
@@ -30,7 +39,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		Long: `Create a TKS Cluster.
 	  
 	Example:
-	tks cluster create <CLUSTERNAME> [--template TEMPLATE_NAME]`,
+	tks cluster create <CLUSTERNAME> [--cloud-service AWS] [--template TEMPLATE_NAME]`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 1 {
 				name = args[0]
@@ -40,21 +49,49 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				helper.PanicWithError("You must specify name")
 			}
 
-			input := domain.CreateClusterRequest{
-				OrganizationId:      organizationId,
-				StackTemplateId:     stackTemplateId,
-				Name:                name,
-				Description:         description,
-				CloudAccountId:      cloudAccountId,
-				CpNodeCnt:           cpNodeCnt,
-				CpNodeMachineType:   cpNodeMachineType,
-				TksNodeCnt:          tksNodeCnt,
-				TksNodeMachineType:  tksNodeMachineType,
-				UserNodeCnt:         userNodeCnt,
-				UserNodeMachineType: userNodeMachineType,
+			isStack := false
+			if stack > 0 {
+				isStack = true
 			}
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			byoClusterEndpointHost := ""
+			byoClusterEndpointPort := 0
+			if cloudService == domain.CloudService_BYOH {
+				if clusterEndpoint == "" {
+					return fmt.Errorf("invalid clusterEndpoint")
+				}
+
+				arr := strings.Split(clusterEndpoint, ":")
+				if len(arr) != 2 {
+					return fmt.Errorf("invalid clusterEndpoint")
+				}
+				byoClusterEndpointHost = arr[0]
+				byoClusterEndpointPort, _ = strconv.Atoi(arr[1])
+			}
+
+			input := domain.CreateClusterRequest{
+				Name:                   name,
+				Description:            description,
+				ClusterType:            clusterType,
+				CloudService:           cloudService,
+				OrganizationId:         organizationId,
+				StackTemplateId:        stackTemplateId,
+				CloudAccountId:         cloudAccountId,
+				ByoClusterEndpointHost: byoClusterEndpointHost,
+				ByoClusterEndpointPort: byoClusterEndpointPort,
+				IsStack:                isStack,
+				TksCpNode:              tksCpNode,
+				TksCpNodeMax:           tksCpNodeMax,
+				TksCpNodeType:          tksCpNodeType,
+				TksInfraNode:           tksInfraNode,
+				TksInfraNodeMax:        tksInfraNodeMax,
+				TksInfraNodeType:       tksInfraNodeType,
+				TksUserNode:            tksUserNode,
+				TksUserNodeMax:         tksUserNodeMax,
+				TksUserNodeType:        tksUserNodeType,
+			}
+
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			body, err := apiClient.Post("clusters", input)
@@ -74,8 +111,10 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().StringVarP(&organizationId, "organization-id", "o", "", "the organizationId with clusters")
 	helper.CheckError(command.MarkFlagRequired("organization-id"))
 
+	command.Flags().StringVar(&cloudService, "cloud-service", "AWS", "the cloud service for cluster (AWS | BYOH)")
+	command.Flags().StringVar(&clusterType, "cluster-type", "USER", "the cluster type (USER | ADMIN)")
+
 	command.Flags().StringVarP(&cloudAccountId, "cloud-account-id", "s", "", "the cloudAccountId for cluster")
-	helper.CheckError(command.MarkFlagRequired("cloud-account-id"))
 
 	command.Flags().StringVarP(&stackTemplateId, "stack-template-id", "t", "", "the template for installation")
 	helper.CheckError(command.MarkFlagRequired("stack-template-id"))
@@ -83,12 +122,21 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().StringVarP(&name, "name", "n", "", "the name of organization")
 	command.Flags().StringVarP(&description, "description", "d", "", "the description of organization")
 
-	command.Flags().IntVar(&cpNodeCnt, "cp-node-cnt", 3, "number of control-plane nodes")
-	command.Flags().StringVar(&cpNodeMachineType, "cp-node-machine-type", "t3.large", "machine type for tks cp node")
-	command.Flags().IntVar(&tksNodeCnt, "tks-node-cnt", 3, "number of tks nodes")
-	command.Flags().StringVar(&tksNodeMachineType, "tks-node-machine-type", "t3.2xlarge", "machine type for tks node")
-	command.Flags().IntVar(&userNodeCnt, "user-node-cnt", 1, "number of control-plane nodes")
-	command.Flags().StringVar(&userNodeMachineType, "user-node-machine-type", "t3.large", "machine type for user node")
+	command.Flags().IntVar(&tksCpNode, "tks-cp-node", 0, "number of control-plane nodes")
+	command.Flags().IntVar(&tksCpNodeMax, "tks-cp-node-max", 0, "max number of control-plane nodes")
+	command.Flags().StringVar(&tksCpNodeType, "tks-cp-node-type", "t3.large", "machine type for tks cp node")
+
+	command.Flags().IntVar(&tksInfraNode, "tks-infra-node", 1, "number of tks infra nodes")
+	command.Flags().IntVar(&tksInfraNodeMax, "tks-infra-node-max", 1, "max number of tks infra nodes")
+	command.Flags().StringVar(&tksInfraNodeType, "tks-infra-node-type", "t3.2xlarge", "machine type for tks infra node")
+
+	command.Flags().IntVar(&tksUserNode, "tks-user-node", 1, "number of user nodes")
+	command.Flags().IntVar(&tksUserNodeMax, "tks-user-node-max", 1, "max number of user nodes")
+	command.Flags().StringVar(&tksUserNodeType, "tks-user-node-type", "t3.large", "machine type for user node")
+
+	command.Flags().IntVar(&stack, "stack", 0, "enable creating stack")
+
+	command.Flags().StringVar(&clusterEndpoint, "cluster-endpoint", "", "cluster endpoint host for byoh")
 
 	return command
 }

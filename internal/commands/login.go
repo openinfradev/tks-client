@@ -43,7 +43,7 @@ func NewLoginCommand(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			var err error
-			apiClient, err := _apiClient.New(server, "")
+			apiClient, err := _apiClient.NewWithToken(server, "")
 			helper.CheckError(err)
 
 			body, err := apiClient.Post("auth/login", input)

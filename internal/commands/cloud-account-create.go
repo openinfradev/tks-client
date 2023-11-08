@@ -45,7 +45,7 @@ func NewCloudAccountCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				SecretAccessKey: secretAccessKey,
 			}
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			url := fmt.Sprintf("organizations/%v/cloud-accounts", organizationId)

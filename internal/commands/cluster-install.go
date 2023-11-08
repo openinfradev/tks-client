@@ -6,31 +6,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewClusterDeleteCommand(globalOpts *GlobalOptions) *cobra.Command {
+func NewClusterInstallCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
 		clusterId string
 	)
 
 	var command = &cobra.Command{
-		Use:   "delete",
-		Short: "Delete a TKS Cluster.",
-		Long: `Delete a TKS Cluster.
+		Use:   "install",
+		Short: "Install a TKS Cluster.",
+		Long: `Install a TKS Cluster.
 	  
 	Example:
-	tks cluster delete <CLUSTERNAME>`,
+	tks cluster install <CLUSTER_ID>`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 1 {
 				clusterId = args[0]
 			}
 
-			if clusterId == "" {
-				helper.PanicWithError("You must specify clusterId")
-			}
-
 			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			_, err = apiClient.Delete("clusters/"+clusterId, nil)
+			_, err = apiClient.Post("clusters/"+clusterId+"/install", nil)
 			if err != nil {
 				return err
 			}
@@ -39,6 +35,8 @@ func NewClusterDeleteCommand(globalOpts *GlobalOptions) *cobra.Command {
 		},
 	}
 
-	command.Flags().StringVarP(&clusterId, "cluster-id", "c", "", "the Id for deleting cluster")
+	command.Flags().StringVarP(&clusterId, "cluster-id", "c", "", "the clusterId with clusters")
+	helper.CheckError(command.MarkFlagRequired("cluster-id"))
+
 	return command
 }

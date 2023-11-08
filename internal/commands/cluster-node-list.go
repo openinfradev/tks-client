@@ -10,49 +10,46 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewAppGroupListCommand(globalOpts *GlobalOptions) *cobra.Command {
+func NewClusterNodeListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
 		clusterId string
 	)
 
 	var command = &cobra.Command{
 		Use:   "list",
-		Short: "Show list of cluster.",
-		Long: `Show list of clusterrganization.
+		Short: "Show list of cluster node.",
+		Long: `Show list of cluster node.
 	
 	Example:
-	tks cluster list`,
+	tks cluster node list`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) == 1 {
-				clusterId = args[0]
-			}
-
 			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
-			api := fmt.Sprintf("app-groups?clusterId=%s", clusterId)
+			api := fmt.Sprintf("clusters/%s/nodes", clusterId)
 			body, err := apiClient.Get(api)
 			if err != nil {
 				return err
 			}
 
-			var out domain.GetAppGroupsResponse
+			var out domain.GetClusterNodesResponse
 			helper.Transcode(body, &out)
 
-			printAppGroups(out.AppGroups)
+			printClusterHosts(out.Nodes)
 
 			return nil
 		},
 	}
 
-	command.Flags().StringVarP(&clusterId, "cluster-id", "c", "", "the clusterId")
+	command.Flags().StringVarP(&clusterId, "cluster-id", "c", "", "the clusterId for nodes")
+	helper.CheckError(command.MarkFlagRequired("cluster-id"))
 
 	return command
 }
 
-func printAppGroups(r []domain.AppGroupResponse) {
+func printClusterHosts(r []domain.ClusterNode) {
 	if len(r) == 0 {
-		fmt.Println("No appGroup exists for specified cluster!")
+		fmt.Println("No cluster nodes exists for specified cluster!")
 		return
 	}
 
@@ -64,11 +61,18 @@ func printAppGroups(r []domain.AppGroupResponse) {
 	t.Style().Options.SeparateFooter = false
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
-	t.AppendHeader(table.Row{"CLUSTER_ID", "NAME", "ID", "TYPE", "STATUS", "CREATED_AT", "UPDATED_AT"})
+
+	t.AppendHeader(table.Row{"TYPE", "NAME", "STATUS"})
 	for _, s := range r {
-		tCreatedAt := helper.ParseTime(s.CreatedAt)
-		tUpdatedAt := helper.ParseTime(s.UpdatedAt)
-		t.AppendRow(table.Row{s.ClusterId, s.Name, s.ID, s.AppGroupType, s.Status, tCreatedAt, tUpdatedAt})
+
+		for _, host := range s.Hosts {
+			t.AppendRow(table.Row{s.Type, host.Name, host.Status})
+		}
 	}
-	fmt.Println(t.Render())
+
+	if len(r) > 0 {
+		fmt.Println(t.Render())
+	} else {
+		fmt.Println("No host found.")
+	}
 }

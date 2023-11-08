@@ -19,7 +19,7 @@ func NewOrganizationListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	Example:
 	tks organization list`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			body, err := apiClient.Get("organizations")

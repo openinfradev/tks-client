@@ -3,8 +3,9 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/pkg/errors"
 	"os"
+
+	"github.com/pkg/errors"
 
 	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
 	"github.com/openinfradev/tks-client/internal/helper"
@@ -162,7 +163,7 @@ func NewAppserveCreateCmd(globalOpts *GlobalOptions) *cobra.Command {
 			//}
 			//
 
-			apiClient, err := _apiClient.New(globalOpts.ServerAddr, globalOpts.AuthToken)
+			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
 
 			url := fmt.Sprintf("organizations/%v/app-serve-apps", organizationId)
