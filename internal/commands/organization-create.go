@@ -11,9 +11,11 @@ import (
 
 func NewOrganizationCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	var (
-		name        string
-		email       string
-		description string
+		name           string
+		description    string
+		adminAccountId string
+		adminName      string
+		adminEmail     string
 	)
 
 	var command = &cobra.Command{
@@ -32,9 +34,11 @@ func NewOrganizationCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			input := domain.CreateOrganizationRequest{
-				Name:        name,
-				Email:       email,
-				Description: description,
+				Name:           name,
+				Description:    description,
+				AdminAccountId: adminAccountId,
+				AdminName:      adminName,
+				AdminEmail:     adminEmail,
 			}
 
 			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
@@ -56,10 +60,13 @@ func NewOrganizationCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		},
 	}
 	command.Flags().StringVar(&name, "name", "", "the name of organization")
-	command.Flags().StringVar(&email, "email", "", "the email for creator")
-	helper.CheckError(command.MarkFlagRequired("email"))
-
 	command.Flags().StringVar(&description, "description", "", "the description of organization")
+
+	command.Flags().StringVar(&adminEmail, "admin_email", "", "the email for admin")
+	helper.CheckError(command.MarkFlagRequired("admin_email"))
+
+	command.Flags().StringVar(&adminName, "admin_name", "admin", "the name for admin")
+	command.Flags().StringVar(&adminAccountId, "admin_account_id", "admin", "the email for admin")
 
 	return command
 }

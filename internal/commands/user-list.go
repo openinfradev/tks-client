@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+
 	"github.com/jedib0t/go-pretty/table"
 	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
 	"github.com/openinfradev/tks-api/pkg/domain"
@@ -28,7 +29,7 @@ func NewUserListCommand(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			type DataInterface struct {
-				Users []domain.User `json:"users"`
+				Users []domain.UserResponse `json:"users"`
 			}
 			var out = DataInterface{}
 			helper.Transcode(body, &out)
@@ -42,7 +43,7 @@ func NewUserListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	return command
 }
 
-func printUsers(d []domain.User) {
+func printUsers(d []domain.UserResponse) {
 	if len(d) == 0 {
 		fmt.Println("No User exists for specified organization!")
 		return
@@ -56,11 +57,11 @@ func printUsers(d []domain.User) {
 	t.Style().Options.SeparateFooter = false
 	t.Style().Options.SeparateHeader = false
 	t.Style().Options.SeparateRows = false
-	t.AppendHeader(table.Row{"ORGANIZATION_ID", "ACCOUNT_ID", "NAME", "ID", "email", "Role", "Department", "Description", "CREATED_AT", "UPDATED_AT"})
+	t.AppendHeader(table.Row{"ORGANIZATION_ID", "ACCOUNT_ID", "NAME", "ID", "email", "Department", "Description", "CREATED_AT", "UPDATED_AT"})
 	for _, i := range d {
 		tCreatedAt := helper.ParseTime(i.CreatedAt)
 		tUpdatedAt := helper.ParseTime(i.UpdatedAt)
-		t.AppendRow(table.Row{i.Organization.ID, i.AccountId, i.Name, i.ID, i.Email, i.Role.Name, i.Department, i.Description, tCreatedAt, tUpdatedAt})
+		t.AppendRow(table.Row{i.Organization.ID, i.AccountId, i.Name, i.ID, i.Email, i.Department, i.Description, tCreatedAt, tUpdatedAt})
 	}
 	fmt.Println(t.Render())
 }

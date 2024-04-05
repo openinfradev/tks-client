@@ -31,6 +31,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		tksUserNodeMax   int
 		tksUserNodeType  string
 		clusterEndpoint  string
+		policyIds        string
 	)
 
 	var command = &cobra.Command{
@@ -69,6 +70,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				byoClusterEndpointPort, _ = strconv.Atoi(arr[1])
 			}
 
+			arrPolicyIds := strings.Split(policyIds, ",")
 			input := domain.CreateClusterRequest{
 				Name:                   name,
 				Description:            description,
@@ -89,6 +91,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				TksUserNode:            tksUserNode,
 				TksUserNodeMax:         tksUserNodeMax,
 				TksUserNodeType:        tksUserNodeType,
+				PolicyIds:              arrPolicyIds,
 			}
 
 			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
@@ -137,6 +140,8 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().IntVar(&stack, "stack", 0, "enable creating stack")
 
 	command.Flags().StringVar(&clusterEndpoint, "cluster-endpoint", "", "cluster endpoint host for byoh")
+
+	command.Flags().StringVar(&policyIds, "policy-ids", "", "ex. policy_id1,policy_id1")
 
 	return command
 }

@@ -61,8 +61,8 @@ func NewAppServeShowCmd(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			type DataInterface struct {
-				AppServeApp domain.AppServeApp     `json:"appServeApp"`
-				Stages      []domain.StageResponse `json:"stages"`
+				AppServeApp domain.AppServeAppResponse `json:"appServeApp"`
+				Stages      []domain.StageResponse     `json:"stages"`
 			}
 			var out = DataInterface{}
 			helper.Transcode(body, &out)
@@ -84,7 +84,7 @@ func NewAppServeShowCmd(globalOpts *GlobalOptions) *cobra.Command {
 	return command
 }
 
-func printAppServeShow(d domain.AppServeApp, long bool) {
+func printAppServeShow(d domain.AppServeAppResponse, long bool) {
 	t := table.NewWriter()
 	tTemp := table.Table{}
 	tTemp.Render()
