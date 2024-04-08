@@ -28,7 +28,7 @@ func NewOrganizationListCommand(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			type DataInterface struct {
-				Organizations []domain.Organization `json:"organizations"`
+				Organizations []domain.OrganizationResponse `json:"organizations"`
 			}
 			var out = DataInterface{}
 			helper.Transcode(body, &out)
@@ -42,7 +42,7 @@ func NewOrganizationListCommand(globalOpts *GlobalOptions) *cobra.Command {
 	return command
 }
 
-func printOrganizations(r []domain.Organization, long bool) {
+func printOrganizations(r []domain.OrganizationResponse, long bool) {
 	t := table.NewWriter()
 	tTemp := table.Table{}
 	tTemp.Render()
