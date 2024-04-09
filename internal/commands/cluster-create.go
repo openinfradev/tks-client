@@ -125,12 +125,12 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().StringVarP(&name, "name", "n", "", "the name of organization")
 	command.Flags().StringVarP(&description, "description", "d", "", "the description of organization")
 
-	command.Flags().IntVar(&tksCpNode, "tks-cp-node", 0, "number of control-plane nodes")
-	command.Flags().IntVar(&tksCpNodeMax, "tks-cp-node-max", 0, "max number of control-plane nodes")
+	command.Flags().IntVar(&tksCpNode, "tks-cp-node", 3, "number of control-plane nodes")
+	command.Flags().IntVar(&tksCpNodeMax, "tks-cp-node-max", 3, "max number of control-plane nodes")
 	command.Flags().StringVar(&tksCpNodeType, "tks-cp-node-type", "t3.large", "machine type for tks cp node")
 
-	command.Flags().IntVar(&tksInfraNode, "tks-infra-node", 1, "number of tks infra nodes")
-	command.Flags().IntVar(&tksInfraNodeMax, "tks-infra-node-max", 1, "max number of tks infra nodes")
+	command.Flags().IntVar(&tksInfraNode, "tks-infra-node", 3, "number of tks infra nodes")
+	command.Flags().IntVar(&tksInfraNodeMax, "tks-infra-node-max", 3, "max number of tks infra nodes")
 	command.Flags().StringVar(&tksInfraNodeType, "tks-infra-node-type", "t3.2xlarge", "machine type for tks infra node")
 
 	command.Flags().IntVar(&tksUserNode, "tks-user-node", 1, "number of user nodes")

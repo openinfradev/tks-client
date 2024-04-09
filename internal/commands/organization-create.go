@@ -43,7 +43,7 @@ func NewOrganizationCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 
 			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
 			helper.CheckError(err)
-			body, err := apiClient.Post("organizations", input)
+			body, err := apiClient.Post("admin/organizations", input)
 			if err != nil {
 				return err
 			}
