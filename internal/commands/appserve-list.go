@@ -41,7 +41,7 @@ func NewAppServeListCmd(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			type DataInterface struct {
-				AppServeApps []domain.AppServeApp `json:"appServeApps"`
+				AppServeApps []domain.AppServeAppResponse `json:"appServeApps"`
 			}
 			var out = DataInterface{}
 			helper.Transcode(body, &out)
@@ -58,7 +58,7 @@ func NewAppServeListCmd(globalOpts *GlobalOptions) *cobra.Command {
 	return command
 }
 
-func printAppServeApps(d []domain.AppServeApp) {
+func printAppServeApps(d []domain.AppServeAppResponse) {
 	if len(d) == 0 {
 		fmt.Println("No AppServeApp exists for specified organization!")
 		return

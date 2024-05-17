@@ -3,6 +3,7 @@ package commands
 import (
 	"errors"
 	"fmt"
+
 	_apiClient "github.com/openinfradev/tks-api/pkg/api-client"
 	"github.com/openinfradev/tks-api/pkg/domain"
 	"github.com/openinfradev/tks-client/internal/helper"
@@ -33,10 +34,10 @@ func NewUserCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			input := domain.CreateUserRequest{
-				AccountId:   accountId,
-				Name:        name,
-				Email:       email,
-				Role:        role,
+				AccountId: accountId,
+				Name:      name,
+				Email:     email,
+				//Roles:       roles,
 				Department:  department,
 				Description: description,
 				Password:    password,
@@ -67,8 +68,9 @@ func NewUserCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().StringVar(&email, "email", "", "[required, unique] email")
 	helper.CheckError(command.MarkFlagRequired("email"))
 
+	// [TODO] check here
 	command.Flags().StringVar(&role, "role", "", "[required] role( one of admin, user)")
-	helper.CheckError(command.MarkFlagRequired("role"))
+	//helper.CheckError(command.MarkFlagRequired("role"))
 
 	command.Flags().StringVar(&password, "password", "", "[required] password")
 	helper.CheckError(command.MarkFlagRequired("password"))
