@@ -31,7 +31,8 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		tksUserNodeMax   int
 		tksUserNodeType  string
 		clusterEndpoint  string
-		policyIds        string
+		policyIds        []string
+		domains          []string
 	)
 
 	var command = &cobra.Command{
@@ -70,7 +71,15 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				byoClusterEndpointPort, _ = strconv.Atoi(arr[1])
 			}
 
-			arrPolicyIds := strings.Split(policyIds, ",")
+			clusterDomains := make([]domain.ClusterDomain, len(domains))
+			for i, domain := range domains {
+				arrDomain := strings.Split(domain, "_")
+				if len(arrDomain) > 0 {
+					clusterDomains[i].DomainType = arrDomain[0]
+					clusterDomains[i].Url = arrDomain[1]
+				}
+			}
+
 			input := domain.CreateClusterRequest{
 				Name:                   name,
 				Description:            description,
@@ -91,7 +100,8 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				TksUserNode:            tksUserNode,
 				TksUserNodeMax:         tksUserNodeMax,
 				TksUserNodeType:        tksUserNodeType,
-				PolicyIds:              arrPolicyIds,
+				PolicyIds:              policyIds,
+				Domains:                clusterDomains,
 			}
 
 			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
@@ -141,7 +151,9 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 
 	command.Flags().StringVar(&clusterEndpoint, "cluster-endpoint", "", "cluster endpoint host for byoh")
 
-	command.Flags().StringVar(&policyIds, "policy-ids", "", "ex. policy_id1,policy_id1")
+	command.Flags().StringSliceVar(&policyIds, "policy-ids", []string{}, "ex. policy_id1,policy_id1")
+
+	command.Flags().StringSliceVar(&domains, "domains", []string{}, "ex. grafana_1.1.1.1:30001,thanos_1.1.1.1:30002")
 
 	return command
 }
