@@ -60,6 +60,8 @@ github.com/openinfradev/tks-api v0.0.0-20240704014234-67b7f7a5f678 h1:7gmdRXvUxH
 github.com/openinfradev/tks-api v0.0.0-20240704014234-67b7f7a5f678/go.mod h1:01x6TpTcRwEFo89/+f+6MHPri562UoxflwhiacIm978=
 github.com/openinfradev/tks-api v0.0.0-20240717072017-1679c30f60c3 h1:pSwgQRMfytYhXmoy/v1C72U0H/HHU+0QJvVrEumL0S0=
 github.com/openinfradev/tks-api v0.0.0-20240717072017-1679c30f60c3/go.mod h1:01x6TpTcRwEFo89/+f+6MHPri562UoxflwhiacIm978=
+github.com/openinfradev/tks-api v0.0.0-20240718053150-d08395d77ee8 h1:xUJHc3u0GMORPSRGLWL9VJyJsTu25YXQQr3ZdQIqBeY=
+github.com/openinfradev/tks-api v0.0.0-20240718053150-d08395d77ee8/go.mod h1:01x6TpTcRwEFo89/+f+6MHPri562UoxflwhiacIm978=
 github.com/pelletier/go-toml/v2 v2.1.0 h1:FnwAJ4oYMvbT/34k9zzHuZNrhlz48GB3/s6at6/MHO4=
 github.com/pelletier/go-toml/v2 v2.1.0/go.mod h1:tJU2Z3ZkXwnxa4DPO899bsyIoywizdUvyaeZurnPPDc=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=

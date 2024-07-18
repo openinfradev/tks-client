@@ -1,6 +1,7 @@
 package commands
 
 import (
+	b64 "encoding/base64"
 	"errors"
 	"fmt"
 	"log"
@@ -43,16 +44,16 @@ func NewClusterImportCommand(globalOpts *GlobalOptions) *cobra.Command {
 				name = args[0]
 			}
 
-			var kubeconfig []byte
+			var kubeconfig string
 			if kubeconfigPath != "" {
 				val, err := os.ReadFile(kubeconfigPath)
 				if err != nil {
 					log.Fatalf("Failed to read kubeconfig from [%s] path", err)
 					log.Fatalf("Failed to read kubeconfig from [%s] path", kubeconfigPath)
 				}
-				kubeconfig = val
+				kubeconfig = b64.StdEncoding.EncodeToString(val)
 			} else if kubeconfigString != "" {
-				kubeconfig = []byte(kubeconfigString)
+				kubeconfig = kubeconfigString
 			} else {
 				log.Fatalf("One of kubeconfigPath and kubeconfigString must be filled")
 			}
