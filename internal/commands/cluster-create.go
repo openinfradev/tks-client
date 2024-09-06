@@ -73,7 +73,7 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 
 			clusterDomains := make([]domain.ClusterDomain, len(domains))
 			for i, domain := range domains {
-				arrDomain := strings.Split(domain, "_")
+				arrDomain := strings.Split(domain, "|")
 				if len(arrDomain) > 0 {
 					clusterDomains[i].DomainType = arrDomain[0]
 					clusterDomains[i].Url = arrDomain[1]
