@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/jedib0t/go-pretty/table"
 	"github.com/spf13/cobra"
@@ -61,8 +60,8 @@ func NewAppServeShowCmd(globalOpts *GlobalOptions) *cobra.Command {
 			}
 
 			type DataInterface struct {
-				AppServeApp domain.AppServeApp     `json:"appServeApp"`
-				Stages      []domain.StageResponse `json:"stages"`
+				AppServeApp domain.AppServeAppResponse `json:"appServeApp"`
+				Stages      []domain.StageResponse     `json:"stages"`
 			}
 			var out = DataInterface{}
 			helper.Transcode(body, &out)
@@ -84,7 +83,7 @@ func NewAppServeShowCmd(globalOpts *GlobalOptions) *cobra.Command {
 	return command
 }
 
-func printAppServeShow(d domain.AppServeApp, long bool) {
+func printAppServeShow(d domain.AppServeAppResponse, long bool) {
 	t := table.NewWriter()
 	tTemp := table.Table{}
 	tTemp.Render()
@@ -95,14 +94,16 @@ func printAppServeShow(d domain.AppServeApp, long bool) {
 	t.Style().Options.SeparateRows = false
 	if long {
 		t.AppendHeader(table.Row{"ID", "Version", "Status", "Available Rollback", "Strategy", "Revision", "Image URL", "Profile", "CREATED_AT", "UPDATED_AT"})
-		for _, i := range d.AppServeAppTasks {
-			tCreatedAt := helper.ParseTime(i.CreatedAt)
-			var tUpdatedAt string
-			if i.UpdatedAt != nil {
-				tUpdatedAt = helper.ParseTime(*i.UpdatedAt)
+		/*
+			for _, i := range d.AppServeAppTasks {
+				tCreatedAt := helper.ParseTime(i.CreatedAt)
+				var tUpdatedAt string
+				if i.UpdatedAt != nil {
+					tUpdatedAt = helper.ParseTime(*i.UpdatedAt)
+				}
+				t.AppendRow(table.Row{i.ID, i.Version, i.Status, i.AvailableRollback, i.Strategy, strconv.Itoa(int(i.HelmRevision)), i.ImageUrl, i.Profile, tCreatedAt, tUpdatedAt})
 			}
-			t.AppendRow(table.Row{i.ID, i.Version, i.Status, i.AvailableRollback, i.Strategy, strconv.Itoa(int(i.HelmRevision)), i.ImageUrl, i.Profile, tCreatedAt, tUpdatedAt})
-		}
+		*/
 	} else {
 		fmt.Println("Not implemented yet.")
 	}

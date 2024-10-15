@@ -31,6 +31,8 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 		tksUserNodeMax   int
 		tksUserNodeType  string
 		clusterEndpoint  string
+		policyIds        []string
+		domains          []string
 	)
 
 	var command = &cobra.Command{
@@ -69,6 +71,15 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				byoClusterEndpointPort, _ = strconv.Atoi(arr[1])
 			}
 
+			clusterDomains := make([]domain.ClusterDomain, len(domains))
+			for i, domain := range domains {
+				arrDomain := strings.Split(domain, "_")
+				if len(arrDomain) > 0 {
+					clusterDomains[i].DomainType = arrDomain[0]
+					clusterDomains[i].Url = arrDomain[1]
+				}
+			}
+
 			input := domain.CreateClusterRequest{
 				Name:                   name,
 				Description:            description,
@@ -89,6 +100,8 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 				TksUserNode:            tksUserNode,
 				TksUserNodeMax:         tksUserNodeMax,
 				TksUserNodeType:        tksUserNodeType,
+				PolicyIds:              policyIds,
+				Domains:                clusterDomains,
 			}
 
 			apiClient, err := _apiClient.NewWithToken(globalOpts.ServerAddr, globalOpts.AuthToken)
@@ -122,12 +135,12 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().StringVarP(&name, "name", "n", "", "the name of organization")
 	command.Flags().StringVarP(&description, "description", "d", "", "the description of organization")
 
-	command.Flags().IntVar(&tksCpNode, "tks-cp-node", 0, "number of control-plane nodes")
-	command.Flags().IntVar(&tksCpNodeMax, "tks-cp-node-max", 0, "max number of control-plane nodes")
+	command.Flags().IntVar(&tksCpNode, "tks-cp-node", 3, "number of control-plane nodes")
+	command.Flags().IntVar(&tksCpNodeMax, "tks-cp-node-max", 3, "max number of control-plane nodes")
 	command.Flags().StringVar(&tksCpNodeType, "tks-cp-node-type", "t3.large", "machine type for tks cp node")
 
-	command.Flags().IntVar(&tksInfraNode, "tks-infra-node", 1, "number of tks infra nodes")
-	command.Flags().IntVar(&tksInfraNodeMax, "tks-infra-node-max", 1, "max number of tks infra nodes")
+	command.Flags().IntVar(&tksInfraNode, "tks-infra-node", 3, "number of tks infra nodes")
+	command.Flags().IntVar(&tksInfraNodeMax, "tks-infra-node-max", 3, "max number of tks infra nodes")
 	command.Flags().StringVar(&tksInfraNodeType, "tks-infra-node-type", "t3.2xlarge", "machine type for tks infra node")
 
 	command.Flags().IntVar(&tksUserNode, "tks-user-node", 1, "number of user nodes")
@@ -137,6 +150,10 @@ func NewClusterCreateCommand(globalOpts *GlobalOptions) *cobra.Command {
 	command.Flags().IntVar(&stack, "stack", 0, "enable creating stack")
 
 	command.Flags().StringVar(&clusterEndpoint, "cluster-endpoint", "", "cluster endpoint host for byoh")
+
+	command.Flags().StringSliceVar(&policyIds, "policy-ids", []string{}, "ex. policy_id1,policy_id1")
+
+	command.Flags().StringSliceVar(&domains, "domains", []string{}, "ex. grafana_1.1.1.1:30001,thanos_1.1.1.1:30002")
 
 	return command
 }
